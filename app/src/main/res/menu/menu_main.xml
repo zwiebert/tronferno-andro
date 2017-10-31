@@ -1,0 +1,25 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="bertw.tronferno.MainActivity">
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="@string/action_settings"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_cuAutoSet"
+        android:orderInCategory="100"
+        android:title="Central Unit Auto Set"
+        android:onClick="onMenuClick"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_setFunc"
+        android:orderInCategory="100"
+        android:title="Set Function"
+        android:onClick="onMenuClick"
+        app:showAsAction="never" />
+
+
+</menu>
