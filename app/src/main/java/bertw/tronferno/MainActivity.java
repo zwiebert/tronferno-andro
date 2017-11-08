@@ -350,10 +350,11 @@ public class MainActivity extends AppCompatActivity {
                     String upTime = ((EditText) findViewById(R.id.editText_dailyUpTime)).getText().toString();
                     String downTime = ((EditText) findViewById(R.id.editText_dailyDownTime)).getText().toString();
                     String astroOffset = ((EditText) findViewById(R.id.editText_astroMinuteOffset)).getText().toString();
+                    boolean rtc_only;
 
                     String timer = "";
 
-                    if (((CheckBox) findViewById(R.id.checkBox_rtc_only)).isChecked()) {
+                    if (rtc_only = ((CheckBox) findViewById(R.id.checkBox_rtc_only)).isChecked()) {
                         timer += " rtc-only=1";
                     } else {
                         boolean dailyUpChecked = ((CheckBox) findViewById(R.id.checkBox_daily_up)).isChecked();
@@ -394,7 +395,9 @@ public class MainActivity extends AppCompatActivity {
 
 
                     transmit(String.format(timerFmt, 0, group, memb, timer));
-                    enableSend(false, 5);
+                    if (!rtc_only ) {
+                        enableSend(false, 5);
+                    }
 
 
                     break;
