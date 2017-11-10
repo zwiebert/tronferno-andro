@@ -11,7 +11,7 @@
     tools:showIn="@layout/activity_main">
 
     <TextView
-        android:id="@+id/textViewRec"
+        android:id="@+id/textView_log"
         android:layout_width="366dp"
         android:layout_height="0dp"
         android:layout_marginBottom="8dp"
