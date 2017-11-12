@@ -1,7 +1,7 @@
 # tronferno-andro
 Experimental Android GUI for [tronferno-mcu](https://github.com/zwiebert/tronferno-mcu)
 
-This is work in progress.  Its not fully implemente and I did not waste too much time on the GUI design.
+This is work in progress.  Its not fully implemented yet and I did not waste too much time on the GUI design.
 
 
 ### What it can do already
