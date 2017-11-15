@@ -300,31 +300,6 @@ public class MainActivity extends AppCompatActivity {
         public void handleMessage(Message msg) {
             MainActivity ma = mActivity.get();
             switch (msg.what) {
-                case MainActivity.MSG_DATA_RECEIVED:
-                    try {
-                        String s = new String((byte[]) msg.obj, "UTF-8");
-                        ma.view_textView_log.append(s);
-                        if (s.contains("rs=data")) {
-                            ma.parse_received_data(s);
-                        }
-                        if (ma.progressDialog != null && ma.progressDialog.isShowing() && ma.cuasInProgress) {
-                            if (s.contains(":cuas=ok:")) {
-                                ma.progressDialog.hide();
-                                ma.showAlertDialog("Success. Data has been received and stored.");
-                                ma.cuasInProgress = false;
-                            } else if (s.contains(":cuas=time-out:")) {
-                                ma.cuasInProgress = false;
-                                ma.progressDialog.hide();
-                                ma.showAlertDialog("Time-Out. Please try again.");
-                            }
-                        }
-
-
-                    } catch (Exception e) {
-                        ma.view_textView_log.setText("error: " + e.toString());
-
-                    }
-                    break;
 
                 case MainActivity.MSG_LINE_RECEIVED:
                     try {
