@@ -26,8 +26,19 @@
         android:singleLine="true"
         android:summary="A number representing groups and members. 1st digit from the left: number of groups. 2nd digit: how many members in 1st group. 3rd digit: how many in 2nd group. ... and so on until 7th group. Examples: 45534, 77777777"
         android:title="Groups and Members" />
+<!--
+   <EditTextPreference
+        android:capitalize="none"
+        android:defaultValue="90abcd"
+        android:inputType="text"
+        android:key="fernotronId"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:summary="a 6 digit hexadecimal number used as ID.  Could be the 5 digit motor hex code with the digit 9 in front of it"
+        android:title="ID code" />
 
-
+-->
     <!-- A 'parent' preference, which enables/disables child preferences (below)
          when checked/unchecked. -->
     <!--

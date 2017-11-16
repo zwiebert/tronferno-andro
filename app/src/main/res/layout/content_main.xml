@@ -20,11 +20,10 @@
         android:layout_marginTop="8dp"
         android:gravity="bottom"
         android:text=""
-        app:layout_constraintBottom_toTopOf="@+id/checkBox_random"
+        app:layout_constraintBottom_toTopOf="@+id/checkBox_ferID"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintRight_creator="1"
         tools:layout_constraintTop_creator="1" />
@@ -199,7 +198,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="3"
+        android:text="A"
         android:textAppearance="@style/TextAppearance.AppCompat.Button"
         app:layout_constraintBottom_toBottomOf="@+id/button_up"
         app:layout_constraintEnd_toEndOf="@+id/button_g"
@@ -219,7 +218,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="1"
+        android:text="A"
         android:textAppearance="@style/TextAppearance.AppCompat.Button"
         app:layout_constraintBottom_toBottomOf="@+id/button_up"
         app:layout_constraintEnd_toEndOf="@+id/button_e"
@@ -394,6 +393,38 @@
         app:layout_constraintBottom_toBottomOf="@+id/checkBox_weekly"
         app:layout_constraintStart_toEndOf="@+id/checkBox_weekly"
         app:layout_constraintTop_toTopOf="@+id/checkBox_weekly" />
+
+    <CheckBox
+        android:id="@+id/checkBox_ferID"
+        android:layout_width="wrap_content"
+        android:layout_height="35dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:text="ID"
+        app:layout_constraintBottom_toTopOf="@+id/checkBox_random"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <EditText
+        android:id="@+id/editText_ferID"
+        android:layout_width="102dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:enabled="false"
+        android:digits="0123456789ABCDEF"
+        android:inputType="textCapCharacters"
+        android:maxLength="6"
+        android:text="90ABCD"
+        app:layout_constraintBottom_toBottomOf="@+id/checkBox_ferID"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.099"
+        app:layout_constraintStart_toEndOf="@+id/checkBox_ferID"
+        app:layout_constraintTop_toTopOf="@+id/checkBox_ferID"
+        app:layout_constraintVertical_bias="0.842" />
 
 
 </android.support.constraint.ConstraintLayout>

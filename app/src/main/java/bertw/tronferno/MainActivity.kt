@@ -41,6 +41,8 @@ class MainActivity : AppCompatActivity() {
 
     internal var tcpHostname = ""
     internal var tcpPort = 0
+    private val use_wifi = true
+    private val mMessageHandler = MessageHandler(this)
 
     internal lateinit var view_checkBox_daily_up: CheckBox
     internal lateinit var view_checkBox_daily_down: CheckBox
@@ -49,6 +51,7 @@ class MainActivity : AppCompatActivity() {
     internal lateinit var view_checkBox_random: CheckBox
     internal lateinit var view_checkBox_sun_auto: CheckBox
     internal lateinit var view_checkBox_rtc_only: CheckBox
+    internal lateinit var view_checkBox_ferID: CheckBox
     internal lateinit var view_textView_log: TextView
     internal lateinit var view_textView_g: TextView
     internal lateinit var view_textView_e: TextView
@@ -56,18 +59,17 @@ class MainActivity : AppCompatActivity() {
     internal lateinit var view_editText_dailyDownTime: EditText
     internal lateinit var view_editText_weeklyTimer: EditText
     internal lateinit var view_editText_astroMinuteOffset: EditText
+    internal lateinit var view_editText_ferID: EditText
 
-    private val use_wifi = true
-    private val mMessageHandler = MessageHandler(this)
 
     ///////////// wifi //////////////////////
-    private var mTcpSocket: Socket? = null
+    private var mTcpSocket = Socket()
     private var socketAddress: SocketAddress? = null
-    private var tcpWrite_Thread: Thread? = null
-    private var tcpRead_Thread: Thread? = null
+    private lateinit var tcpWrite_Thread: Thread
+    private lateinit var tcpRead_Thread: Thread
     private val q = ArrayBlockingQueue<String>(1000)
 
-    internal var onCheckedChanged: CompoundButton.OnCheckedChangeListener = CompoundButton.OnCheckedChangeListener { button, isChecked ->
+    internal val onCheckedChanged = CompoundButton.OnCheckedChangeListener { button, isChecked ->
         when (button.id) {
 
             R.id.checkBox_rtc_only -> {
@@ -102,21 +104,26 @@ class MainActivity : AppCompatActivity() {
                 view_editText_astroMinuteOffset.isEnabled = isChecked
                 if (!isChecked) view_editText_astroMinuteOffset.setText("")
             }
+
+            R.id.checkBox_ferID -> {
+                view_editText_ferID.isEnabled = isChecked
+                view_textView_g.isEnabled = !isChecked
+                view_textView_e.isEnabled = !isChecked
+            }
         }
     }
 
-    internal val timeFormat = "%4d-%02d-%02dT%02d:%02d:%02d"
 
-    internal var group = 3
-    internal var memb = 1 // FIXME:
-    internal var group_max = 4  // FIXME : configure this from settings
-    internal var memb_max = intArrayOf(0, 5, 5, 1, 1, 0, 0, 0)  // FIXME: configure this from settings
+    internal var group = 0
+    internal var memb = 0
+    internal var group_max = 0
+    internal val memb_max = intArrayOf(0,0,0,0,0,0,0,0);
 
     internal var wait_for_saved_timer = false
 
     internal lateinit var alertDialog: AlertDialog
+    internal lateinit var progressDialog: ProgressDialog
 
-    internal var progressDialog: ProgressDialog? = null
     internal var cuasInProgress = false
 
 
@@ -170,11 +177,13 @@ class MainActivity : AppCompatActivity() {
         view_checkBox_random = findViewById(R.id.checkBox_random) as CheckBox
         view_checkBox_sun_auto = findViewById(R.id.checkBox_sun_auto) as CheckBox
         view_checkBox_rtc_only = findViewById(R.id.checkBox_rtc_only) as CheckBox
+        view_checkBox_ferID = findViewById(R.id.checkBox_ferID) as CheckBox
 
         view_editText_dailyUpTime = findViewById(R.id.editText_dailyUpTime) as EditText
         view_editText_dailyDownTime = findViewById(R.id.editText_dailyDownTime) as EditText
         view_editText_weeklyTimer = findViewById(R.id.editText_weeklyTimer) as EditText
         view_editText_astroMinuteOffset = findViewById(R.id.editText_astroMinuteOffset) as EditText
+        view_editText_ferID = findViewById(R.id.editText_ferID) as EditText
 
         view_textView_log = findViewById(R.id.textView_log) as TextView
         view_textView_g = findViewById(R.id.textView_g) as TextView
@@ -187,77 +196,19 @@ class MainActivity : AppCompatActivity() {
         view_checkBox_random.setOnCheckedChangeListener(onCheckedChanged)
         view_checkBox_sun_auto.setOnCheckedChangeListener(onCheckedChanged)
         view_checkBox_rtc_only.setOnCheckedChangeListener(onCheckedChanged)
+        view_checkBox_ferID.setOnCheckedChangeListener(onCheckedChanged)
 
         view_editText_dailyUpTime.setText("")
         view_editText_dailyDownTime.setText("")
         view_editText_weeklyTimer.setText("")
         view_editText_astroMinuteOffset.setText("")
 
-        if (use_wifi) {
-            wifi_onCreate()
-        }
-    }
+        progressDialog = ProgressDialog(this)
 
-
-    private fun start_tcpRead_Thread() {
-        if (tcpRead_Thread == null) {
-            tcpRead_Thread = object : Thread() {
-                internal var buf = ByteArray(256)
-
-                override fun run() {
-                    try {
-                        val br = BufferedReader(InputStreamReader(mTcpSocket!!.getInputStream()))
-
-                        if (false) {
-                            while (mTcpSocket!!.isConnected) {
-                                try {
-                                    val len = mTcpSocket!!.getInputStream().read(buf)
-                                    if (len > 0) {
-                                        val data = Arrays.copyOf(buf, len)
-                                        mMessageHandler.obtainMessage(MSG_DATA_RECEIVED, data).sendToTarget()
-                                    }
-                                } catch (e: IOException) {
-                                    // reconnect_tcpSocket();
-                                }
-
-                            }
-                        } else {
-                            while (mTcpSocket!!.isConnected) {
-                                try {
-                                    val line = br.readLine()
-
-                                    mMessageHandler.obtainMessage(MSG_LINE_RECEIVED, line).sendToTarget()
-
-                                } catch (e: IOException) {
-                                    // reconnect_tcpSocket();
-                                }
-
-                            }
-
-                        }
-
-                    } catch (e: IOException) {
-
-                    }
-
-
-                }
-
-
-            }
-        }
-
-        tcpRead_Thread!!.start()
-    }
-
-
-    internal fun tcpSocket_transmit(s: String) {
-        q.add(s)
-        if (tcpWrite_Thread == null) {
-            tcpWrite_Thread = object : Thread() {
+        tcpWrite_Thread = object : Thread() {
                 //private Socket mTcpSocket;
                 override fun run() {
-                    while (true) {
+                    while (!mTcpSocket.isClosed) {
                         try {
                             val data = q.take()
 
@@ -265,7 +216,7 @@ class MainActivity : AppCompatActivity() {
                             val retry = 10
                             while (true) {
                                 try {
-                                    mTcpSocket!!.getOutputStream().write(data.toByteArray())
+                                    mTcpSocket.getOutputStream().write(data.toByteArray())
                                     break
                                 } catch (e: IOException) {
                                     if (i < retry) {
@@ -280,19 +231,56 @@ class MainActivity : AppCompatActivity() {
                             }
 
                         } catch (e: InterruptedException) {
+                            return;
                             // e.printStackTrace();
                         }
-
                     }
                 }
             }
-            tcpWrite_Thread!!.start()
+
+
+        tcpRead_Thread = object : Thread() {
+            internal var buf = ByteArray(256)
+
+            override fun run() {
+                try {
+                    val br = BufferedReader(InputStreamReader(mTcpSocket.getInputStream()))
+                     while (!mTcpSocket.isClosed) {
+                            try {
+                                val line = br.readLine()
+                                mMessageHandler.obtainMessage(MSG_LINE_RECEIVED, line).sendToTarget()
+                            } catch (e: IOException) {
+                                // reconnect_tcpSocket();
+                            }
+
+                        }
+                } catch (e: IOException) {
+                    return;
+                }
+            }
         }
+
+
+    }
+
+
+    private fun start_tcpRead_Thread() {
+        if (tcpRead_Thread.state == Thread.State.NEW || tcpRead_Thread.state == Thread.State.TERMINATED) {
+            tcpRead_Thread.start()
+        }
+    }
+
+
+    internal fun tcpSocket_transmit(s: String) {
+        if (tcpWrite_Thread.state == Thread.State.NEW || tcpWrite_Thread.state == Thread.State.TERMINATED) {
+            tcpWrite_Thread.start()
+        }
+        q.add(s)
     }
 
     internal fun reconnect_tcpSocket(): Boolean {
         try {
-            mTcpSocket!!.connect(socketAddress)
+            mTcpSocket.connect(socketAddress)
             return true
         } catch (e: IOException) {
         }
@@ -302,14 +290,16 @@ class MainActivity : AppCompatActivity() {
 
     internal fun connect_tcpSocket(): Boolean {
         try {
-            mTcpSocket = Socket()
+            if (mTcpSocket.isClosed) {
+                mTcpSocket = Socket()
+            }
             socketAddress = InetSocketAddress(tcpHostname, tcpPort)
-            mTcpSocket!!.connect(socketAddress)
-            return mTcpSocket!!.isConnected
+            mTcpSocket.connect(socketAddress)
+            return mTcpSocket.isConnected
         } catch (e: IOException) {
-            view_textView_log.text = "error: " + e.toString()
+            view_textView_log.append("TCP-Error: " + e.toString() + "\n")
         } catch (e: NullPointerException) {
-            view_textView_log.text = "cannot connect to tcp server"
+            view_textView_log.append("TCP-Error: cannot connect to tcp server\n")
         }
 
         return false
@@ -322,23 +312,19 @@ class MainActivity : AppCompatActivity() {
 
     internal fun stop_tcp() {
         try {
-            mTcpSocket!!.close()
+            mTcpSocket.close()
         } catch (e: IOException) {
             e.printStackTrace()
         }
 
     }
 
-    private fun wifi_onCreate() {
-
-    }
-
-
-    override fun onResume() {
+      override fun onResume() {
         super.onResume()
 
         if (use_wifi) {
             start_tcp()
+
         }
     }
 
@@ -369,14 +355,14 @@ class MainActivity : AppCompatActivity() {
                     if (s.contains("rs=data")) {
                         ma.parse_received_data(s)
                     }
-                    if (ma.progressDialog != null && ma.progressDialog!!.isShowing && ma.cuasInProgress) {
+                    if (ma.progressDialog.isShowing && ma.cuasInProgress) {
                         if (s.contains(":cuas=ok:")) {
-                            ma.progressDialog!!.hide()
+                            ma.progressDialog.hide()
                             ma.showAlertDialog("Success. Data has been received and stored.")
                             ma.cuasInProgress = false
                         } else if (s.contains(":cuas=time-out:")) {
                             ma.cuasInProgress = false
-                            ma.progressDialog!!.hide()
+                            ma.progressDialog.hide()
                             ma.showAlertDialog("Time-Out. Please try again.")
                         }
                     }
@@ -387,9 +373,9 @@ class MainActivity : AppCompatActivity() {
 
                 }
 
-                MainActivity.MSG_CUAS_TIME_OUT -> if (ma.progressDialog != null && ma.progressDialog!!.isShowing && ma.cuasInProgress) {
+                MainActivity.MSG_CUAS_TIME_OUT -> if (ma.progressDialog.isShowing && ma.cuasInProgress) {
                     ma.cuasInProgress = false
-                    ma.progressDialog!!.hide()
+                    ma.progressDialog.hide()
                     ma.showAlertDialog("Time-Out. Please try again.")
                 }
 
@@ -401,8 +387,8 @@ class MainActivity : AppCompatActivity() {
 
     @Throws(IOException::class)
     private fun transmit(s: String) {
-        view_textView_log.append("transmit: " + s + "\n")
         if (use_wifi) tcpSocket_transmit(s)
+        view_textView_log.append("transmit: " + s + "\n")
     }
 
     fun onCheckedClick(view: View) {
@@ -547,13 +533,27 @@ class MainActivity : AppCompatActivity() {
         return ++msgid
     }
 
+    private fun getFerId(): Int {
+        if (view_checkBox_ferID.isChecked) {
+            var s = view_editText_ferID.text.toString()
+            if (s.length == 5) {
+                s = "9$s";
+            } else if (s.length != 6) {
+                throw Exception("id must have 6 digits ($s)")
+            }
+            val result = Integer.parseInt(s, 16);
+            return result;
+        }
+        return 0;
+    }
+
     fun onClick(view: View) {
 
         try {
             when (view.id) {
-                R.id.button_stop -> transmit(String.format(sendFmt, getMsgid(), 0, group, memb, "stop"))
-                R.id.button_up -> transmit(String.format(sendFmt, getMsgid(), 0, group, memb, "up"))
-                R.id.button_down -> transmit(String.format(sendFmt, getMsgid(), 0, group, memb, "down"))
+                R.id.button_stop -> transmit(String.format(sendFmt, getMsgid(), getFerId(), group, memb, "stop"))
+                R.id.button_up -> transmit(String.format(sendFmt, getMsgid(), getFerId(), group, memb, "up"))
+                R.id.button_down -> transmit(String.format(sendFmt, getMsgid(), getFerId(), group, memb, "down"))
                 R.id.button_g -> {
                     group = ++group % (group_max + 1)
                     view_textView_g.text = if (group == 0) "A" else group.toString()
@@ -567,7 +567,7 @@ class MainActivity : AppCompatActivity() {
                     view_textView_e.text = if (group == 0) "" else if (memb == 0) "A" else memb.toString()
                     get_saved_timer(group, memb)
                 }
-                R.id.button_sun_pos -> transmit(String.format(sendFmt, getMsgid(), 0, group, memb, "sun-down"))
+                R.id.button_sun_pos -> transmit(String.format(sendFmt, getMsgid(), getFerId(), group, memb, "sun-down"))
 
                 R.id.button_timer -> {
                     val upTime = view_editText_dailyUpTime.text.toString()
@@ -618,7 +618,7 @@ class MainActivity : AppCompatActivity() {
                     // timer = upTime.substring(0,2);
 
 
-                    transmit(String.format(timerFmt, getMsgid(), 0, group, memb, timer))
+                    transmit(String.format(timerFmt, getMsgid(), getFerId(), group, memb, timer))
                     if (!rtc_only) {
                         enableSend(false, 5)
                     }
@@ -627,7 +627,7 @@ class MainActivity : AppCompatActivity() {
 
 
         } catch (e: Exception) {
-            view_textView_log.text = e.toString()
+            view_textView_log.append("Error: " + e.toString() + "...\n")
         }
 
     }
@@ -643,13 +643,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     internal fun showProgressDialog(msg: String, time_out: Int) {
-        progressDialog = ProgressDialog(this)
 
-        progressDialog!!.setMessage("Press the Stop-Button on your Fernotron Central Unit in the next 60 seconds...")
-        progressDialog!!.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
-        progressDialog!!.isIndeterminate = false
-        progressDialog!!.max = 60
-        progressDialog!!.show()
+        progressDialog.setMessage("Press the Stop-Button on your Fernotron Central Unit in the next 60 seconds...")
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
+        progressDialog.isIndeterminate = false
+        progressDialog.max = 60
+        progressDialog.show()
         cuasInProgress = true
 
 
@@ -661,7 +660,7 @@ class MainActivity : AppCompatActivity() {
                     try {
                         Thread.sleep(1000)
                         jumpTime += 1
-                        progressDialog!!.progress = jumpTime
+                        progressDialog.progress = jumpTime
 
                     } catch (e: InterruptedException) {
                         // TODO Auto-generated catch block
@@ -764,9 +763,10 @@ class MainActivity : AppCompatActivity() {
         internal const val def_dailyDown = "19:30"
         internal const val def_weekly = "0700-++++0900-+"
         internal const val def_astro = "0"
-        internal const val sendFmt = "send mid=%d a=%d g=%d m=%d c=%s;"
-        internal const val timerFmt = "timer mid=%d a=%d g=%d m=%d%s;"
+        internal const val sendFmt = "send mid=%d a=%x g=%d m=%d c=%s;"
+        internal const val timerFmt = "timer mid=%d a=%x g=%d m=%d%s;"
         internal const val configFmt = "config mid=%d %s;"
+        internal const val timeFormat = "%4d-%02d-%02dT%02d:%02d:%02d"
     }
 
 
