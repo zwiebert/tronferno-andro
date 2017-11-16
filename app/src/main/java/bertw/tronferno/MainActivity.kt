@@ -81,6 +81,7 @@ class MainActivity : AppCompatActivity() {
                 view_editText_dailyUpTime.isEnabled = !isChecked && view_checkBox_daily_up.isChecked
                 view_editText_dailyDownTime.isEnabled = !isChecked && view_checkBox_daily_down.isChecked
                 view_editText_weeklyTimer.isEnabled = !isChecked && view_checkBox_weekly.isChecked
+                view_editText_astroMinuteOffset.isEnabled = !isChecked && view_checkBox_astro.isChecked
                 view_checkBox_random.isEnabled = !isChecked
                 view_checkBox_sun_auto.isEnabled = !isChecked
             }
