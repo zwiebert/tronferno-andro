@@ -719,7 +719,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 R.id.action_setFunc -> {
-                    transmit(String.format(sendFmt, getMsgid(), 0, group, memb, "set"))
+                    transmit(String.format(sendFmt, getMsgid(), getFerId(), group, memb, "set"))
                     showAlertDialog("You now have 60 seconds remaining to press STOP on the transmitter you want to add/remove. Beware: If you press STOP on the central unit, the device will be removed from it. To add it again, you would need the code. If you don't have the code, then you would have to press the physical set-button on the device")
                 }
             }
