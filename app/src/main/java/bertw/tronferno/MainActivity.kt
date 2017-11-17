@@ -65,6 +65,17 @@ class MainActivity : AppCompatActivity() {
     private lateinit var vbtSunPos: Button
 
 
+    private var group = 0
+    private var memb = 0
+    private var groupMax = 0
+    private val membMax = intArrayOf(0,0,0,0,0,0,0,0)
+    private var waitForSavedTimer = false
+    private lateinit var alertDialog: AlertDialog
+    internal lateinit var progressDialog: ProgressDialog
+    internal var cuasInProgress = false
+    private lateinit var mMenu: Menu
+
+
     ///////////// wifi //////////////////////
     private var mTcpSocket = Socket()
     private var socketAddress: SocketAddress? = null
@@ -118,26 +129,11 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private var group = 0
-    private var memb = 0
-    private var groupMax = 0
-    private val membMax = intArrayOf(0,0,0,0,0,0,0,0)
-
-    private var waitForSavedTimer = false
-
-    private lateinit var alertDialog: AlertDialog
-    internal lateinit var progressDialog: ProgressDialog
-
-    internal var cuasInProgress = false
-
-
-    private lateinit var mMenu: Menu
-
     private fun loadPreferences() {
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        val pref = PreferenceManager.getDefaultSharedPreferences(applicationContext)
 
 
-        tcpHostname = sharedPreferences.getString("tcpHostName", DEFAULT_TCP_HOSTNAME)
+        tcpHostname = pref.getString("tcpHostName", DEFAULT_TCP_HOSTNAME)
         if (tcpHostname.contains(":")) {
             val pos = tcpHostname.indexOf(':')
             tcpPort = Integer.parseInt(tcpHostname.substring(pos + 1))
@@ -146,7 +142,7 @@ class MainActivity : AppCompatActivity() {
             tcpPort = 7777
         }
 
-        val sgam = sharedPreferences.getString("groupsAndMembers", "77777777")
+        val sgam = pref.getString("groupsAndMembers", "77777777")
         val sgamLength1 = Math.min(7, sgam!!.length - 1)
         groupMax = Math.min(7, Integer.parseInt(sgam.substring(0, 1)))
 
@@ -157,6 +153,24 @@ class MainActivity : AppCompatActivity() {
             membMax[i] = 0
         }
 
+        group = pref.getInt("mGroup", 0);
+        memb = pref.getInt("mMemb", 0);
+        vetFerId.setText(pref.getString("vetFerIdText", "90ABCD"))
+        vcbRtcOnly.isChecked = pref.getBoolean("vcbRtcOnlyIsChecked", false)
+        vcbFerId.isChecked = pref.getBoolean("vcbFerIdIsChecked", false)
+    }
+
+    private fun savePreferences() {
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        val ed = sharedPreferences.edit();
+
+        ed.putInt("mGroup", group);
+        ed.putInt("mMemb", memb);
+        ed.putString("vetFerIdText", vetFerId.text.toString())
+        ed.putBoolean("vcbRtcOnlyIsChecked", vcbRtcOnly.isChecked)
+        ed.putBoolean("vcbFerIdIsChecked", vcbFerId.isChecked)
+
+        ed.apply();
     }
 
 
@@ -171,7 +185,6 @@ class MainActivity : AppCompatActivity() {
         StrictMode.setThreadPolicy(policy)
 
 
-        loadPreferences()
 
         vcbDailyUp = findViewById(R.id.checkBox_daily_up)
         vcbDailyDown = findViewById(R.id.checkBox_daily_down)
@@ -214,10 +227,16 @@ class MainActivity : AppCompatActivity() {
         vetWeeklyTimer.setText("")
         vetAstroMinuteOffset.setText("")
 
+        loadPreferences()
+
+
+        vtvG.text = if (group!=0) group.toString() else "A"
+        vtvE.text = if (memb!=0) memb.toString() else if (group!=0) "A" else ""
+
+
         progressDialog = ProgressDialog(this)
 
         tcpWriteThread = object : Thread() {
-                //private Socket mTcpSocket;
                 override fun run() {
                     while (!mTcpSocket.isClosed) {
                         try {
@@ -233,7 +252,7 @@ class MainActivity : AppCompatActivity() {
                                     if (i < retry) {
                                         reconnectTcpSocket()
                                     } else {
-                                        mMessageHandler.obtainMessage(0, e.toString().toByteArray().toString() + "\n").sendToTarget()
+                                        mMessageHandler.obtainMessage(MSG_LINE_RECEIVED, "TCP_wt:Error: " + e.toString() + "\n").sendToTarget()
                                         break
                                     }
                                 }
@@ -243,7 +262,6 @@ class MainActivity : AppCompatActivity() {
 
                         } catch (e: InterruptedException) {
                             return
-                            // e.printStackTrace();
                         }
                     }
                 }
@@ -308,9 +326,9 @@ class MainActivity : AppCompatActivity() {
             mTcpSocket.connect(socketAddress)
             return mTcpSocket.isConnected
         } catch (e: IOException) {
-            vtvLog.append("TCP-Error: " + e.toString() + "\n")
+            vtvLog.append("TCP:error: " + e.toString() + "\n")
         } catch (e: NullPointerException) {
-            vtvLog.append("TCP-Error: cannot connect to tcp server\n")
+            vtvLog.append("TCP:error: cannot connect to tcp server\n")
         }
 
         return false
@@ -344,6 +362,8 @@ class MainActivity : AppCompatActivity() {
 
         if (useWifi)
             stopTcp()
+
+        savePreferences()
     }
 
 
