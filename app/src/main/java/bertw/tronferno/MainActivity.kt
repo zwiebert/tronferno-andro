@@ -32,8 +32,6 @@ const val DEFAULT_TCP_HOSTNAME = "fernotron.fritz.box"
 class MainActivity : AppCompatActivity() {
 
 
-    private var tcpHostname = ""
-    private var tcpPort = 0
     private val useWifi = true
     private val mMessageHandler = MessageHandler(this)
 
@@ -71,17 +69,21 @@ class MainActivity : AppCompatActivity() {
     private val membMax = intArrayOf(0,0,0,0,0,0,0,0)
     private var waitForSavedTimer = false
     private lateinit var alertDialog: AlertDialog
-    internal lateinit var progressDialog: ProgressDialog
-    internal var cuasInProgress = false
-    private lateinit var mMenu: Menu
+    private lateinit var progressDialog: ProgressDialog
+    private var cuasInProgress = false
+    private var mMenu: Menu? = null
 
 
     ///////////// wifi //////////////////////
     private var mTcpSocket = Socket()
     private var socketAddress: SocketAddress? = null
+    private lateinit var tcpConnectThread: Thread
     private lateinit var tcpWriteThread: Thread
     private lateinit var tcpReadThread: Thread
+
     private val q = ArrayBlockingQueue<String>(1000)
+    @Volatile var tcpConnectPending = false
+
 
     private val onCheckedChanged = CompoundButton.OnCheckedChangeListener { button, isChecked ->
         when (button.id) {
@@ -133,14 +135,15 @@ class MainActivity : AppCompatActivity() {
         val pref = PreferenceManager.getDefaultSharedPreferences(applicationContext)
 
 
-        tcpHostname = pref.getString("tcpHostName", DEFAULT_TCP_HOSTNAME)
+        var tcpHostname = pref.getString("tcpHostName", DEFAULT_TCP_HOSTNAME)
+        var tcpPort = 7777
         if (tcpHostname.contains(":")) {
             val pos = tcpHostname.indexOf(':')
             tcpPort = Integer.parseInt(tcpHostname.substring(pos + 1))
             tcpHostname = tcpHostname.substring(0, pos)
-        } else {
-            tcpPort = 7777
         }
+
+        socketAddress = InetSocketAddress(tcpHostname, tcpPort)
 
         val sgam = pref.getString("groupsAndMembers", "77777777")
         val sgamLength1 = Math.min(7, sgam!!.length - 1)
@@ -236,28 +239,39 @@ class MainActivity : AppCompatActivity() {
 
         progressDialog = ProgressDialog(this)
 
+        tcpConnectThread = object : Thread() {
+            override fun run() {
+                stopThread = true;
+                if (mTcpSocket.isClosed) {
+                    mTcpSocket = Socket()
+                }
+                while (true) {
+                    mTcpSocket.connect(socketAddress)
+                    if (mTcpSocket.isConnected) {
+                        mMessageHandler.obtainMessage(MSG_TCP_CONNECTED, "").sendToTarget()
+                        break;
+                    }
+                }
+
+                stopThread = false;
+               // tcpWriteThread.start()
+               // tcpReadThread.start()
+            }
+        }
+
         tcpWriteThread = object : Thread() {
                 override fun run() {
-                    while (!mTcpSocket.isClosed) {
+                    while (!stopThread && !mTcpSocket.isClosed) {
                         try {
                             val data = q.take()
-
-                            var i = 0
-                            val retry = 10
-                            while (true) {
+                            while (!stopThread && !mTcpSocket.isClosed) {
                                 try {
                                     mTcpSocket.getOutputStream().write(data.toByteArray())
                                     break
                                 } catch (e: IOException) {
-                                    if (i < retry) {
-                                        reconnectTcpSocket()
-                                    } else {
-                                        mMessageHandler.obtainMessage(MSG_LINE_RECEIVED, "TCP_wt:Error: " + e.toString() + "\n").sendToTarget()
-                                        break
-                                    }
+                                        mMessageHandler.obtainMessage(MSG_ERROR, "TCP_wt:Error: " + e.toString() + "\n").sendToTarget()
+                                       return
                                 }
-
-                                ++i
                             }
 
                         } catch (e: InterruptedException) {
@@ -274,12 +288,13 @@ class MainActivity : AppCompatActivity() {
             override fun run() {
                 try {
                     val br = BufferedReader(InputStreamReader(mTcpSocket.getInputStream()))
-                     while (!mTcpSocket.isClosed) {
+                     while (!stopThread && !mTcpSocket.isClosed) {
                             try {
                                 val line = br.readLine()
                                 mMessageHandler.obtainMessage(MSG_LINE_RECEIVED, line).sendToTarget()
                             } catch (e: IOException) {
-                                // reconnectTcpSocket();
+                               mMessageHandler.obtainMessage(MSG_ERROR,"dbtrace: tcp readline failed")
+                                return
                             }
 
                         }
@@ -292,6 +307,8 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    private var messagePending = 0;
+   @Volatile private var stopThread = false
 
     private fun startTcpReadThread() {
         if (tcpReadThread.state == Thread.State.NEW || tcpReadThread.state == Thread.State.TERMINATED) {
@@ -301,9 +318,23 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun tcpSocketTransmit(s: String) {
+        if (messagePending != 0 || !mTcpSocket.isConnected) {
+            if (tcpConnectThread.state == Thread.State.NEW || tcpConnectThread.state == Thread.State.TERMINATED) {
+                enableSend(false, 0)
+                mTcpSocket.close()
+                tcpConnectThread.start()
+                vtvLog.append("tcp: try to reconnect...\n")
+            }
+            messagePending = 0;
+            return;
+        }
         if (tcpWriteThread.state == Thread.State.NEW || tcpWriteThread.state == Thread.State.TERMINATED) {
             tcpWriteThread.start()
         }
+        if (tcpReadThread.state == Thread.State.NEW || tcpReadThread.state == Thread.State.TERMINATED) {
+            tcpReadThread.start()
+        }
+        messagePending = msgid
         q.add(s)
     }
 
@@ -322,7 +353,6 @@ class MainActivity : AppCompatActivity() {
             if (mTcpSocket.isClosed) {
                 mTcpSocket = Socket()
             }
-            socketAddress = InetSocketAddress(tcpHostname, tcpPort)
             mTcpSocket.connect(socketAddress)
             return mTcpSocket.isConnected
         } catch (e: IOException) {
@@ -352,8 +382,8 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
 
         if (useWifi) {
-            startTcp()
-
+            enableSend(false,0)
+            tcpConnectThread.start()
         }
     }
 
@@ -380,9 +410,22 @@ class MainActivity : AppCompatActivity() {
                 return
             when (msg.what) {
 
+                MainActivity.MSG_TCP_CONNECTED -> {
+                    ma.enableSend(true, 0)
+                    ma.vtvLog.append("tcp connected\n")
+                }
+
                 MainActivity.MSG_LINE_RECEIVED -> try {
                     val s = msg.obj as String
-                    ma.vtvLog.append(s + "\n")
+                    if (s.equals("ready:")) {
+
+                    } else if (s.isEmpty()) {
+
+                    } else {
+                        ma.vtvLog.append(s + "\n")
+                    }
+                    ma.messagePending = 0;  // FIXME: check msgid?
+
                     if (s.contains("rs=data")) {
                         ma.parseReceivedData(s)
                     }
@@ -400,7 +443,7 @@ class MainActivity : AppCompatActivity() {
 
 
                 } catch (e: Exception) {
-                    ma.vtvLog.append("Error: " + e.toString() + "\n")
+                    ma.vtvLog.append("MLR:error: " + e.toString() + "\n")
 
                 }
 
@@ -412,6 +455,11 @@ class MainActivity : AppCompatActivity() {
 
 
                 MainActivity.MSG_SEND_ENABLE -> ma.enableSend(true, 0)
+
+                MainActivity.MSG_ERROR -> {
+                    val s = msg.obj as String
+                    ma.vtvLog.append(s + "\n")
+                }
             }
         }
     }
@@ -645,7 +693,7 @@ class MainActivity : AppCompatActivity() {
 
 
         } catch (e: Exception) {
-            vtvLog.append("Error: " + e.toString() + "...\n")
+            vtvLog.append("OCH:error: " + e.toString() + "...\n")
         }
 
     }
@@ -722,8 +770,9 @@ class MainActivity : AppCompatActivity() {
         vbtSunPos.isEnabled = enable;
         vbtDown.isEnabled = enable;
 
-        mMenu.findItem(R.id.action_cuAutoSet).isEnabled = enable
-        mMenu.findItem(R.id.action_setFunc).isEnabled = enable
+        mMenu?.findItem(R.id.action_cuAutoSet)?.isEnabled = enable
+        mMenu?.findItem(R.id.action_setFunc)?.isEnabled = enable
+
 
     }
 
@@ -777,6 +826,8 @@ class MainActivity : AppCompatActivity() {
         internal const val MSG_CUAS_TIME_OUT = 3
         internal const val MSG_SEND_ENABLE = 4
         internal const val MSG_LINE_RECEIVED = 5
+        internal const val MSG_ERROR = 6
+        internal const val MSG_TCP_CONNECTED = 7
         internal const val def_dailyUp = "07:30"
         internal const val def_dailyDown = "19:30"
         internal const val def_weekly = "0700-++++0900-+"
