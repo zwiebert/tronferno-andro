@@ -45,9 +45,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var vcbSunAuto: CheckBox
     private lateinit var vcbRtcOnly: CheckBox
     private lateinit var vcbFerId: CheckBox
+
     private lateinit var vtvLog: TextView
     private lateinit var vtvG: TextView
     private lateinit var vtvE: TextView
+
     private lateinit var vetDailyUpTime: EditText
     private lateinit var vetDailyDownTime: EditText
     private lateinit var vetWeeklyTimer: EditText
@@ -88,12 +90,12 @@ class MainActivity : AppCompatActivity() {
             }
 
             R.id.checkBox_daily_up -> {
-                vetDailyUpTime.isEnabled = isChecked
+                vetDailyUpTime.isEnabled = isChecked && !vcbRtcOnly.isChecked
                 if (!isChecked) vetDailyUpTime.setText("")
             }
 
             R.id.checkBox_daily_down -> {
-                vetDailyDownTime.isEnabled = isChecked
+                vetDailyDownTime.isEnabled = isChecked && !vcbRtcOnly.isChecked
                 if (!isChecked) vetDailyDownTime.setText("")
             }
 
@@ -103,7 +105,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             R.id.checkBox_astro -> {
-                vetAstroMinuteOffset.isEnabled = isChecked
+                vetAstroMinuteOffset.isEnabled = isChecked && !vcbRtcOnly.isChecked
                 if (!isChecked) vetAstroMinuteOffset.setText("")
             }
 
