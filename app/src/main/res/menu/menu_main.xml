@@ -10,14 +10,14 @@
     <item
         android:id="@+id/action_cuAutoSet"
         android:orderInCategory="100"
-        android:title="Central Unit Auto Set"
+        android:title="@string/cuas"
         android:onClick="onMenuClick"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/action_setFunc"
         android:orderInCategory="100"
-        android:title="Set Function"
+        android:title="@string/set_function"
         android:onClick="onMenuClick"
         app:showAsAction="never" />
 

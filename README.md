@@ -10,8 +10,9 @@ This is work in progress.  Its not fully implemented yet and I did not waste too
 * change the built-in timers (mcu command timer)
 * show the current timers for each shutter (mcu timer option rs=2)
 * scan the ID of the original 2411 (mcu config option cu=auto)
+* send commands using the code written on the motor or the cable sticker
 
 ### Things to add or change 
 
-* allow using motor IDs (e.g. for adding a motor to a group)
+* more intuitive preference settings
 * ...

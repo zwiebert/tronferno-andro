@@ -1,9 +1,7 @@
 package bertw.tronferno
 
 import android.app.ProgressDialog
-import android.content.DialogInterface
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
@@ -15,10 +13,7 @@ import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.CheckBox
-import android.widget.CompoundButton
-import android.widget.EditText
-import android.widget.TextView
+import android.widget.*
 
 import java.io.BufferedReader
 import java.io.IOException
@@ -28,10 +23,8 @@ import java.net.InetSocketAddress
 import java.net.Socket
 import java.net.SocketAddress
 import java.text.SimpleDateFormat
-import java.util.Arrays
-import java.util.Calendar
+import java.util.*
 import java.util.concurrent.ArrayBlockingQueue
-import java.util.concurrent.BlockingQueue
 import java.util.regex.Pattern
 
 const val DEFAULT_TCP_HOSTNAME = "fernotron.fritz.box"
@@ -39,98 +32,106 @@ const val DEFAULT_TCP_HOSTNAME = "fernotron.fritz.box"
 class MainActivity : AppCompatActivity() {
 
 
-    internal var tcpHostname = ""
-    internal var tcpPort = 0
-    private val use_wifi = true
+    private var tcpHostname = ""
+    private var tcpPort = 0
+    private val useWifi = true
     private val mMessageHandler = MessageHandler(this)
 
-    internal lateinit var view_checkBox_daily_up: CheckBox
-    internal lateinit var view_checkBox_daily_down: CheckBox
-    internal lateinit var view_checkBox_weekly: CheckBox
-    internal lateinit var view_checkBox_astro: CheckBox
-    internal lateinit var view_checkBox_random: CheckBox
-    internal lateinit var view_checkBox_sun_auto: CheckBox
-    internal lateinit var view_checkBox_rtc_only: CheckBox
-    internal lateinit var view_checkBox_ferID: CheckBox
-    internal lateinit var view_textView_log: TextView
-    internal lateinit var view_textView_g: TextView
-    internal lateinit var view_textView_e: TextView
-    internal lateinit var view_editText_dailyUpTime: EditText
-    internal lateinit var view_editText_dailyDownTime: EditText
-    internal lateinit var view_editText_weeklyTimer: EditText
-    internal lateinit var view_editText_astroMinuteOffset: EditText
-    internal lateinit var view_editText_ferID: EditText
+    private lateinit var vcbDailyUp: CheckBox
+    private lateinit var vcbDailyDown: CheckBox
+    private lateinit var vcbWeekly: CheckBox
+    private lateinit var vcbAstro: CheckBox
+    private lateinit var vcbRandom: CheckBox
+    private lateinit var vcbSunAuto: CheckBox
+    private lateinit var vcbRtcOnly: CheckBox
+    private lateinit var vcbFerId: CheckBox
+    private lateinit var vtvLog: TextView
+    private lateinit var vtvG: TextView
+    private lateinit var vtvE: TextView
+    private lateinit var vetDailyUpTime: EditText
+    private lateinit var vetDailyDownTime: EditText
+    private lateinit var vetWeeklyTimer: EditText
+    private lateinit var vetAstroMinuteOffset: EditText
+    private lateinit var vetFerId: EditText
+
+    private lateinit var vbtUp: Button
+    private lateinit var vbtDown: Button
+    private lateinit var vbtStop: Button
+    private lateinit var vbtG: Button
+    private lateinit var vbtE: Button
+    private lateinit var vbtTimer: Button
+    private lateinit var vbtSunPos: Button
 
 
     ///////////// wifi //////////////////////
     private var mTcpSocket = Socket()
     private var socketAddress: SocketAddress? = null
-    private lateinit var tcpWrite_Thread: Thread
-    private lateinit var tcpRead_Thread: Thread
+    private lateinit var tcpWriteThread: Thread
+    private lateinit var tcpReadThread: Thread
     private val q = ArrayBlockingQueue<String>(1000)
 
-    internal val onCheckedChanged = CompoundButton.OnCheckedChangeListener { button, isChecked ->
+    private val onCheckedChanged = CompoundButton.OnCheckedChangeListener { button, isChecked ->
         when (button.id) {
 
             R.id.checkBox_rtc_only -> {
 
-                view_checkBox_daily_up.isEnabled = !isChecked
-                view_checkBox_daily_down.isEnabled = !isChecked
-                view_checkBox_weekly.isEnabled = !isChecked
-                view_checkBox_astro.isEnabled = !isChecked
-                view_editText_dailyUpTime.isEnabled = !isChecked && view_checkBox_daily_up.isChecked
-                view_editText_dailyDownTime.isEnabled = !isChecked && view_checkBox_daily_down.isChecked
-                view_editText_weeklyTimer.isEnabled = !isChecked && view_checkBox_weekly.isChecked
-                view_editText_astroMinuteOffset.isEnabled = !isChecked && view_checkBox_astro.isChecked
-                view_checkBox_random.isEnabled = !isChecked
-                view_checkBox_sun_auto.isEnabled = !isChecked
+                vcbDailyUp.isEnabled = !isChecked
+                vcbDailyDown.isEnabled = !isChecked
+                vcbWeekly.isEnabled = !isChecked
+                vcbAstro.isEnabled = !isChecked
+                vetDailyUpTime.isEnabled = !isChecked && vcbDailyUp.isChecked
+                vetDailyDownTime.isEnabled = !isChecked && vcbDailyDown.isChecked
+                vetWeeklyTimer.isEnabled = !isChecked && vcbWeekly.isChecked
+                vetAstroMinuteOffset.isEnabled = !isChecked && vcbAstro.isChecked
+                vcbRandom.isEnabled = !isChecked
+                vcbSunAuto.isEnabled = !isChecked
             }
 
             R.id.checkBox_daily_up -> {
-                view_editText_dailyUpTime.isEnabled = isChecked
-                if (!isChecked) view_editText_dailyUpTime.setText("")
+                vetDailyUpTime.isEnabled = isChecked
+                if (!isChecked) vetDailyUpTime.setText("")
             }
 
             R.id.checkBox_daily_down -> {
-                view_editText_dailyDownTime.isEnabled = isChecked
-                if (!isChecked) view_editText_dailyDownTime.setText("")
+                vetDailyDownTime.isEnabled = isChecked
+                if (!isChecked) vetDailyDownTime.setText("")
             }
 
             R.id.checkBox_weekly -> {
-                view_editText_weeklyTimer.isEnabled = isChecked
-                if (!isChecked) view_editText_weeklyTimer.setText("")
+                vetWeeklyTimer.isEnabled = isChecked
+                if (!isChecked) vetWeeklyTimer.setText("")
             }
 
             R.id.checkBox_astro -> {
-                view_editText_astroMinuteOffset.isEnabled = isChecked
-                if (!isChecked) view_editText_astroMinuteOffset.setText("")
+                vetAstroMinuteOffset.isEnabled = isChecked
+                if (!isChecked) vetAstroMinuteOffset.setText("")
             }
 
             R.id.checkBox_ferID -> {
-                view_editText_ferID.isEnabled = isChecked
-                view_textView_g.isEnabled = !isChecked
-                view_textView_e.isEnabled = !isChecked
+                vetFerId.isEnabled = isChecked
+                vtvG.isEnabled = !isChecked
+                vtvE.isEnabled = !isChecked
             }
         }
     }
 
 
-    internal var group = 0
-    internal var memb = 0
-    internal var group_max = 0
-    internal val memb_max = intArrayOf(0,0,0,0,0,0,0,0);
+    private var group = 0
+    private var memb = 0
+    private var groupMax = 0
+    private val membMax = intArrayOf(0,0,0,0,0,0,0,0)
 
-    internal var wait_for_saved_timer = false
+    private var waitForSavedTimer = false
 
-    internal lateinit var alertDialog: AlertDialog
+    private lateinit var alertDialog: AlertDialog
     internal lateinit var progressDialog: ProgressDialog
 
     internal var cuasInProgress = false
 
 
-    internal lateinit var mMenu: Menu
+    private lateinit var mMenu: Menu
 
-    private fun LoadPreferences() {
+    private fun loadPreferences() {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
 
 
@@ -144,14 +145,14 @@ class MainActivity : AppCompatActivity() {
         }
 
         val sgam = sharedPreferences.getString("groupsAndMembers", "77777777")
-        val sgam_length_1 = Math.min(7, sgam!!.length - 1)
-        group_max = Math.min(7, Integer.parseInt(sgam.substring(0, 1)))
+        val sgamLength1 = Math.min(7, sgam!!.length - 1)
+        groupMax = Math.min(7, Integer.parseInt(sgam.substring(0, 1)))
 
-        for (i in 1..sgam_length_1) {
-            memb_max[i] = Math.min(7, Integer.parseInt(sgam.substring(i, i + 1)))
+        for (i in 1..sgamLength1) {
+            membMax[i] = Math.min(7, Integer.parseInt(sgam.substring(i, i + 1)))
         }
-        for (i in sgam_length_1 + 1..7) {
-            memb_max[i] = 0
+        for (i in sgamLength1 + 1..7) {
+            membMax[i] = 0
         }
 
     }
@@ -161,52 +162,59 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_main)
-        val toolbar = findViewById(R.id.toolbar) as Toolbar
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
 
-        if (android.os.Build.VERSION.SDK_INT > 9) {
-            val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
-            StrictMode.setThreadPolicy(policy)
-        }
+        val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
+        StrictMode.setThreadPolicy(policy)
 
-        LoadPreferences()
 
-        view_checkBox_daily_up = findViewById(R.id.checkBox_daily_up) as CheckBox
-        view_checkBox_daily_down = findViewById(R.id.checkBox_daily_down) as CheckBox
-        view_checkBox_weekly = findViewById(R.id.checkBox_weekly) as CheckBox
-        view_checkBox_astro = findViewById(R.id.checkBox_astro) as CheckBox
-        view_checkBox_random = findViewById(R.id.checkBox_random) as CheckBox
-        view_checkBox_sun_auto = findViewById(R.id.checkBox_sun_auto) as CheckBox
-        view_checkBox_rtc_only = findViewById(R.id.checkBox_rtc_only) as CheckBox
-        view_checkBox_ferID = findViewById(R.id.checkBox_ferID) as CheckBox
+        loadPreferences()
 
-        view_editText_dailyUpTime = findViewById(R.id.editText_dailyUpTime) as EditText
-        view_editText_dailyDownTime = findViewById(R.id.editText_dailyDownTime) as EditText
-        view_editText_weeklyTimer = findViewById(R.id.editText_weeklyTimer) as EditText
-        view_editText_astroMinuteOffset = findViewById(R.id.editText_astroMinuteOffset) as EditText
-        view_editText_ferID = findViewById(R.id.editText_ferID) as EditText
+        vcbDailyUp = findViewById(R.id.checkBox_daily_up)
+        vcbDailyDown = findViewById(R.id.checkBox_daily_down)
+        vcbWeekly = findViewById(R.id.checkBox_weekly)
+        vcbAstro = findViewById(R.id.checkBox_astro)
+        vcbRandom = findViewById(R.id.checkBox_random)
+        vcbSunAuto = findViewById(R.id.checkBox_sun_auto)
+        vcbRtcOnly = findViewById(R.id.checkBox_rtc_only)
+        vcbFerId = findViewById(R.id.checkBox_ferID)
 
-        view_textView_log = findViewById(R.id.textView_log) as TextView
-        view_textView_g = findViewById(R.id.textView_g) as TextView
-        view_textView_e = findViewById(R.id.textView_e) as TextView
+        vetDailyUpTime = findViewById(R.id.editText_dailyUpTime)
+        vetDailyDownTime = findViewById(R.id.editText_dailyDownTime)
+        vetWeeklyTimer = findViewById(R.id.editText_weeklyTimer)
+        vetAstroMinuteOffset = findViewById(R.id.editText_astroMinuteOffset)
+        vetFerId = findViewById(R.id.editText_ferID)
 
-        view_checkBox_daily_up.setOnCheckedChangeListener(onCheckedChanged)
-        view_checkBox_daily_down.setOnCheckedChangeListener(onCheckedChanged)
-        view_checkBox_weekly.setOnCheckedChangeListener(onCheckedChanged)
-        view_checkBox_astro.setOnCheckedChangeListener(onCheckedChanged)
-        view_checkBox_random.setOnCheckedChangeListener(onCheckedChanged)
-        view_checkBox_sun_auto.setOnCheckedChangeListener(onCheckedChanged)
-        view_checkBox_rtc_only.setOnCheckedChangeListener(onCheckedChanged)
-        view_checkBox_ferID.setOnCheckedChangeListener(onCheckedChanged)
+        vtvLog = findViewById(R.id.textView_log)
+        vtvG = findViewById(R.id.textView_g)
+        vtvE = findViewById(R.id.textView_e)
 
-        view_editText_dailyUpTime.setText("")
-        view_editText_dailyDownTime.setText("")
-        view_editText_weeklyTimer.setText("")
-        view_editText_astroMinuteOffset.setText("")
+        vbtTimer = findViewById(R.id.button_timer)
+        vbtUp = findViewById(R.id.button_up)
+        vbtStop = findViewById(R.id.button_stop)
+        vbtSunPos = findViewById(R.id.button_sun_pos)
+        vbtDown = findViewById(R.id.button_down)
+
+
+
+        vcbDailyUp.setOnCheckedChangeListener(onCheckedChanged)
+        vcbDailyDown.setOnCheckedChangeListener(onCheckedChanged)
+        vcbWeekly.setOnCheckedChangeListener(onCheckedChanged)
+        vcbAstro.setOnCheckedChangeListener(onCheckedChanged)
+        vcbRandom.setOnCheckedChangeListener(onCheckedChanged)
+        vcbSunAuto.setOnCheckedChangeListener(onCheckedChanged)
+        vcbRtcOnly.setOnCheckedChangeListener(onCheckedChanged)
+        vcbFerId.setOnCheckedChangeListener(onCheckedChanged)
+
+        vetDailyUpTime.setText("")
+        vetDailyDownTime.setText("")
+        vetWeeklyTimer.setText("")
+        vetAstroMinuteOffset.setText("")
 
         progressDialog = ProgressDialog(this)
 
-        tcpWrite_Thread = object : Thread() {
+        tcpWriteThread = object : Thread() {
                 //private Socket mTcpSocket;
                 override fun run() {
                     while (!mTcpSocket.isClosed) {
@@ -221,7 +229,7 @@ class MainActivity : AppCompatActivity() {
                                     break
                                 } catch (e: IOException) {
                                     if (i < retry) {
-                                        reconnect_tcpSocket()
+                                        reconnectTcpSocket()
                                     } else {
                                         mMessageHandler.obtainMessage(0, e.toString().toByteArray().toString() + "\n").sendToTarget()
                                         break
@@ -232,7 +240,7 @@ class MainActivity : AppCompatActivity() {
                             }
 
                         } catch (e: InterruptedException) {
-                            return;
+                            return
                             // e.printStackTrace();
                         }
                     }
@@ -240,7 +248,7 @@ class MainActivity : AppCompatActivity() {
             }
 
 
-        tcpRead_Thread = object : Thread() {
+        tcpReadThread = object : Thread() {
             internal var buf = ByteArray(256)
 
             override fun run() {
@@ -251,12 +259,12 @@ class MainActivity : AppCompatActivity() {
                                 val line = br.readLine()
                                 mMessageHandler.obtainMessage(MSG_LINE_RECEIVED, line).sendToTarget()
                             } catch (e: IOException) {
-                                // reconnect_tcpSocket();
+                                // reconnectTcpSocket();
                             }
 
                         }
                 } catch (e: IOException) {
-                    return;
+                    return
                 }
             }
         }
@@ -265,21 +273,21 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun start_tcpRead_Thread() {
-        if (tcpRead_Thread.state == Thread.State.NEW || tcpRead_Thread.state == Thread.State.TERMINATED) {
-            tcpRead_Thread.start()
+    private fun startTcpReadThread() {
+        if (tcpReadThread.state == Thread.State.NEW || tcpReadThread.state == Thread.State.TERMINATED) {
+            tcpReadThread.start()
         }
     }
 
 
-    internal fun tcpSocket_transmit(s: String) {
-        if (tcpWrite_Thread.state == Thread.State.NEW || tcpWrite_Thread.state == Thread.State.TERMINATED) {
-            tcpWrite_Thread.start()
+    private fun tcpSocketTransmit(s: String) {
+        if (tcpWriteThread.state == Thread.State.NEW || tcpWriteThread.state == Thread.State.TERMINATED) {
+            tcpWriteThread.start()
         }
         q.add(s)
     }
 
-    internal fun reconnect_tcpSocket(): Boolean {
+    internal fun reconnectTcpSocket(): Boolean {
         try {
             mTcpSocket.connect(socketAddress)
             return true
@@ -289,7 +297,7 @@ class MainActivity : AppCompatActivity() {
         return false
     }
 
-    internal fun connect_tcpSocket(): Boolean {
+    private fun connectTcpSocket(): Boolean {
         try {
             if (mTcpSocket.isClosed) {
                 mTcpSocket = Socket()
@@ -298,20 +306,20 @@ class MainActivity : AppCompatActivity() {
             mTcpSocket.connect(socketAddress)
             return mTcpSocket.isConnected
         } catch (e: IOException) {
-            view_textView_log.append("TCP-Error: " + e.toString() + "\n")
+            vtvLog.append("TCP-Error: " + e.toString() + "\n")
         } catch (e: NullPointerException) {
-            view_textView_log.append("TCP-Error: cannot connect to tcp server\n")
+            vtvLog.append("TCP-Error: cannot connect to tcp server\n")
         }
 
         return false
     }
 
-    internal fun start_tcp() {
-        connect_tcpSocket()
-        start_tcpRead_Thread()
+    private fun startTcp() {
+        connectTcpSocket()
+        startTcpReadThread()
     }
 
-    internal fun stop_tcp() {
+    private fun stopTcp() {
         try {
             mTcpSocket.close()
         } catch (e: IOException) {
@@ -323,8 +331,8 @@ class MainActivity : AppCompatActivity() {
       override fun onResume() {
         super.onResume()
 
-        if (use_wifi) {
-            start_tcp()
+        if (useWifi) {
+            startTcp()
 
         }
     }
@@ -332,8 +340,8 @@ class MainActivity : AppCompatActivity() {
     public override fun onPause() {
         super.onPause()
 
-        if (use_wifi)
-            stop_tcp()
+        if (useWifi)
+            stopTcp()
     }
 
 
@@ -347,14 +355,14 @@ class MainActivity : AppCompatActivity() {
         override fun handleMessage(msg: Message) {
             val ma = mActivity.get()
             if (ma == null)
-                return;
+                return
             when (msg.what) {
 
                 MainActivity.MSG_LINE_RECEIVED -> try {
                     val s = msg.obj as String
-                    ma.view_textView_log.append(s + "\n")
+                    ma.vtvLog.append(s + "\n")
                     if (s.contains("rs=data")) {
-                        ma.parse_received_data(s)
+                        ma.parseReceivedData(s)
                     }
                     if (ma.progressDialog.isShowing && ma.cuasInProgress) {
                         if (s.contains(":cuas=ok:")) {
@@ -370,7 +378,7 @@ class MainActivity : AppCompatActivity() {
 
 
                 } catch (e: Exception) {
-                    ma.view_textView_log.text = "error: " + e.toString()
+                    ma.vtvLog.append("Error: " + e.toString() + "\n")
 
                 }
 
@@ -388,8 +396,8 @@ class MainActivity : AppCompatActivity() {
 
     @Throws(IOException::class)
     private fun transmit(s: String) {
-        if (use_wifi) tcpSocket_transmit(s)
-        view_textView_log.append("transmit: " + s + "\n")
+        if (useWifi) tcpSocketTransmit(s)
+        vtvLog.append("transmit: " + s + "\n")
     }
 
     fun onCheckedClick(view: View) {
@@ -398,39 +406,38 @@ class MainActivity : AppCompatActivity() {
 
         if (isChecked)
             when (view.getId()) {
-                R.id.checkBox_daily_up -> view_editText_dailyUpTime.setText(def_dailyUp)
+                R.id.checkBox_daily_up -> vetDailyUpTime.setText(def_dailyUp)
 
-                R.id.checkBox_daily_down -> view_editText_dailyDownTime.setText(def_dailyDown)
+                R.id.checkBox_daily_down -> vetDailyDownTime.setText(def_dailyDown)
 
-                R.id.checkBox_weekly -> view_editText_weeklyTimer.setText(def_weekly)
+                R.id.checkBox_weekly -> vetWeeklyTimer.setText(def_weekly)
 
-                R.id.checkBox_astro -> view_editText_astroMinuteOffset.setText(def_astro)
+                R.id.checkBox_astro -> vetAstroMinuteOffset.setText(def_astro)
             }
 
     }
 
     @Throws(IOException::class)
-    private fun fer_send_time() {
+    private fun ferSendTime() {
         val c = Calendar.getInstance()
 
-        val sd = SimpleDateFormat("yyyy-MM-dd").format(c.time)
-        val st = SimpleDateFormat("HH:mm:ss").format(c.time)
+        val sd = SimpleDateFormat("yyyy-MM-dd", Locale.US).format(c.time)
+        val st = SimpleDateFormat("HH:mm:ss", Locale.US).format(c.time)
 
 
         val cmd = String.format("config rtc=%sT%s;", sd, st)
-        view_textView_log.append(cmd + "\n")
+        vtvLog.append(cmd + "\n")
         transmit(cmd)
 
     }
 
-    @Throws(java.io.IOException::class)
-    internal fun get_saved_timer(g: Int, m: Int) {
-        transmit(String.format("timer mid=%d g=%d m=%d rs=2;", getMsgid(), g, m))
-        wait_for_saved_timer = true
+    @Throws(java.io.IOException::class) private fun getSavedTimer(g: Int, m: Int) {
+        transmit(String.format("timer mid=%d g=%d m=%d rs=2;", getMsgId(), g, m))
+        waitForSavedTimer = true
     }
 
-    internal fun parse_received_data(s: String) {
-        var s = s;
+    internal fun parseReceivedData(s: String) {
+        var s = s
         try {
             s = s.substring(s.indexOf(":rs=data: "))
 
@@ -438,7 +445,7 @@ class MainActivity : AppCompatActivity() {
 
             var g = 0
             var m = 0
-            var sun_auto = 0
+            var sunAuto = 0
             var random = 0
             var astro = 0
             var daily = ""
@@ -468,29 +475,17 @@ class MainActivity : AppCompatActivity() {
                         val value = i.substring(idxES + 1)
                         //        tvRec.append(String.format("##%s##%s\n", key, val));
 
-                        if (key == "g") {
-                            g = value.toInt()
-
-                        } else if (key == "m") {
-                            m = value.toInt()
-
-                        } else if (key == "sun-auto") {
-                            sun_auto = value.toInt()
-
-                        } else if (key == "random") {
-                            random = value.toInt()
-
-                        } else if (key == "astro") {
-                            hasAstro = true
-                            astro = value.toInt()
-
-                        } else if (key == "daily") {
-                            daily = value
-
-                        } else if (key == "weekly") {
-                            weekly = value
+                        when (key) {
+                            "g" -> g = value.toInt()
+                            "m" -> m = value.toInt()
+                            "sun-auto" -> sunAuto = value.toInt()
+                            "random" -> random = value.toInt()
+                            "astro" -> { hasAstro = true; astro = value.toInt() }
+                            "daily" ->  daily = value
+                            "weekly" -> weekly = value
 
                         }
+
 
                     }
                 }
@@ -498,15 +493,15 @@ class MainActivity : AppCompatActivity() {
 
             }
 
-            view_checkBox_sun_auto.isChecked = sun_auto == 1
-            view_checkBox_random.isChecked = random == 1
-            view_checkBox_weekly.isChecked = !weekly.isEmpty()
-            view_checkBox_astro.isChecked = hasAstro
-            view_editText_weeklyTimer.setText(weekly)
-            view_checkBox_daily_up.isChecked = !(daily.isEmpty() || daily.startsWith("-"))
-            view_checkBox_daily_down.isChecked = !(daily.isEmpty() || daily.endsWith("-"))
+            vcbSunAuto.isChecked = sunAuto == 1
+            vcbRandom.isChecked = random == 1
+            vcbWeekly.isChecked = !weekly.isEmpty()
+            vcbAstro.isChecked = hasAstro
+            vetWeeklyTimer.setText(weekly)
+            vcbDailyUp.isChecked = !(daily.isEmpty() || daily.startsWith("-"))
+            vcbDailyDown.isChecked = !(daily.isEmpty() || daily.endsWith("-"))
 
-            view_editText_astroMinuteOffset.setText(if (hasAstro) astro.toString() else "")
+            vetAstroMinuteOffset.setText(if (hasAstro) astro.toString() else "")
 
             var dailyUp = ""
             var dailyDown = ""
@@ -522,69 +517,69 @@ class MainActivity : AppCompatActivity() {
                 dailyDown = daily.substring(0, 2) + ":" + daily.substring(2, 4)
             }
 
-            view_editText_dailyUpTime.setText(dailyUp)
-            view_editText_dailyDownTime.setText(dailyDown)
+            vetDailyUpTime.setText(dailyUp)
+            vetDailyDownTime.setText(dailyDown)
 
         } catch (e: Exception) {
         }
 
     }
 
-    internal fun getMsgid(): Int {
+    private fun getMsgId(): Int {
         return ++msgid
     }
 
     private fun getFerId(): Int {
-        if (view_checkBox_ferID.isChecked) {
-            var s = view_editText_ferID.text.toString()
+        if (vcbFerId.isChecked) {
+            var s = vetFerId.text.toString()
             if (s.length == 5) {
-                s = "9$s";
+                s = "9$s"
             } else if (s.length != 6) {
                 throw Exception("id must have 6 digits ($s)")
             }
-            val result = Integer.parseInt(s, 16);
-            return result;
+            val result = Integer.parseInt(s, 16)
+            return result
         }
-        return 0;
+        return 0
     }
 
     fun onClick(view: View) {
 
         try {
             when (view.id) {
-                R.id.button_stop -> transmit(String.format(sendFmt, getMsgid(), getFerId(), group, memb, "stop"))
-                R.id.button_up -> transmit(String.format(sendFmt, getMsgid(), getFerId(), group, memb, "up"))
-                R.id.button_down -> transmit(String.format(sendFmt, getMsgid(), getFerId(), group, memb, "down"))
+                R.id.button_stop -> transmit(String.format(sendFmt, getMsgId(), getFerId(), group, memb, "stop"))
+                R.id.button_up -> transmit(String.format(sendFmt, getMsgId(), getFerId(), group, memb, "up"))
+                R.id.button_down -> transmit(String.format(sendFmt, getMsgId(), getFerId(), group, memb, "down"))
                 R.id.button_g -> {
-                    group = ++group % (group_max + 1)
-                    view_textView_g.text = if (group == 0) "A" else group.toString()
-                    if (memb > memb_max[group])
+                    group = ++group % (groupMax + 1)
+                    vtvG.text = if (group == 0) "A" else group.toString()
+                    if (memb > membMax[group])
                         memb = 1
-                    view_textView_e.text = if (group == 0) "" else if (memb == 0) "A" else memb.toString()
-                    get_saved_timer(group, memb)
+                    vtvE.text = if (group == 0) "" else if (memb == 0) "A" else memb.toString()
+                    getSavedTimer(group, memb)
                 }
                 R.id.button_e -> {
-                    memb = ++memb % (memb_max[group] + 1)
-                    view_textView_e.text = if (group == 0) "" else if (memb == 0) "A" else memb.toString()
-                    get_saved_timer(group, memb)
+                    memb = ++memb % (membMax[group] + 1)
+                    vtvE.text = if (group == 0) "" else if (memb == 0) "A" else memb.toString()
+                    getSavedTimer(group, memb)
                 }
-                R.id.button_sun_pos -> transmit(String.format(sendFmt, getMsgid(), getFerId(), group, memb, "sun-down"))
+                R.id.button_sun_pos -> transmit(String.format(sendFmt, getMsgId(), getFerId(), group, memb, "sun-down"))
 
                 R.id.button_timer -> {
-                    val upTime = view_editText_dailyUpTime.text.toString()
-                    val downTime = view_editText_dailyDownTime.text.toString()
-                    val astroOffset = view_editText_astroMinuteOffset.text.toString()
+                    val upTime = vetDailyUpTime.text.toString()
+                    val downTime = vetDailyDownTime.text.toString()
+                    val astroOffset = vetAstroMinuteOffset.text.toString()
 
                     var timer = ""
 
-                    val rtc_only = view_checkBox_rtc_only.isChecked;
+                    val rtcOnly = vcbRtcOnly.isChecked
 
-                    if (rtc_only) {
+                    if (rtcOnly) {
                         timer += " rtc-only=1"
                     } else {
-                        val dailyUpChecked = view_checkBox_daily_up.isChecked
-                        val dailyDownChecked = view_checkBox_daily_down.isChecked
-                        val weeklyChecked = view_checkBox_weekly.isChecked
+                        val dailyUpChecked = vcbDailyUp.isChecked
+                        val dailyDownChecked = vcbDailyDown.isChecked
+                        val weeklyChecked = vcbWeekly.isChecked
 
                         if (dailyUpChecked || dailyDownChecked) {
                             timer += " daily="
@@ -592,13 +587,13 @@ class MainActivity : AppCompatActivity() {
                             timer += if (dailyDownChecked) downTime.substring(0, 2) + downTime.substring(3, 5) else "-"
                         }
 
-                        if (view_checkBox_astro.isChecked) {
+                        if (vcbAstro.isChecked) {
                             timer += " astro="
                             timer += astroOffset
                         }
 
                         if (weeklyChecked) {
-                            val weeklyTimer = view_editText_weeklyTimer.text.toString()
+                            val weeklyTimer = vetWeeklyTimer.text.toString()
 
                             timer += " weekly="
                             timer += weeklyTimer
@@ -607,11 +602,11 @@ class MainActivity : AppCompatActivity() {
                     }
 
 
-                    if (view_checkBox_sun_auto.isChecked) {
+                    if (vcbSunAuto.isChecked) {
                         timer += " sun-auto=1"
                     }
 
-                    if (view_checkBox_random.isChecked) {
+                    if (vcbRandom.isChecked) {
                         timer += " random=1"
                     }
 
@@ -619,8 +614,8 @@ class MainActivity : AppCompatActivity() {
                     // timer = upTime.substring(0,2);
 
 
-                    transmit(String.format(timerFmt, getMsgid(), getFerId(), group, memb, timer))
-                    if (!rtc_only) {
+                    transmit(String.format(timerFmt, getMsgId(), getFerId(), group, memb, timer))
+                    if (!rtcOnly) {
                         enableSend(false, 5)
                     }
                 }
@@ -628,7 +623,7 @@ class MainActivity : AppCompatActivity() {
 
 
         } catch (e: Exception) {
-            view_textView_log.append("Error: " + e.toString() + "...\n")
+            vtvLog.append("Error: " + e.toString() + "...\n")
         }
 
     }
@@ -643,7 +638,7 @@ class MainActivity : AppCompatActivity() {
         alertDialog.show()
     }
 
-    internal fun showProgressDialog(msg: String, time_out: Int) {
+    private fun showProgressDialog(msg: String, time_out: Int) {
 
         progressDialog.setMessage("Press the Stop-Button on your Fernotron Central Unit in the next 60 seconds...")
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
@@ -699,12 +694,12 @@ class MainActivity : AppCompatActivity() {
 
 
         }
+        vbtTimer.isEnabled = enable;
+        vbtUp.isEnabled = enable;
+        vbtStop.isEnabled = enable;
+        vbtSunPos.isEnabled = enable;
+        vbtDown.isEnabled = enable;
 
-        findViewById(R.id.button_timer).isEnabled = enable
-        findViewById(R.id.button_up).isEnabled = enable
-        findViewById(R.id.button_stop).isEnabled = enable
-        findViewById(R.id.button_sun_pos).isEnabled = enable
-        findViewById(R.id.button_down).isEnabled = enable
         mMenu.findItem(R.id.action_cuAutoSet).isEnabled = enable
         mMenu.findItem(R.id.action_setFunc).isEnabled = enable
 
@@ -715,18 +710,18 @@ class MainActivity : AppCompatActivity() {
         try {
             when (mi.itemId) {
                 R.id.action_cuAutoSet -> {
-                    transmit(String.format(configFmt, getMsgid(), "cu=auto"))
+                    transmit(String.format(configFmt, getMsgId(), "cu=auto"))
                     showProgressDialog("Press the Stop-Button on your Fernotron Central Unit in the next 60 seconds...", 60)
                 }
 
                 R.id.action_setFunc -> {
-                    transmit(String.format(sendFmt, getMsgid(), getFerId(), group, memb, "set"))
+                    transmit(String.format(sendFmt, getMsgId(), getFerId(), group, memb, "set"))
                     showAlertDialog("You now have 60 seconds remaining to press STOP on the transmitter you want to add/remove. Beware: If you press STOP on the central unit, the device will be removed from it. To add it again, you would need the code. If you don't have the code, then you would have to press the physical set-button on the device")
                 }
             }
 
         } catch (e: IOException) {
-            view_textView_log.text = e.toString()
+            vtvLog.text = e.toString()
         }
 
     }
