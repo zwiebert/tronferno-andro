@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
 
     ///////////// wifi //////////////////////
     private var mTcpSocket = Socket()
-    private var socketAddress: SocketAddress? = null
+    private var socketAddress: InetSocketAddress? = null
     private lateinit var tcpConnectThread: Thread
     private lateinit var tcpWriteThread: Thread
     private lateinit var tcpReadThread: Thread
@@ -144,6 +144,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         socketAddress = InetSocketAddress(tcpHostname, tcpPort)
+
 
         val sgam = pref.getString("groupsAndMembers", "77777777")
         val sgamLength1 = Math.min(7, sgam!!.length - 1)
@@ -241,6 +242,10 @@ class MainActivity : AppCompatActivity() {
 
         tcpConnectThread = object : Thread() {
             override fun run() {
+                if (socketAddress!!.isUnresolved()) {
+                    mMessageHandler.obtainMessage(MSG_TCP_CONNECTION_FAILED, "invalid address").sendToTarget()
+                    return
+                }
                 stopThread = true;
                 if (mTcpSocket.isClosed) {
                     mTcpSocket = Socket()
@@ -321,9 +326,13 @@ class MainActivity : AppCompatActivity() {
         if (messagePending != 0 || !mTcpSocket.isConnected) {
             if (tcpConnectThread.state == Thread.State.NEW || tcpConnectThread.state == Thread.State.TERMINATED) {
                 enableSend(false, 0)
-                mTcpSocket.close()
-                tcpConnectThread.start()
-                vtvLog.append("tcp: try to reconnect...\n")
+                if (socketAddress!!.isUnresolved()) {
+
+                } else {
+                    mTcpSocket.close()
+                    tcpConnectThread.start()
+                    vtvLog.append("tcp: try to reconnect...\n")
+                }
             }
             messagePending = 0;
             return;
@@ -413,6 +422,11 @@ class MainActivity : AppCompatActivity() {
                 MainActivity.MSG_TCP_CONNECTED -> {
                     ma.enableSend(true, 0)
                     ma.vtvLog.append("tcp connected\n")
+                }
+
+                MainActivity.MSG_TCP_CONNECTION_FAILED -> {
+                    val s = msg.obj as String
+                    ma.vtvLog.append("tcp connection failed: " + s + "\n")
                 }
 
                 MainActivity.MSG_LINE_RECEIVED -> try {
@@ -828,6 +842,7 @@ class MainActivity : AppCompatActivity() {
         internal const val MSG_LINE_RECEIVED = 5
         internal const val MSG_ERROR = 6
         internal const val MSG_TCP_CONNECTED = 7
+        internal const val MSG_TCP_CONNECTION_FAILED = 8
         internal const val def_dailyUp = "07:30"
         internal const val def_dailyDown = "19:30"
         internal const val def_weekly = "0700-++++0900-+"
