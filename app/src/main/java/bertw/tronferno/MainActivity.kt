@@ -241,26 +241,28 @@ class MainActivity : AppCompatActivity() {
         progressDialog = ProgressDialog(this)
 
         tcpConnectThread = object : Thread() {
-            override fun run() {
-                if (socketAddress!!.isUnresolved()) {
-                    mMessageHandler.obtainMessage(MSG_TCP_CONNECTION_FAILED, "invalid address").sendToTarget()
-                    return
-                }
-                stopThread = true;
-                if (mTcpSocket.isClosed) {
-                    mTcpSocket = Socket()
-                }
-                while (true) {
-                    mTcpSocket.connect(socketAddress)
-                    if (mTcpSocket.isConnected) {
-                        mMessageHandler.obtainMessage(MSG_TCP_CONNECTED, "").sendToTarget()
-                        break;
-                    }
-                }
 
-                stopThread = false;
-               // tcpWriteThread.start()
-               // tcpReadThread.start()
+            override fun run() {
+                try {
+                     stopThread = true;
+                    if (mTcpSocket.isClosed) {
+                        mTcpSocket = Socket()
+                    }
+                    while (true) {
+                        mTcpSocket.connect(socketAddress)
+                        if (mTcpSocket.isConnected) {
+                            mMessageHandler.obtainMessage(MSG_TCP_CONNECTED, "").sendToTarget()
+                            break;
+                        }
+                    }
+
+                    stopThread = false;
+                    // tcpWriteThread.start()
+                    // tcpReadThread.start()
+                } catch (e: Exception) {
+                    mMessageHandler.obtainMessage(MSG_TCP_CONNECTION_FAILED, e.toString()).sendToTarget()
+                    return;
+                }
             }
         }
 
@@ -326,13 +328,9 @@ class MainActivity : AppCompatActivity() {
         if (messagePending != 0 || !mTcpSocket.isConnected) {
             if (tcpConnectThread.state == Thread.State.NEW || tcpConnectThread.state == Thread.State.TERMINATED) {
                 enableSend(false, 0)
-                if (socketAddress!!.isUnresolved()) {
-
-                } else {
-                    mTcpSocket.close()
-                    tcpConnectThread.start()
-                    vtvLog.append("tcp: try to reconnect...\n")
-                }
+                mTcpSocket.close()
+                tcpConnectThread.start()
+                vtvLog.append("tcp: try to reconnect...\n")
             }
             messagePending = 0;
             return;
