@@ -20,6 +20,8 @@
         android:layout_marginTop="8dp"
         android:gravity="bottom"
         android:text=""
+        android:scrollbars="vertical"
+        android:maxLines="20"
         app:layout_constraintBottom_toTopOf="@+id/checkBox_ferID"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -388,17 +390,18 @@
 
     <EditText
         android:id="@+id/editText_weeklyTimer"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:ems="10"
         android:enabled="false"
         android:inputType="textPersonName"
         android:text="0700-++++0900-+"
         app:layout_constraintBottom_toBottomOf="@+id/checkBox_weekly"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/checkBox_weekly"
-        app:layout_constraintTop_toTopOf="@+id/checkBox_weekly"
-        android:layout_marginLeft="8dp" />
+        app:layout_constraintTop_toTopOf="@+id/checkBox_weekly" />
 
     <CheckBox
         android:id="@+id/checkBox_ferID"

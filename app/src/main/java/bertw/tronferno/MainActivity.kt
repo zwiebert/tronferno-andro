@@ -10,6 +10,7 @@ import android.preference.PreferenceManager
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
+import android.text.method.ScrollingMovementMethod
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -18,6 +19,7 @@ import android.widget.*
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
+import java.lang.Integer.min
 import java.lang.ref.WeakReference
 import java.net.InetSocketAddress
 import java.net.Socket
@@ -28,6 +30,14 @@ import java.util.concurrent.ArrayBlockingQueue
 import java.util.regex.Pattern
 
 const val DEFAULT_TCP_HOSTNAME = "fernotron.fritz.box"
+
+
+fun intMin(a: Int, b: Int): Int {
+    return if (a < b) a else b
+}
+fun intMax(a: Int, b: Int): Int {
+    return if (a > b) a else b
+}
 
 class MainActivity : AppCompatActivity() {
 
@@ -159,9 +169,27 @@ class MainActivity : AppCompatActivity() {
 
         group = pref.getInt("mGroup", 0);
         memb = pref.getInt("mMemb", 0);
-        vetFerId.setText(pref.getString("vetFerIdText", "90ABCD"))
+
         vcbRtcOnly.isChecked = pref.getBoolean("vcbRtcOnlyIsChecked", false)
         vcbFerId.isChecked = pref.getBoolean("vcbFerIdIsChecked", false)
+
+                vcbDailyUp.isChecked = pref.getBoolean("vcbDailyUpIsChecked", false)
+                vcbDailyDown.isChecked = pref.getBoolean("vcbDailyDownIsChecked", false)
+                vcbWeekly.isChecked = pref.getBoolean("vcbWeeklyIsChecked", false)
+                vcbAstro.isChecked = pref.getBoolean("vcbAstroIsChecked", false)
+                vcbRandom.isChecked = pref.getBoolean("vcbRandomIsChecked", false)
+                vcbSunAuto.isChecked = pref.getBoolean("vcbSunAutoIsChecked", false)
+//                .isChecked = pref.getBoolean("IsChecked", false)
+
+
+        vetFerId.setText(pref.getString("vetFerIdText", "90ABCD"))
+        vetDailyUpTime.setText(pref.getString("vetDailyUpTimeText", ""))
+        vetDailyDownTime.setText(pref.getString("vetDailyDownTimeText", ""))
+        vetWeeklyTimer.setText(pref.getString("vetWeeklyTimerText", ""))
+        vetAstroMinuteOffset.setText(pref.getString("vetAstroMinuteOffsetText", ""))
+
+        vtvLog.setText(pref.getString("vtvLogText", ""))
+
     }
 
     private fun savePreferences() {
@@ -170,9 +198,34 @@ class MainActivity : AppCompatActivity() {
 
         ed.putInt("mGroup", group);
         ed.putInt("mMemb", memb);
-        ed.putString("vetFerIdText", vetFerId.text.toString())
+
         ed.putBoolean("vcbRtcOnlyIsChecked", vcbRtcOnly.isChecked)
         ed.putBoolean("vcbFerIdIsChecked", vcbFerId.isChecked)
+        ed.putBoolean("vcbDailyUpIsChecked", vcbDailyUp.isChecked)
+        ed.putBoolean("vcbDailyDownIsChecked", vcbDailyDown.isChecked)
+        ed.putBoolean("vcbWeeklyIsChecked", vcbWeekly.isChecked)
+        ed.putBoolean("vcbAstroIsChecked", vcbAstro.isChecked)
+        ed.putBoolean("vcbRandomIsChecked", vcbRandom.isChecked)
+        ed.putBoolean("vcbSunAutoIsChecked", vcbSunAuto.isChecked)
+
+//        ed.putBoolean("IsChecked", .isChecked)
+
+
+        ed.putString("vetFerIdText", vetFerId.text.toString())
+        ed.putString("vetDailyUpTimeText", vetDailyUpTime.text.toString())
+        ed.putString("vetDailyDownTimeText", vetDailyDownTime.text.toString())
+        ed.putString("vetWeeklyTimerText", vetWeeklyTimer.text.toString())
+        ed.putString("vetAstroMinuteOffsetText", vetAstroMinuteOffset.text.toString())
+
+        val start = vtvLog.getLayout().getLineStart(intMax(0, vtvLog.getLineCount() - 20))
+        val end = vtvLog.getLayout().getLineEnd(vtvLog.getLineCount() - 1)
+        val logText = vtvLog.getText().toString().substring(start, end)
+        ed.putString("vtvLogText", logText)
+
+
+
+
+       // ed.putString("Text", .text.toString())
 
         ed.apply();
     }
@@ -226,13 +279,9 @@ class MainActivity : AppCompatActivity() {
         vcbRtcOnly.setOnCheckedChangeListener(onCheckedChanged)
         vcbFerId.setOnCheckedChangeListener(onCheckedChanged)
 
-        vetDailyUpTime.setText("")
-        vetDailyDownTime.setText("")
-        vetWeeklyTimer.setText("")
-        vetAstroMinuteOffset.setText("")
 
         loadPreferences()
-
+        vtvLog.setMovementMethod(ScrollingMovementMethod())
 
         vtvG.text = if (group!=0) group.toString() else "A"
         vtvE.text = if (memb!=0) memb.toString() else if (group!=0) "A" else ""
