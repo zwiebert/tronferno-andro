@@ -1,0 +1,89 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to
+         dismiss it. -->
+    <!-- NOTE: ListPreference's summary should be set to its value by the activity code. -->
+    <!--
+    <ListPreference
+        android:defaultValue="180"
+        android:entries="@array/pref_sync_frequency_titles"
+        android:entryValues="@array/pref_sync_frequency_values"
+        android:key="sync_frequency"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_title_sync_frequency" />
+        -->
+
+    <!-- This preference simply launches an intent when selected. Use this UI sparingly, per
+         design guidelines. -->
+    <!--
+    <Preference android:title="@string/pref_title_system_sync_settings">
+        <intent android:action="android.settings.SYNC_SETTINGS" />
+    </Preference>
+    -->
+
+
+    <ListPreference
+        android:defaultValue="180"
+        android:entries="@array/pref_members_titles"
+        android:entryValues="@array/pref_members_values"
+        android:key="group1_members"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_group1_members" />
+
+    <ListPreference
+        android:defaultValue="180"
+        android:entries="@array/pref_members_titles"
+        android:entryValues="@array/pref_members_values"
+        android:key="group2_members"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_group2_members" />
+
+    <ListPreference
+        android:defaultValue="180"
+        android:entries="@array/pref_members_titles"
+        android:entryValues="@array/pref_members_values"
+        android:key="group3_members"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_group3_members" />
+
+    <ListPreference
+        android:defaultValue="180"
+        android:entries="@array/pref_members_titles"
+        android:entryValues="@array/pref_members_values"
+        android:key="group4_members"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_group4_members" />
+
+    <ListPreference
+        android:defaultValue="180"
+        android:entries="@array/pref_members_titles"
+        android:entryValues="@array/pref_members_values"
+        android:key="group5_members"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_group5_members" />
+
+    <ListPreference
+        android:defaultValue="180"
+        android:entries="@array/pref_members_titles"
+        android:entryValues="@array/pref_members_values"
+        android:key="group6_members"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_group6_members" />
+
+    <ListPreference
+        android:defaultValue="180"
+        android:entries="@array/pref_members_titles"
+        android:entryValues="@array/pref_members_values"
+        android:key="group7_members"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_group7_members" />
+
+</PreferenceScreen>

@@ -11,15 +11,18 @@
         android:id="@+id/action_cuAutoSet"
         android:orderInCategory="100"
         android:title="@string/cuas"
-        android:onClick="onMenuClick"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/action_setFunc"
         android:orderInCategory="100"
         android:title="@string/set_function"
-        android:onClick="onMenuClick"
         app:showAsAction="never" />
 
-
+    <item
+        android:id="@+id/action_expert"
+        android:orderInCategory="100"
+        android:title="@string/action_expert"
+        android:visible="false"
+        app:showAsAction="never" />
 </menu>

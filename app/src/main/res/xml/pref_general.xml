@@ -16,6 +16,7 @@
 
     <!-- NOTE: EditTextPreference accepts EditText attributes. -->
     <!-- NOTE: EditTextPreference's summary should be set to its value by the activity code. -->
+    <!--
     <EditTextPreference
         android:capitalize="none"
         android:defaultValue="77777777"
@@ -26,6 +27,7 @@
         android:singleLine="true"
         android:summary="A number representing groups and members. 1st digit from the left: number of groups. 2nd digit: how many members in 1st group. 3rd digit: how many in 2nd group. ... and so on until 7th group. Examples: 45534, 77777777"
         android:title="Groups and Members" />
+        -->
 <!--
    <EditTextPreference
         android:capitalize="none"

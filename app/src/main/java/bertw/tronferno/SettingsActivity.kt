@@ -26,6 +26,10 @@ import android.view.MenuItem
  */
 class SettingsActivity : AppCompatPreferenceActivity() {
 
+    override fun onBackPressed() {
+        //super.onBackPressed()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setupActionBar()
@@ -147,14 +151,23 @@ class SettingsActivity : AppCompatPreferenceActivity() {
     class DataSyncPreferenceFragment : PreferenceFragment() {
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
-            addPreferencesFromResource(R.xml.pref_data_sync)
+            addPreferencesFromResource(R.xml.pref_members)
             setHasOptionsMenu(true)
 
             // Bind the summaries of EditText/List/Dialog/Ringtone preferences
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
-            bindPreferenceSummaryToValue(findPreference("sync_frequency"))
+
+
+            bindPreferenceSummaryToValue(findPreference("group1_members"))
+            bindPreferenceSummaryToValue(findPreference("group2_members"))
+            bindPreferenceSummaryToValue(findPreference("group3_members"))
+            bindPreferenceSummaryToValue(findPreference("group4_members"))
+            bindPreferenceSummaryToValue(findPreference("group5_members"))
+            bindPreferenceSummaryToValue(findPreference("group6_members"))
+            bindPreferenceSummaryToValue(findPreference("group7_members"))
+
         }
 
         override fun onOptionsItemSelected(item: MenuItem): Boolean {

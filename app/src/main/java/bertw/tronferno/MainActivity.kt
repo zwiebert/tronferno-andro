@@ -15,27 +15,27 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
-
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
-import java.lang.Integer.min
 import java.lang.ref.WeakReference
 import java.net.InetSocketAddress
 import java.net.Socket
-import java.net.SocketAddress
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.regex.Pattern
 
-const val DEFAULT_TCP_HOSTNAME = "fernotron.fritz.box"
+const val DEFAULT_TCP_HOSTNAME = "fernotron.fritz.box."
+const val DEFAULT_TCP_PORT = 7777
 
 
-fun intMin(a: Int, b: Int): Int {
+// Integer.min/max not available for SDK < 24
+fun <T : Comparable<T>> min(a: T, b: T): T {
     return if (a < b) a else b
 }
-fun intMax(a: Int, b: Int): Int {
+
+fun <T : Comparable<T>> max(a: T, b: T): T {
     return if (a > b) a else b
 }
 
@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
     private var group = 0
     private var memb = 0
     private var groupMax = 0
-    private val membMax = intArrayOf(0,0,0,0,0,0,0,0)
+    private val membMax = intArrayOf(0, 0, 0, 0, 0, 0, 0, 0)
     private var waitForSavedTimer = false
     private lateinit var alertDialog: AlertDialog
     private lateinit var progressDialog: ProgressDialog
@@ -92,7 +92,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tcpReadThread: Thread
 
     private val q = ArrayBlockingQueue<String>(1000)
-    @Volatile var tcpConnectPending = false
+    @Volatile
+    var tcpConnectPending = false
 
 
     private val onCheckedChanged = CompoundButton.OnCheckedChangeListener { button, isChecked ->
@@ -146,7 +147,7 @@ class MainActivity : AppCompatActivity() {
 
 
         var tcpHostname = pref.getString("tcpHostName", DEFAULT_TCP_HOSTNAME)
-        var tcpPort = 7777
+        var tcpPort = DEFAULT_TCP_PORT
         if (tcpHostname.contains(":")) {
             val pos = tcpHostname.indexOf(':')
             tcpPort = Integer.parseInt(tcpHostname.substring(pos + 1))
@@ -167,18 +168,27 @@ class MainActivity : AppCompatActivity() {
             membMax[i] = 0
         }
 
+        membMax[1] = Integer.parseInt(pref.getString("group1_members", "7"));
+        membMax[2] = Integer.parseInt(pref.getString("group2_members", "7"));
+        membMax[3] = Integer.parseInt(pref.getString("group3_members", "7"));
+        membMax[4] = Integer.parseInt(pref.getString("group4_members", "7"));
+        membMax[5] = Integer.parseInt(pref.getString("group5_members", "7"));
+        membMax[6] = Integer.parseInt(pref.getString("group6_members", "7"));
+        membMax[7] = Integer.parseInt(pref.getString("group7_members", "7"));
+
+
         group = pref.getInt("mGroup", 0);
         memb = pref.getInt("mMemb", 0);
 
         vcbRtcOnly.isChecked = pref.getBoolean("vcbRtcOnlyIsChecked", false)
         vcbFerId.isChecked = pref.getBoolean("vcbFerIdIsChecked", false)
 
-                vcbDailyUp.isChecked = pref.getBoolean("vcbDailyUpIsChecked", false)
-                vcbDailyDown.isChecked = pref.getBoolean("vcbDailyDownIsChecked", false)
-                vcbWeekly.isChecked = pref.getBoolean("vcbWeeklyIsChecked", false)
-                vcbAstro.isChecked = pref.getBoolean("vcbAstroIsChecked", false)
-                vcbRandom.isChecked = pref.getBoolean("vcbRandomIsChecked", false)
-                vcbSunAuto.isChecked = pref.getBoolean("vcbSunAutoIsChecked", false)
+        vcbDailyUp.isChecked = pref.getBoolean("vcbDailyUpIsChecked", false)
+        vcbDailyDown.isChecked = pref.getBoolean("vcbDailyDownIsChecked", false)
+        vcbWeekly.isChecked = pref.getBoolean("vcbWeeklyIsChecked", false)
+        vcbAstro.isChecked = pref.getBoolean("vcbAstroIsChecked", false)
+        vcbRandom.isChecked = pref.getBoolean("vcbRandomIsChecked", false)
+        vcbSunAuto.isChecked = pref.getBoolean("vcbSunAutoIsChecked", false)
 //                .isChecked = pref.getBoolean("IsChecked", false)
 
 
@@ -217,15 +227,13 @@ class MainActivity : AppCompatActivity() {
         ed.putString("vetWeeklyTimerText", vetWeeklyTimer.text.toString())
         ed.putString("vetAstroMinuteOffsetText", vetAstroMinuteOffset.text.toString())
 
-        val start = vtvLog.getLayout().getLineStart(intMax(0, vtvLog.getLineCount() - 20))
+        val start = vtvLog.getLayout().getLineStart(max(0, vtvLog.getLineCount() - 20))
         val end = vtvLog.getLayout().getLineEnd(vtvLog.getLineCount() - 1)
         val logText = vtvLog.getText().toString().substring(start, end)
         ed.putString("vtvLogText", logText)
 
 
-
-
-       // ed.putString("Text", .text.toString())
+        // ed.putString("Text", .text.toString())
 
         ed.apply();
     }
@@ -283,8 +291,8 @@ class MainActivity : AppCompatActivity() {
         loadPreferences()
         vtvLog.setMovementMethod(ScrollingMovementMethod())
 
-        vtvG.text = if (group!=0) group.toString() else "A"
-        vtvE.text = if (memb!=0) memb.toString() else if (group!=0) "A" else ""
+        vtvG.text = if (group != 0) group.toString() else "A"
+        vtvE.text = if (memb != 0) memb.toString() else if (group != 0) "A" else ""
 
 
         progressDialog = ProgressDialog(this)
@@ -293,7 +301,7 @@ class MainActivity : AppCompatActivity() {
 
             override fun run() {
                 try {
-                     stopThread = true;
+                    stopThread = true;
                     if (mTcpSocket.isClosed) {
                         mTcpSocket = Socket()
                     }
@@ -306,8 +314,8 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     stopThread = false;
-                    // tcpWriteThread.start()
-                    // tcpReadThread.start()
+                    tcpWriteThread.start()
+                    tcpReadThread.start()
                 } catch (e: Exception) {
                     mMessageHandler.obtainMessage(MSG_TCP_CONNECTION_FAILED, e.toString()).sendToTarget()
                     return;
@@ -316,26 +324,18 @@ class MainActivity : AppCompatActivity() {
         }
 
         tcpWriteThread = object : Thread() {
-                override fun run() {
-                    while (!stopThread && !mTcpSocket.isClosed) {
-                        try {
-                            val data = q.take()
-                            while (!stopThread && !mTcpSocket.isClosed) {
-                                try {
-                                    mTcpSocket.getOutputStream().write(data.toByteArray())
-                                    break
-                                } catch (e: IOException) {
-                                        mMessageHandler.obtainMessage(MSG_ERROR, "TCP_wt:Error: " + e.toString() + "\n").sendToTarget()
-                                       return
-                                }
-                            }
-
-                        } catch (e: InterruptedException) {
-                            return
-                        }
+            override fun run() {
+                while (!stopThread && !mTcpSocket.isClosed) {
+                    try {
+                        val data = q.take()
+                        mTcpSocket.getOutputStream().write(data.toByteArray())
+                    } catch (e: Exception) {
+                        mMessageHandler.obtainMessage(MSG_TCP_OUTPUT_ERROR, "tcp-wt:error: ${e.toString()}").sendToTarget()
+                        return
                     }
                 }
             }
+        }
 
 
         tcpReadThread = object : Thread() {
@@ -344,17 +344,16 @@ class MainActivity : AppCompatActivity() {
             override fun run() {
                 try {
                     val br = BufferedReader(InputStreamReader(mTcpSocket.getInputStream()))
-                     while (!stopThread && !mTcpSocket.isClosed) {
-                            try {
-                                val line = br.readLine()
-                                mMessageHandler.obtainMessage(MSG_LINE_RECEIVED, line).sendToTarget()
-                            } catch (e: IOException) {
-                               mMessageHandler.obtainMessage(MSG_ERROR,"dbtrace: tcp readline failed")
-                                return
-                            }
-
-                        }
-                } catch (e: IOException) {
+                    while (!stopThread && !mTcpSocket.isClosed) {
+                            val line = br.readLine()
+                            if (line == null) {
+                                mMessageHandler.obtainMessage(MSG_TCP_INPUT_EOF, line).sendToTarget()
+                                 return; // EOF
+                             }
+                            mMessageHandler.obtainMessage(MSG_LINE_RECEIVED, line).sendToTarget()
+                    }
+                } catch (e: Exception) {
+                    mMessageHandler.obtainMessage(MSG_TCP_INPUT_ERROR, "tcp-rt:error: ${e.toString()}").sendToTarget()
                     return
                 }
             }
@@ -364,13 +363,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private var messagePending = 0;
-   @Volatile private var stopThread = false
-
-    private fun startTcpReadThread() {
-        if (tcpReadThread.state == Thread.State.NEW || tcpReadThread.state == Thread.State.TERMINATED) {
-            tcpReadThread.start()
-        }
-    }
+    @Volatile private var stopThread = false
 
 
     private fun tcpSocketTransmit(s: String) {
@@ -384,12 +377,7 @@ class MainActivity : AppCompatActivity() {
             messagePending = 0;
             return;
         }
-        if (tcpWriteThread.state == Thread.State.NEW || tcpWriteThread.state == Thread.State.TERMINATED) {
-            tcpWriteThread.start()
-        }
-        if (tcpReadThread.state == Thread.State.NEW || tcpReadThread.state == Thread.State.TERMINATED) {
-            tcpReadThread.start()
-        }
+
         messagePending = msgid
         q.add(s)
     }
@@ -422,26 +410,29 @@ class MainActivity : AppCompatActivity() {
 
     private fun startTcp() {
         connectTcpSocket()
-        startTcpReadThread()
     }
 
     private fun stopTcp() {
         try {
             mTcpSocket.close()
         } catch (e: IOException) {
-            e.printStackTrace()
         }
-
     }
 
-      override fun onResume() {
+    override fun onResume() {
         super.onResume()
 
         if (useWifi) {
-            enableSend(false,0)
+            enableSend(false, 0)
             tcpConnectThread.start()
         }
     }
+
+    override fun onBackPressed() {
+      //  supportFragmentManager.fragments[supportFragmentManager.backStackEntryCount - 1].onResume()
+       super.onBackPressed()
+     }
+
 
     public override fun onPause() {
         super.onPause()
@@ -465,6 +456,16 @@ class MainActivity : AppCompatActivity() {
             if (ma == null)
                 return
             when (msg.what) {
+
+                MainActivity.MSG_TCP_INPUT_EOF -> {
+                    //FIXME: what to do here?
+                    ma.mTcpSocket.close()
+                }
+
+
+                MainActivity.MSG_TCP_OUTPUT_ERROR, MainActivity.MSG_TCP_INPUT_ERROR -> {
+                    ma.mTcpSocket.close()
+                }
 
                 MainActivity.MSG_TCP_CONNECTED -> {
                     ma.enableSend(true, 0)
@@ -604,24 +605,30 @@ class MainActivity : AppCompatActivity() {
                         val idxES = i.indexOf('=')
                         val key = i.substring(0, idxES)
                         val value = i.substring(idxES + 1)
-                        //        tvRec.append(String.format("##%s##%s\n", key, val));
 
                         when (key) {
                             "g" -> g = value.toInt()
                             "m" -> m = value.toInt()
                             "sun-auto" -> sunAuto = value.toInt()
                             "random" -> random = value.toInt()
-                            "astro" -> { hasAstro = true; astro = value.toInt() }
-                            "daily" ->  daily = value
+                            "astro" -> {
+                                hasAstro = true; astro = value.toInt()
+                            }
+                            "daily" -> daily = value
                             "weekly" -> weekly = value
 
                         }
 
-
+                    } else {
+                        when (i) {
+                            "sun-auto" -> sunAuto = 1
+                            "random" -> random = 1
+                            "astro" -> {
+                                hasAstro = true; astro = 0
+                            }
+                        }
                     }
                 }
-
-
             }
 
             vcbSunAuto.isChecked = sunAuto == 1
@@ -682,7 +689,13 @@ class MainActivity : AppCompatActivity() {
                 R.id.button_up -> transmit(String.format(sendFmt, getMsgId(), getFerId(), group, memb, "up"))
                 R.id.button_down -> transmit(String.format(sendFmt, getMsgId(), getFerId(), group, memb, "down"))
                 R.id.button_g -> {
-                    group = ++group % (groupMax + 1)
+                    for (i in 0..7) {
+                        group = ++group % 8
+                        if (group == 0 || membMax[group] != 0) {
+                            break;
+                        }
+                    }
+
                     vtvG.text = if (group == 0) "A" else group.toString()
                     if (memb > membMax[group])
                         memb = 1
@@ -706,7 +719,7 @@ class MainActivity : AppCompatActivity() {
                     val rtcOnly = vcbRtcOnly.isChecked
 
                     if (rtcOnly) {
-                        timer += " rtc-only=1"
+                        timer += " rtc-only"
                     } else {
                         val dailyUpChecked = vcbDailyUp.isChecked
                         val dailyDownChecked = vcbDailyDown.isChecked
@@ -719,8 +732,7 @@ class MainActivity : AppCompatActivity() {
                         }
 
                         if (vcbAstro.isChecked) {
-                            timer += " astro="
-                            timer += astroOffset
+                            timer += " astro=$astroOffset"
                         }
 
                         if (weeklyChecked) {
@@ -734,11 +746,11 @@ class MainActivity : AppCompatActivity() {
 
 
                     if (vcbSunAuto.isChecked) {
-                        timer += " sun-auto=1"
+                        timer += " sun-auto"
                     }
 
                     if (vcbRandom.isChecked) {
-                        timer += " random=1"
+                        timer += " random"
                     }
 
 
@@ -837,27 +849,6 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    fun onMenuClick(mi: MenuItem) {
-
-        try {
-            when (mi.itemId) {
-                R.id.action_cuAutoSet -> {
-                    transmit(String.format(configFmt, getMsgId(), "cu=auto"))
-                    showProgressDialog("Press the Stop-Button on your Fernotron Central Unit in the next 60 seconds...", 60)
-                }
-
-                R.id.action_setFunc -> {
-                    transmit(String.format(sendFmt, getMsgId(), getFerId(), group, memb, "set"))
-                    showAlertDialog("You now have 60 seconds remaining to press STOP on the transmitter you want to add/remove. Beware: If you press STOP on the central unit, the device will be removed from it. To add it again, you would need the code. If you don't have the code, then you would have to press the physical set-button on the device")
-                }
-            }
-
-        } catch (e: IOException) {
-            vtvLog.text = e.toString()
-        }
-
-    }
-
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
@@ -869,20 +860,37 @@ class MainActivity : AppCompatActivity() {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        val id = item.itemId
 
+        when (item.itemId) {
+            R.id.action_settings -> {
+                val intent = Intent(this, SettingsActivity::class.java)
+                startActivity(intent)
+            }
 
-        if (id == R.id.action_settings) {
-            val intent = Intent(this, SettingsActivity::class.java)
-            startActivity(intent)
-            return true
+            R.id.action_expert -> {
+                val intent = Intent(this, ExpertActivity::class.java)
+                startActivity(intent)
+            }
+
+            R.id.action_cuAutoSet -> {
+                transmit(String.format(configFmt, getMsgId(), "cu=auto"))
+                showProgressDialog("Press the Stop-Button on your Fernotron Central Unit in the next 60 seconds...", 60)
+            }
+
+            R.id.action_setFunc -> {
+                transmit(String.format(sendFmt, getMsgId(), getFerId(), group, memb, "set"))
+                showAlertDialog("You now have 60 seconds remaining to press STOP on the transmitter you want to add/remove. Beware: If you press STOP on the central unit, the device will be removed from it. To add it again, you would need the code. If you don't have the code, then you would have to press the physical set-button on the device")
+            }
+
+            else -> return super.onOptionsItemSelected(item)
         }
 
-        return super.onOptionsItemSelected(item)
+        return true;
     }
 
     companion object {
         internal var msgid = 1
+
         internal const val MSG_DATA_RECEIVED = 0
         internal const val MSG_CUAS_TIME_OUT = 3
         internal const val MSG_SEND_ENABLE = 4
@@ -890,6 +898,10 @@ class MainActivity : AppCompatActivity() {
         internal const val MSG_ERROR = 6
         internal const val MSG_TCP_CONNECTED = 7
         internal const val MSG_TCP_CONNECTION_FAILED = 8
+        internal const val MSG_TCP_INPUT_EOF = 9
+        internal const val MSG_TCP_INPUT_ERROR = 10
+        internal const val MSG_TCP_OUTPUT_ERROR = 11
+
         internal const val def_dailyUp = "07:30"
         internal const val def_dailyDown = "19:30"
         internal const val def_weekly = "0700-++++0900-+"

@@ -2,6 +2,8 @@
     <string name="app_name">Tronferno</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_settings">Settings</string>
+    <string name="action_expert">Expert</string>
+
 
     <string name="sun_auto">SunAuto</string>
     <string name="random">Random</string>
@@ -23,6 +25,35 @@
     <string name="set_function">Set Function</string>
 
 
+    <string name="pref_members">Members</string>
+    <string name="pref_group1_members">Members of Group 1</string>
+    <string name="pref_group2_members">Members of Group 2</string>
+    <string name="pref_group3_members">Members of Group 3</string>
+    <string name="pref_group4_members">Members of Group 4</string>
+    <string name="pref_group5_members">Members of Group 5</string>
+    <string name="pref_group6_members">Members of Group 6</string>
+    <string name="pref_group7_members">Members of Group 7</string>
+
+    <string-array name="pref_members_titles">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+    </string-array>
+    <string-array name="pref_members_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+    </string-array>
 
 
     <!-- Strings related to Settings -->
@@ -51,7 +82,7 @@
     </string-array>
 
     <!-- Example settings for Data & Sync -->
-    <string name="pref_header_data_sync">Data &amp; sync</string>
+    <string name="pref_header_data_sync">Groups and Members</string>
 
     <string name="pref_title_sync_frequency">Sync frequency</string>
     <string-array name="pref_sync_frequency_titles">

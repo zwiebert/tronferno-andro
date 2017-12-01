@@ -15,11 +15,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:windowSoftInputMode="stateHidden"
             android:name=".MainActivity"
             android:label="Tronferno"
             android:screenOrientation="sensorPortrait"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -34,6 +34,13 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="bertw.tronferno.MainActivity" />
         </activity>
+        <activity android:name=".ExpertActivity"
+          android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="bertw.tronferno.MainActivity" />
+        </activity>
+
     </application>
 
 </manifest>
