@@ -314,7 +314,7 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     stopThread = false;
-                    tcpWriteThread.start()
+                    if (!tcpWriteThread.isAlive) tcpWriteThread.start()
                     tcpReadThread.start()
                 } catch (e: Exception) {
                     mMessageHandler.obtainMessage(MSG_TCP_CONNECTION_FAILED, e.toString()).sendToTarget()
@@ -416,16 +416,19 @@ class MainActivity : AppCompatActivity() {
         try {
             mTcpSocket.close()
         } catch (e: IOException) {
+            vtvLog.append(e.toString())
         }
     }
 
     override fun onResume() {
         super.onResume()
+      //  vtvLog.append(String.format("read alive: %b, wa: %b, ca: %b\n", tcpReadThread.isAlive, tcpWriteThread.isAlive, tcpConnectThread.isAlive))
 
         if (useWifi) {
             enableSend(false, 0)
             tcpConnectThread.start()
         }
+      //  vtvLog.append("-----onResume----\n")
     }
 
     override fun onBackPressed() {
@@ -436,11 +439,12 @@ class MainActivity : AppCompatActivity() {
 
     public override fun onPause() {
         super.onPause()
+      //  vtvLog.append("-----onPause----\n")
 
         if (useWifi)
             stopTcp()
 
-        savePreferences()
+      //  savePreferences()
     }
 
 
@@ -684,6 +688,8 @@ class MainActivity : AppCompatActivity() {
     fun onClick(view: View) {
 
         try {
+            vtvLog.append(String.format("ra: %b, wa: %b, ca: %b\n", tcpReadThread.isAlive, tcpWriteThread.isAlive, tcpConnectThread.isAlive))
+
             when (view.id) {
                 R.id.button_stop -> transmit(String.format(sendFmt, getMsgId(), getFerId(), group, memb, "stop"))
                 R.id.button_up -> transmit(String.format(sendFmt, getMsgId(), getFerId(), group, memb, "up"))

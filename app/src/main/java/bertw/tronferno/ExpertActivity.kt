@@ -2,11 +2,12 @@ package bertw.tronferno
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v4.app.NavUtils
 
 class ExpertActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
-        //super.onBackPressed()
+        NavUtils.navigateUpFromSameTask(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

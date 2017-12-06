@@ -27,7 +27,7 @@ import android.view.MenuItem
 class SettingsActivity : AppCompatPreferenceActivity() {
 
     override fun onBackPressed() {
-        //super.onBackPressed()
+        NavUtils.navigateUpFromSameTask(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
