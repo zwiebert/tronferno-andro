@@ -25,4 +25,11 @@
         android:title="@string/action_expert"
         android:visible="false"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_setEndPos"
+        android:orderInCategory="100"
+        android:title="@string/set_end_pos"
+        android:checkable="true"
+        app:showAsAction="never" />
 </menu>

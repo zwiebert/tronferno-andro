@@ -24,7 +24,7 @@
 
 
     <ListPreference
-        android:defaultValue="180"
+        android:defaultValue="7"
         android:entries="@array/pref_members_titles"
         android:entryValues="@array/pref_members_values"
         android:key="group1_members"
@@ -33,7 +33,7 @@
         android:title="@string/pref_group1_members" />
 
     <ListPreference
-        android:defaultValue="180"
+        android:defaultValue="7"
         android:entries="@array/pref_members_titles"
         android:entryValues="@array/pref_members_values"
         android:key="group2_members"
@@ -42,7 +42,7 @@
         android:title="@string/pref_group2_members" />
 
     <ListPreference
-        android:defaultValue="180"
+        android:defaultValue="7"
         android:entries="@array/pref_members_titles"
         android:entryValues="@array/pref_members_values"
         android:key="group3_members"
@@ -51,7 +51,7 @@
         android:title="@string/pref_group3_members" />
 
     <ListPreference
-        android:defaultValue="180"
+        android:defaultValue="7"
         android:entries="@array/pref_members_titles"
         android:entryValues="@array/pref_members_values"
         android:key="group4_members"
@@ -60,7 +60,7 @@
         android:title="@string/pref_group4_members" />
 
     <ListPreference
-        android:defaultValue="180"
+        android:defaultValue="7"
         android:entries="@array/pref_members_titles"
         android:entryValues="@array/pref_members_values"
         android:key="group5_members"
@@ -69,7 +69,7 @@
         android:title="@string/pref_group5_members" />
 
     <ListPreference
-        android:defaultValue="180"
+        android:defaultValue="7"
         android:entries="@array/pref_members_titles"
         android:entryValues="@array/pref_members_values"
         android:key="group6_members"
@@ -78,12 +78,20 @@
         android:title="@string/pref_group6_members" />
 
     <ListPreference
-        android:defaultValue="180"
+        android:defaultValue="7"
         android:entries="@array/pref_members_titles"
         android:entryValues="@array/pref_members_values"
         android:key="group7_members"
         android:negativeButtonText="@null"
         android:positiveButtonText="@null"
         android:title="@string/pref_group7_members" />
+
+    <MultiSelectListPreference
+        android:entries="@array/pref_members_titles"
+        android:entryValues="@array/pref_members_values"
+        android:key="group8_members"
+        android:persistent="true"
+        android:title="@string/pref_group7_members" />
+
 
 </PreferenceScreen>

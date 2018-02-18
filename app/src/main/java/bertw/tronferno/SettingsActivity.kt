@@ -167,6 +167,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             bindPreferenceSummaryToValue(findPreference("group5_members"))
             bindPreferenceSummaryToValue(findPreference("group6_members"))
             bindPreferenceSummaryToValue(findPreference("group7_members"))
+            //bindPreferenceSummaryToValue(findPreference("group8_members"))
 
         }
 
@@ -207,7 +208,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
                 // using RingtoneManager.
                 if (TextUtils.isEmpty(stringValue)) {
                     // Empty values correspond to 'silent' (no ringtone).
-                    preference.setSummary(R.string.pref_ringtone_silent)
+                   // preference.setSummary(R.string.pref_ringtone_silent)
 
                 } else {
                     val ringtone = RingtoneManager.getRingtone(

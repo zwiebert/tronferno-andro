@@ -14,6 +14,7 @@ import android.text.method.ScrollingMovementMethod
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.Window
 import android.widget.*
 import java.io.BufferedReader
 import java.io.IOException
@@ -72,12 +73,91 @@ class MainActivity : AppCompatActivity() {
     private lateinit var vbtTimer: Button
     private lateinit var vbtSunPos: Button
 
+    private var mode = VIS_NORMAL;
+
+    private fun visibility_mode(mode: Int = VIS_NORMAL) {
+        val iv = View.INVISIBLE
+        val vi = View.VISIBLE
+
+        when(mode) {
+            VIS_NORMAL -> {
+                vcbDailyUp.visibility = vi
+                vcbDailyDown.visibility = vi
+                vcbWeekly.visibility = vi
+                vcbAstro.visibility = vi
+                vcbRandom.visibility = vi
+                vcbSunAuto.visibility = vi
+                vcbRtcOnly.visibility = vi
+                vcbFerId.visibility = vi
+
+                vtvLog.visibility = vi
+                vtvG.visibility = vi
+                vtvE.visibility = vi
+
+                vetDailyUpTime.visibility = vi
+                vetDailyDownTime.visibility = vi
+                vetWeeklyTimer.visibility = vi
+                vetAstroMinuteOffset.visibility = vi
+                vetFerId.visibility = vi
+
+                vbtUp.visibility = vi
+                vbtDown.visibility = vi
+                vbtStop.visibility = vi
+                vbtG.visibility = vi
+                vbtE.visibility = vi
+                vbtTimer.visibility = vi
+                vbtSunPos.visibility = vi
+            }
+
+            VIS_SEP -> {
+                vcbDailyUp.visibility = iv
+                vcbDailyDown.visibility = iv
+                vcbWeekly.visibility = iv
+                vcbAstro.visibility = iv
+                vcbRandom.visibility = iv
+                vcbSunAuto.visibility = iv
+                vcbRtcOnly.visibility = iv
+                vcbFerId.visibility = vi
+
+                vtvLog.visibility = vi
+                vtvG.visibility = vi
+                vtvE.visibility = vi
+
+                vetDailyUpTime.visibility = iv
+                vetDailyDownTime.visibility = iv
+                vetWeeklyTimer.visibility = iv
+                vetAstroMinuteOffset.visibility = iv
+                vetFerId.visibility = vi
+
+                vbtUp.visibility = vi
+                vbtDown.visibility = vi
+                vbtStop.visibility = vi
+                vbtG.visibility = vi
+                vbtE.visibility = vi
+                vbtTimer.visibility = iv
+                vbtSunPos.visibility = iv
+            }
+        }
+    }
 
     private var group = 0
     private var memb = 0
     private var groupMax = 0
     private val membMax = intArrayOf(0, 0, 0, 0, 0, 0, 0, 0)
-    private var waitForSavedTimer = false
+    val membMap = arrayOf(
+            booleanArrayOf(false, false, false, false, false, false, false, false),
+            booleanArrayOf(false, false, false, false, false, false, false, false),
+            booleanArrayOf(false, false, false, false, false, false, false, false),
+            booleanArrayOf(false, false, false, false, false, false, false, false),
+            booleanArrayOf(false, false, false, false, false, false, false, false),
+            booleanArrayOf(false, false, false, false, false, false, false, false),
+            booleanArrayOf(false, false, false, false, false, false, false, false));
+
+
+
+
+
+            private var waitForSavedTimer = false
     private lateinit var alertDialog: AlertDialog
     private lateinit var progressDialog: ProgressDialog
     private var cuasInProgress = false
@@ -141,6 +221,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun set_member_max(m: Int, arr: Set<String>) {
+
+    }
+
+    private fun set_member_max(g: Int, max: Int) {
+        membMax[g] = max; // old
+         for (i in 0..6) {
+           membMap[g-1][i] = i < max;
+        }
+    }
 
     private fun loadPreferences() {
         val pref = PreferenceManager.getDefaultSharedPreferences(applicationContext)
@@ -168,13 +258,13 @@ class MainActivity : AppCompatActivity() {
             membMax[i] = 0
         }
 
-        membMax[1] = Integer.parseInt(pref.getString("group1_members", "7"));
-        membMax[2] = Integer.parseInt(pref.getString("group2_members", "7"));
-        membMax[3] = Integer.parseInt(pref.getString("group3_members", "7"));
-        membMax[4] = Integer.parseInt(pref.getString("group4_members", "7"));
-        membMax[5] = Integer.parseInt(pref.getString("group5_members", "7"));
-        membMax[6] = Integer.parseInt(pref.getString("group6_members", "7"));
-        membMax[7] = Integer.parseInt(pref.getString("group7_members", "7"));
+        set_member_max(1, Integer.parseInt(pref.getString("group1_members", "7")))
+        set_member_max(2, Integer.parseInt(pref.getString("group2_members", "7")))
+        set_member_max(3, Integer.parseInt(pref.getString("group3_members", "7")))
+        set_member_max(4, Integer.parseInt(pref.getString("group4_members", "7")))
+        set_member_max(5, Integer.parseInt(pref.getString("group5_members", "7")))
+        set_member_max(6, Integer.parseInt(pref.getString("group6_members", "7")))
+        set_member_max(7, Integer.parseInt(pref.getString("group7_members", "7")))
 
 
         group = pref.getInt("mGroup", 0);
@@ -275,7 +365,8 @@ class MainActivity : AppCompatActivity() {
         vbtStop = findViewById(R.id.button_stop)
         vbtSunPos = findViewById(R.id.button_sun_pos)
         vbtDown = findViewById(R.id.button_down)
-
+        vbtE = findViewById(R.id.button_e)
+        vbtG = findViewById(R.id.button_g)
 
 
         vcbDailyUp.setOnCheckedChangeListener(onCheckedChanged)
@@ -296,6 +387,7 @@ class MainActivity : AppCompatActivity() {
 
 
         progressDialog = ProgressDialog(this)
+
 
         tcpConnectThread = object : Thread() {
 
@@ -345,12 +437,12 @@ class MainActivity : AppCompatActivity() {
                 try {
                     val br = BufferedReader(InputStreamReader(mTcpSocket.getInputStream()))
                     while (!stopThread && !mTcpSocket.isClosed) {
-                            val line = br.readLine()
-                            if (line == null) {
-                                mMessageHandler.obtainMessage(MSG_TCP_INPUT_EOF, line).sendToTarget()
-                                 return; // EOF
-                             }
-                            mMessageHandler.obtainMessage(MSG_LINE_RECEIVED, line).sendToTarget()
+                        val line = br.readLine()
+                        if (line == null) {
+                            mMessageHandler.obtainMessage(MSG_TCP_INPUT_EOF, line).sendToTarget()
+                            return; // EOF
+                        }
+                        mMessageHandler.obtainMessage(MSG_LINE_RECEIVED, line).sendToTarget()
                     }
                 } catch (e: Exception) {
                     mMessageHandler.obtainMessage(MSG_TCP_INPUT_ERROR, "tcp-rt:error: ${e.toString()}").sendToTarget()
@@ -358,7 +450,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-
 
     }
 
@@ -444,11 +535,11 @@ class MainActivity : AppCompatActivity() {
         if (useWifi)
             stopTcp()
 
-      //  savePreferences()
+        savePreferences()
     }
 
 
-    private class MessageHandler(activity: MainActivity) : Handler() {
+    public class MessageHandler(activity: MainActivity) : Handler() {
         private val mActivity: WeakReference<MainActivity>
 
         init {
@@ -688,12 +779,17 @@ class MainActivity : AppCompatActivity() {
     fun onClick(view: View) {
 
         try {
-            vtvLog.append(String.format("ra: %b, wa: %b, ca: %b\n", tcpReadThread.isAlive, tcpWriteThread.isAlive, tcpConnectThread.isAlive))
+           // vtvLog.append(String.format("ra: %b, wa: %b, ca: %b\n", tcpReadThread.isAlive, tcpWriteThread.isAlive, tcpConnectThread.isAlive))
 
             when (view.id) {
                 R.id.button_stop -> transmit(String.format(sendFmt, getMsgId(), getFerId(), group, memb, "stop"))
-                R.id.button_up -> transmit(String.format(sendFmt, getMsgId(), getFerId(), group, memb, "up"))
-                R.id.button_down -> transmit(String.format(sendFmt, getMsgId(), getFerId(), group, memb, "down"))
+                R.id.button_up -> {
+                    var txMsg =  String.format(if (mode == MODE_SEP) sepFmt else sendFmt, getMsgId(), getFerId(), group, memb, "up");
+                    transmit(txMsg)
+                }
+                R.id.button_down -> {
+                    transmit(String.format(if (mode == MODE_SEP) sepFmt else sendFmt, getMsgId(), getFerId(), group, memb, "down"))
+                }
                 R.id.button_g -> {
                     for (i in 0..7) {
                         group = ++group % 8
@@ -888,6 +984,12 @@ class MainActivity : AppCompatActivity() {
                 showAlertDialog("You now have 60 seconds remaining to press STOP on the transmitter you want to add/remove. Beware: If you press STOP on the central unit, the device will be removed from it. To add it again, you would need the code. If you don't have the code, then you would have to press the physical set-button on the device")
             }
 
+            R.id.action_setEndPos -> {
+                item.isChecked = !item.isChecked
+                visibility_mode(if (item.isChecked) VIS_SEP else VIS_NORMAL)
+                mode = if (item.isChecked) MODE_SEP else MODE_NORMAL
+            }
+
             else -> return super.onOptionsItemSelected(item)
         }
 
@@ -896,6 +998,13 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         internal var msgid = 1
+
+        internal const val MODE_NORMAL = 0
+        internal const val MODE_SEP = 1
+
+        internal const val VIS_NORMAL = 0
+        internal const val VIS_SEP = 1
+        internal const val VIS_XXX = 2
 
         internal const val MSG_DATA_RECEIVED = 0
         internal const val MSG_CUAS_TIME_OUT = 3
@@ -913,6 +1022,7 @@ class MainActivity : AppCompatActivity() {
         internal const val def_weekly = "0700-++++0900-+"
         internal const val def_astro = "0"
         internal const val sendFmt = "send mid=%d a=%x g=%d m=%d c=%s;"
+        internal const val sepFmt = "send mid=%d a=%x g=%d m=%d c=%s SEP;"
         internal const val timerFmt = "timer mid=%d a=%x g=%d m=%d%s;"
         internal const val configFmt = "config mid=%d %s;"
         internal const val timeFormat = "%4d-%02d-%02dT%02d:%02d:%02d"

@@ -16,7 +16,7 @@
 
     <header
         android:fragment="bertw.tronferno.SettingsActivity$DataSyncPreferenceFragment"
-        android:title="@string/pref_header_data_sync" />
+        android:title="@string/pref_header_members" />
 
 
 </preference-headers>
