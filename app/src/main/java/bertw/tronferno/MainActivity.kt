@@ -154,7 +154,55 @@ class MainActivity : AppCompatActivity() {
             booleanArrayOf(false, false, false, false, false, false, false, false));
 
 
+    private fun makeSendString(c : String, mid : Int = 0, a : Int = 0, g : Int = 0, m : Int = 0, sep : Boolean = false ) : String {
+        var s = "send c=" + c;
 
+        if (mid != 0) {
+            s += String.format(" mid=%d", mid)
+        }
+        if (a != 0) {
+            s += String.format(" a=%x", a)
+
+        }
+        if (a == 0 || (a and 0xF00000) == 0x800000) {
+            if (g != 0) {
+                s += String.format(" g=%d", g)
+
+             if (m != 0) {
+                   s += String.format(" m=%d", m)
+             }
+          }   
+        }
+
+        if (sep != false) {
+            s += " SEP"
+        }
+
+        return s + ";"
+    }
+
+    private fun makeTimerString(timer : String, mid : Int = 0, a : Int = 0, g : Int = 0, m : Int = 0) : String {
+        var s = "timer";
+
+        if (mid != 0) {
+            s += String.format(" mid=%d", mid)
+        }
+        if (a != 0) {
+            s += String.format(" a=%x", a)
+
+        }
+        if (a == 0 || (a and 0xF00000) == 0x800000) {
+            if (g != 0) {
+                s += String.format(" g=%d", g)
+                if (m != 0) {
+                    s += String.format(" m=%d", m)
+                }
+            }
+
+        }
+
+        return s + timer + ";"
+    }
 
 
             private var waitForSavedTimer = false
@@ -659,7 +707,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     @Throws(java.io.IOException::class) private fun getSavedTimer(g: Int, m: Int) {
-        transmit(String.format("timer mid=%d g=%d m=%d rs=2;", getMsgId(), g, m))
+        transmit(makeTimerString(timer = " rs=2", mid = getMsgId(), g = g, m = m))
+
         waitForSavedTimer = true
     }
 
@@ -782,14 +831,11 @@ class MainActivity : AppCompatActivity() {
            // vtvLog.append(String.format("ra: %b, wa: %b, ca: %b\n", tcpReadThread.isAlive, tcpWriteThread.isAlive, tcpConnectThread.isAlive))
 
             when (view.id) {
-                R.id.button_stop -> transmit(String.format(sendFmt, getMsgId(), getFerId(), group, memb, "stop"))
-                R.id.button_up -> {
-                    var txMsg =  String.format(if (mode == MODE_SEP) sepFmt else sendFmt, getMsgId(), getFerId(), group, memb, "up");
-                    transmit(txMsg)
-                }
-                R.id.button_down -> {
-                    transmit(String.format(if (mode == MODE_SEP) sepFmt else sendFmt, getMsgId(), getFerId(), group, memb, "down"))
-                }
+                R.id.button_stop -> transmit(makeSendString(c = "stop", mid = getMsgId(), a = getFerId(), g = group, m = memb))
+                R.id.button_up -> transmit(makeSendString(c = "up", mid = getMsgId(), a = getFerId(), g = group, m = memb, sep = (mode == MODE_SEP)))
+
+
+                R.id.button_down -> transmit(makeSendString(c = "down", mid = getMsgId(), a = getFerId(), g = group, m = memb, sep = (mode == MODE_SEP)))
                 R.id.button_g -> {
                     for (i in 0..7) {
                         group = ++group % 8
@@ -809,7 +855,7 @@ class MainActivity : AppCompatActivity() {
                     vtvE.text = if (group == 0) "" else if (memb == 0) "A" else memb.toString()
                     getSavedTimer(group, memb)
                 }
-                R.id.button_sun_pos -> transmit(String.format(sendFmt, getMsgId(), getFerId(), group, memb, "sun-down"))
+                R.id.button_sun_pos -> transmit(makeSendString(c = "sun-down", mid = getMsgId(), a = getFerId(), g = group, m = memb))
 
                 R.id.button_timer -> {
                     val upTime = vetDailyUpTime.text.toString()
@@ -859,7 +905,7 @@ class MainActivity : AppCompatActivity() {
                     // timer = upTime.substring(0,2);
 
 
-                    transmit(String.format(timerFmt, getMsgId(), getFerId(), group, memb, timer))
+                    transmit(makeTimerString(timer = timer, mid = getMsgId(), a = getFerId(), g = group, m = memb))
                     if (!rtcOnly) {
                         enableSend(false, 5)
                     }
@@ -980,7 +1026,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             R.id.action_setFunc -> {
-                transmit(String.format(sendFmt, getMsgId(), getFerId(), group, memb, "set"))
+                transmit(makeSendString(c = "set", mid = getMsgId(), a = getFerId(), g = group, m = memb))
                 showAlertDialog("You now have 60 seconds remaining to press STOP on the transmitter you want to add/remove. Beware: If you press STOP on the central unit, the device will be removed from it. To add it again, you would need the code. If you don't have the code, then you would have to press the physical set-button on the device")
             }
 
@@ -1021,9 +1067,6 @@ class MainActivity : AppCompatActivity() {
         internal const val def_dailyDown = "19:30"
         internal const val def_weekly = "0700-++++0900-+"
         internal const val def_astro = "0"
-        internal const val sendFmt = "send mid=%d a=%x g=%d m=%d c=%s;"
-        internal const val sepFmt = "send mid=%d a=%x g=%d m=%d c=%s SEP;"
-        internal const val timerFmt = "timer mid=%d a=%x g=%d m=%d%s;"
         internal const val configFmt = "config mid=%d %s;"
         internal const val timeFormat = "%4d-%02d-%02dT%02d:%02d:%02d"
     }
