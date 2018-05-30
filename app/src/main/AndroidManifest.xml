@@ -35,22 +35,6 @@
                 android:value="bertw.tronferno.MainActivity" />
         </activity>
         <activity
-            android:name=".ExpertActivity"
-            android:parentActivityName=".MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="bertw.tronferno.MainActivity" />
-        </activity>
-        <activity
-            android:name=".McuCfgActivity"
-            android:label="@string/title_activity_mcu_cfg"
-            android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="bertw.tronferno.MainActivity" />
-        </activity>
-        <activity
             android:name=".McuConfigActivity"
             android:label="@string/title_activity_mcu_config"
             android:parentActivityName=".MainActivity"

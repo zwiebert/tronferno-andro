@@ -896,10 +896,6 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
             }
 
-            R.id.action_expert -> {
-                val intent = Intent(this, ExpertActivity::class.java)
-                startActivity(intent)
-            }
 
             R.id.action_cuAutoSet -> {
                 transmit(String.format(configFmt, getMsgId(), "cu=auto"))
