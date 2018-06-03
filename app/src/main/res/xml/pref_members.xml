@@ -85,13 +85,13 @@
         android:negativeButtonText="@null"
         android:positiveButtonText="@null"
         android:title="@string/pref_group7_members" />
-
+<!--
     <MultiSelectListPreference
         android:entries="@array/pref_members_titles"
         android:entryValues="@array/pref_members_values"
         android:key="group8_members"
         android:persistent="true"
         android:title="@string/pref_group7_members" />
-
+-->
 
 </PreferenceScreen>

@@ -101,6 +101,9 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             bindPreferenceSummaryToValue(findPreference("geo_time_zone"))
             bindPreferenceSummaryToValue(findPreference("wlan_ssid"))
             bindPreferenceSummaryToValue(findPreference("cli_verbosity"))
+            bindPreferenceSummaryToValue(findPreference("time_dst"))
+
+            MainActivity.mcuConfig_changed = true
 
             //bindPreferenceSummaryToValue(findPreference("example_text"))
             //bindPreferenceSummaryToValue(findPreference("example_list"))

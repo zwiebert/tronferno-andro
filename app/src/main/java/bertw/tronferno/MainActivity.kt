@@ -494,6 +494,13 @@ class MainActivity : AppCompatActivity() {
                 McuTcp.MSG_TCP_CONNECTED -> {
                     ma.enableSendButtons(true, 0)
                     ma.vtvLog.append("tcp connected\n")
+
+                    if (mcuConfig_changed) {
+                        mcuConfig_changed = false
+                        ma.configureMcu()
+                    }
+
+                    ma.tcp.transmit("config longitude=? latitude=? time-zone=? dst=? wlan-ssid=? baud=? verbose=? dst=?;")
                 }
 
                 McuTcp.MSG_TCP_CONNECTION_FAILED -> {
@@ -513,7 +520,7 @@ class MainActivity : AppCompatActivity() {
                     ma.messagePending = 0;  // FIXME: check msgid?
 
                     if (s.contains("rs=data")) {
-                        ma.parseReceivedData(s)
+                        ma.parseReceivedTimer(s)
                     }
                     if (ma.progressDialog.isShowing && ma.cuasInProgress) {
                         if (s.contains(":cuas=ok:")) {
@@ -526,7 +533,9 @@ class MainActivity : AppCompatActivity() {
                             ma.showAlertDialog("Time-Out. Please try again.")
                         }
                     }
-
+                    if (s.startsWith("config ")) {
+                        ma.parseReceivedConfig(s)
+                    }
 
                 } catch (e: Exception) {
                     ma.vtvLog.append("MLR:error: " + e.toString() + "\n")
@@ -593,7 +602,7 @@ class MainActivity : AppCompatActivity() {
         waitForSavedTimer = true
     }
 
-    internal fun parseReceivedData(s: String) {
+    internal fun parseReceivedTimer(s: String) {
         var s = s
         try {
             s = s.substring(s.indexOf(":rs=data: "))
@@ -688,6 +697,64 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    fun saveMcuPreferecence () {
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        val ed = sharedPreferences.edit()
+
+
+       for(i in 0..mcuCfg_prefKeys.size - 1) {
+           ed.putString(mcuCfg_prefKeys[i], mcuCfg_prefVals[i])
+           ed.putString(mcuCfg_prefKeys[i] + "_old", mcuCfg_prefVals[i])
+       }
+
+        ed.apply()
+
+    }
+
+    val mcuCfg_prefKeys = arrayOf("geo_latitude", "geo_longitude", "geo_time_zone", "wlan_ssid", "serial_baud", "cli_verbosity", "time_dst")
+    val mcuCfg_mcuKeys = arrayOf("latitude", "longitude", "time-zone", "wlan-ssid", "baud", "verbose", "dst")
+    var mcuCfg_prefVals = arrayOf("","","","","","", "");
+
+
+    fun configureMcu() {
+        val pref = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        for(i in 0..mcuCfg_prefKeys.size - 1) {
+            val pv = pref.getString(mcuCfg_prefKeys[i], "")
+            val pv_old = pref.getString(mcuCfg_prefKeys[i] + "_old", "")
+            val mk = mcuCfg_mcuKeys[i]
+
+            if (pv != pv_old) {
+                tcp.transmit("config " + mk + "=" + pv + ";")
+            }
+        }
+
+    }
+
+    fun parseReceivedConfig(line: String) {
+
+        if (line.startsWith("config ")) {
+
+            var s = line.substringAfter("config ")
+            while (s.contains('=')) {
+                val k = s.substringBefore('=')
+                val v = s.substringAfter('=').substringBefore(';').substringBefore(' ')
+                s = s.substringAfter(' ', ";")
+
+               // listAdapter.add(k + "=" + v)
+                for(i in 0..mcuCfg_prefKeys.size - 1) {
+                    if (mcuCfg_mcuKeys[i] == k) {
+                        mcuCfg_prefVals[i] = v
+                    }
+                }
+
+               // vtvLog.append("key: " + k + "\nval: " + v + "\n")
+
+            }
+            saveMcuPreferecence()
+            vtvLog.append("mcuconfig saved\n")
+        }
+    }
+
     private fun getMsgId(): Int {
         return ++msgid
     }
@@ -714,9 +781,8 @@ class MainActivity : AppCompatActivity() {
             when (view.id) {
                 R.id.button_stop -> transmit(makeSendString(c = "stop", mid = getMsgId(), a = getFerId(), g = group, m = memb))
                 R.id.button_up -> transmit(makeSendString(c = "up", mid = getMsgId(), a = getFerId(), g = group, m = memb, sep = (mode == MODE_SEP)))
-
-
                 R.id.button_down -> transmit(makeSendString(c = "down", mid = getMsgId(), a = getFerId(), g = group, m = memb, sep = (mode == MODE_SEP)))
+
                 R.id.button_g -> {
                     for (i in 0..7) {
                         group = ++group % 8
@@ -736,6 +802,7 @@ class MainActivity : AppCompatActivity() {
                     vtvE.text = if (group == 0) "" else if (memb == 0) "A" else memb.toString()
                     getSavedTimer(group, memb)
                 }
+
                 R.id.button_sun_pos -> transmit(makeSendString(c = "sun-down", mid = getMsgId(), a = getFerId(), g = group, m = memb))
 
                 R.id.button_timer -> {
@@ -944,6 +1011,8 @@ class MainActivity : AppCompatActivity() {
         internal const val def_astro = "0"
         internal const val configFmt = "config mid=%d %s;"
         internal const val timeFormat = "%4d-%02d-%02dT%02d:%02d:%02d"
+
+        var mcuConfig_changed = false;
     }
 
 

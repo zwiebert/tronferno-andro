@@ -24,7 +24,7 @@
     <string name="cuas">Main Controller Auto Set</string>
     <string name="set_function">Set Function</string>
     <string name="set_end_pos">Set End Position</string>
-    <string name="open_mcu_cfg">Configure MCU</string>
+    <string name="open_mcu_cfg">experimental</string>
 
 
     <string name="pref_members">Members</string>
@@ -101,6 +101,17 @@
         <item>5</item>
     </string-array>
 
+
+    <string-array name="pref_mcu_dst_list_titles">
+        <item>off</item>
+        <item>on</item>
+        <item>auto: Europe</item>
+    </string-array>
+    <string-array name="pref_mcu_dst_list_values">
+        <item>0</item>
+        <item>1</item>
+        <item>eu</item>
+    </string-array>
 
     <!-- Example settings for Data & Sync -->
     <string name="pref_header_members">Groups and Members</string>

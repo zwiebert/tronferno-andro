@@ -1,18 +1,17 @@
 # tronferno-andro
-Experimental Android GUI for [tronferno-mcu](https://github.com/zwiebert/tronferno-mcu)
-
-This is work in progress.  Its not fully implemented yet and I did not waste too much time on the GUI design.
+Android GUI for [tronferno-mcu](https://github.com/zwiebert/tronferno-mcu)
 
 
-### What it can do already
+### What it can do
 
 * open and close shutters  (mcu command send)
 * change the built-in timers (mcu command timer)
 * show the current timers for each shutter (mcu timer option rs=2)
 * scan the ID of the original 2411 (mcu config option cu=auto)
 * send commands using the code written on the motor or the cable sticker
+* set shutter upper and lower limit
 
 ### Things to add or change 
 
-* more intuitive preference settings
+* configure MCU via GUI
 * ...
