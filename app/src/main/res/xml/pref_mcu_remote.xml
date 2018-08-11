@@ -10,7 +10,7 @@
     <!-- NOTE: EditTextPreference accepts EditText attributes. -->
     <!-- NOTE: EditTextPreference's summary should be set to its value by the activity code. -->
     <EditTextPreference
-        android:inputType="number"
+        android:inputType="numberDecimal"
         android:numeric="integer"
         android:key="serial_baud"
         android:maxLines="1"
@@ -19,7 +19,7 @@
         android:title="Serial port baud rate" />
 
     <EditTextPreference
-        android:inputType="number"
+        android:inputType="numberSigned"
         android:key="geo_latitude"
         android:maxLines="1"
         android:selectAllOnFocus="true"
@@ -27,7 +27,7 @@
         android:title="Latitude" />
 
     <EditTextPreference
-        android:inputType="number"
+        android:inputType="numberSigned"
         android:key="geo_longitude"
         android:maxLines="1"
         android:selectAllOnFocus="true"
@@ -35,7 +35,7 @@
         android:title="Longitude" />
 
     <EditTextPreference
-        android:inputType="number"
+        android:inputType="numberSigned"
         android:key="geo_time_zone"
         android:maxLines="1"
         android:selectAllOnFocus="true"
