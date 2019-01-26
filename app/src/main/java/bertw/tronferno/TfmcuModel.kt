@@ -4,18 +4,51 @@ import java.io.IOException
 import java.lang.ref.WeakReference
 import java.util.regex.Pattern
 
+
 class TfmcuTimerData {
     var g = 0
     var m = 0
-    var sunAuto = 0
-    var random = 0
-    var astro = 0
+    var sunAuto = false
+    var random = false
     var daily = ""
     var weekly = ""
     var hasAstro = false
+    var astro = 0
     var dailyUp = ""
     var dailyDown = ""
+    var rtcOnly = false
+
+    override fun toString() : String {
+        var timer = ""
+
+        if (rtcOnly) {
+            return "rtc-only=1"
+        }
+
+        if (hasAstro) {
+            timer += " astro=" + astro.toString()
+        }
+
+        if (daily.isNotEmpty()) {
+            timer += " daily=" + daily
+        }
+
+        if (weekly.isNotEmpty()) {
+            timer += " weekly=" + weekly
+        }
+
+        if (sunAuto) {
+            timer += " sun-auto=1"
+        }
+
+        if (random) {
+            timer += " random=1"
+        }
+
+        return timer
+    }
 }
+
 
 class TfmcuModel(activity: MainActivity) {
 
@@ -37,6 +70,11 @@ class TfmcuModel(activity: MainActivity) {
 
     fun transmitTimer(timer: String, mid: Int = 0, a: Int = 0, g: Int = 0, m: Int = 0): Boolean {
         val s = makeTimerString(timer, mid, a, g, m)
+        return transmit(s)
+    }
+
+    fun transmitTimer(timer: TfmcuTimerData, mid: Int = 0, a: Int = 0, g: Int = 0, m: Int = 0): Boolean {
+        val s = makeTimerString(timer.toString(), mid, a, g, m)
         return transmit(s)
     }
 
@@ -109,7 +147,7 @@ class TfmcuModel(activity: MainActivity) {
 
         }
 
-        return s + timer + ";"
+        return s + " " + timer + ";"
     }
 
     fun getMsgId(): Int {
@@ -248,10 +286,11 @@ class TfmcuModel(activity: MainActivity) {
                         when (key) {
                             "g" -> td.g = value.toInt()
                             "m" -> td.m = value.toInt()
-                            "sun-auto" -> td.sunAuto = value.toInt()
-                            "random" -> td.random = value.toInt()
+                            "sun-auto" -> td.sunAuto = value != "0"
+                            "random" -> td.random = value != "0"
                             "astro" -> {
-                                td.hasAstro = true; td.astro = value.toInt()
+                                td.hasAstro = true
+                                td.astro = value.toInt()
                             }
                             "daily" -> td.daily = value
                             "weekly" -> td.weekly = value
@@ -260,8 +299,8 @@ class TfmcuModel(activity: MainActivity) {
 
                     } else {
                         when (i) {
-                            "sun-auto" -> td.sunAuto = 1
-                            "random" -> td.random = 1
+                            "sun-auto" -> td.sunAuto
+                            "random" -> td.random
                             "astro" -> {
                                 td.hasAstro = true; td.astro = 0
                             }

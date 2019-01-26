@@ -16,11 +16,8 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import kotlinx.android.synthetic.main.content_main.*
-import java.io.IOException
 import java.lang.ref.WeakReference
 import java.net.InetSocketAddress
-import java.text.SimpleDateFormat
-import java.util.*
 
 const val DEFAULT_TCP_HOSTNAME = "fernotron.fritz.box."
 const val DEFAULT_TCP_PORT = 7777
@@ -40,6 +37,7 @@ class MainActivity : AppCompatActivity() {
     public val mMessageHandler = MessageHandler(this)
     private var tfmcuModel = TfmcuModel(this);
     public var tcp = tfmcuModel.tcp //FIXME
+    val pr = TfmcuPresenter(tfmcuModel)
 
 
     private lateinit var vcbDailyUp: CheckBox
@@ -524,26 +522,14 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    @Throws(IOException::class)
-    private fun ferSendTime() {
-        val c = Calendar.getInstance()
 
-        val sd = SimpleDateFormat("yyyy-MM-dd", Locale.US).format(c.time)
-        val st = SimpleDateFormat("HH:mm:ss", Locale.US).format(c.time)
-
-
-        val cmd = String.format("config rtc=%sT%s;", sd, st)
-        vtvLog.append(cmd + "\n")
-        transmit(cmd)
-
-    }
 
 
     internal fun parseReceivedTimer(s: String) {
         var td = tfmcuModel.parseReceivedTimer(s)
 
-        vcbSunAuto.isChecked = td.sunAuto == 1
-        vcbRandom.isChecked = td.random == 1
+        vcbSunAuto.isChecked = td.sunAuto
+        vcbRandom.isChecked = td.random
         vcbWeekly.isChecked = !td.weekly.isEmpty()
         vcbAstro.isChecked = td.hasAstro
         vetWeeklyTimer.setText(td.weekly)
@@ -668,57 +654,48 @@ class MainActivity : AppCompatActivity() {
                 R.id.button_sun_pos -> (tfmcuModel.transmitSend(c = "sun-down", mid = MSG_ID_AUTO, a = getFerId(), g = group, m = memb))
 
                 R.id.button_timer -> {
-                    val upTime = vetDailyUpTime.text.toString()
-                    val downTime = vetDailyDownTime.text.toString()
-                    val astroOffset = vetAstroMinuteOffset.text.toString()
-
-                    var timer = ""
 
                     val rtcOnly = vcbRtcOnly.isChecked
 
+                    pr.timerClear()
+
                     if (rtcOnly) {
-                        timer += " rtc-only"
+                        pr.td.rtcOnly = true
+                        pr.timerSend()
                     } else {
+
+
                         val dailyUpChecked = vcbDailyUp.isChecked
                         val dailyDownChecked = vcbDailyDown.isChecked
-                        val weeklyChecked = vcbWeekly.isChecked
-
                         if (dailyUpChecked || dailyDownChecked) {
-                            timer += " daily="
-                            timer += if (dailyUpChecked) upTime.substring(0, 2) + upTime.substring(3, 5) else "-"
-                            timer += if (dailyDownChecked) downTime.substring(0, 2) + downTime.substring(3, 5) else "-"
+                            val upTime = vetDailyUpTime.text.toString()
+                            val downTime = vetDailyDownTime.text.toString()
+                            pr.td.daily += if (dailyUpChecked) upTime.substring(0, 2) + upTime.substring(3, 5) else "-"
+                            pr.td.daily += if (dailyDownChecked) downTime.substring(0, 2) + downTime.substring(3, 5) else "-"
                         }
 
                         if (vcbAstro.isChecked) {
-                            timer += " astro=$astroOffset"
+                            pr.td.astro = vetAstroMinuteOffset.text.toString().toInt()
                         }
 
-                        if (weeklyChecked) {
-                            val weeklyTimer = vetWeeklyTimer.text.toString()
-
-                            timer += " weekly="
-                            timer += weeklyTimer
+                        if (vcbWeekly.isChecked) {
+                            pr.td.weekly = vetWeeklyTimer.text.toString()
                         }
 
                     }
 
 
-                    if (vcbSunAuto.isChecked) {
-                        timer += " sun-auto"
-                    }
+                    pr.td.sunAuto = vcbSunAuto.isChecked
+                    pr.td.random = vcbRandom.isChecked
 
-                    if (vcbRandom.isChecked) {
-                        timer += " random"
-                    }
+                    pr.td.g = group
+                    pr.td.m = memb
 
+                    pr.timerSend()
 
-                    // timer = upTime.substring(0,2);
+                    // disable buttons while sending timer data which takes 5 seconds
+                    enableSendButtons(false, 5)
 
-
-                    (tfmcuModel.transmitTimer(timer = timer, mid = MSG_ID_AUTO, a = getFerId(), g = group, m = memb))
-                    if (!rtcOnly) {
-                        enableSendButtons(false, 5)
-                    }
                 }
             }
 
