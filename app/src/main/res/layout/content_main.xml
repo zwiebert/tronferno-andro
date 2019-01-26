@@ -419,21 +419,34 @@
         android:id="@+id/editText_ferID"
         android:layout_width="102dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:digits="0123456789ABCDEF"
         android:ems="10"
         android:enabled="false"
-        android:digits="0123456789ABCDEF"
         android:inputType="textCapCharacters"
         android:maxLength="6"
         android:text="90ABCD"
         app:layout_constraintBottom_toBottomOf="@+id/checkBox_ferID"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/editText_shutterPos"
         app:layout_constraintHorizontal_bias="0.099"
         app:layout_constraintStart_toEndOf="@+id/checkBox_ferID"
         app:layout_constraintTop_toTopOf="@+id/checkBox_ferID"
         app:layout_constraintVertical_bias="0.842" />
+
+    <EditText
+        android:id="@+id/editText_shutterPos"
+        android:layout_width="167dp"
+        android:layout_height="41dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:ems="10"
+        android:inputType="number"
+        app:layout_constraintBottom_toBottomOf="@+id/editText_ferID"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/editText_ferID" />
 
 
 </android.support.constraint.ConstraintLayout>
