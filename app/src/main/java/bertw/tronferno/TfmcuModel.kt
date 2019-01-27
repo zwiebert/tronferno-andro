@@ -15,7 +15,7 @@ class TfmcuSendData(a: Int = 0, g: Int = 0, m: Int = 0, cmd: String = "", sep: B
         var s = "send"
 
         if (a != 0) {
-            s += " a=" + String.format(" a=%x", a)
+            s += String.format(" a=%x", a)
         }
 
         if (a == 0 || (a and 0xF00000) == 0x800000) {
