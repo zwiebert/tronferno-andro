@@ -1,28 +1,83 @@
 package bertw.tronferno
 
+import android.os.Handler
 import java.io.IOException
-import java.lang.ref.WeakReference
 import java.util.regex.Pattern
 
+class TfmcuSendData(a: Int = 0, g: Int = 0, m: Int = 0, cmd: String = "", sep: Boolean = false) {
+    var a = a
+    var g = g
+    var m = m
+    var cmd = cmd
+    var sep = sep
 
-class TfmcuTimerData {
-    var g = 0
-    var m = 0
+    override fun toString(): String {
+        var s = "send"
+
+        if (a != 0) {
+            s += " a=" + String.format(" a=%x", a)
+        }
+
+        if (a == 0 || (a and 0xF00000) == 0x800000) {
+            if (g != 0) {
+                s += " g=" + g.toString()
+            }
+            if (m != 0) {
+                s += " m=" + m.toString()
+            }
+        }
+
+        if (cmd.isNotEmpty()) {
+            s += " c=$cmd"
+        }
+
+        if (sep && (cmd == CMD_UP || cmd == CMD_DOWN)) {
+            s += " SEP"
+        }
+
+        return s
+    }
+
+    companion object {
+        const val CMD_UP = "up"
+        const val CMD_DOWN = "down"
+        const val CMD_STOP = "stop"
+        const val CMD_SET = "set"
+    }
+}
+
+class TfmcuTimerData(a: Int = 0, g: Int = 0, m: Int = 0) {
+    var a = a
+    var g = g
+    var m = m
     var sunAuto = false
     var random = false
     var daily = ""
     var weekly = ""
     var hasAstro = false
     var astro = 0
-    var dailyUp = ""
-    var dailyDown = ""
-    var rtcOnly = false
+     var rtcOnly = false
+    var rs = 0;
 
-    override fun toString() : String {
-        var timer = ""
+    override fun toString(): String {
+        var timer = "timer"
+
+        if (a != 0) {
+            timer += " a=" + String.format(" a=%x", a)
+        }
+
+        if (a == 0 || (a and 0xF00000) == 0x800000) {
+            if (g != 0) {
+                timer += " g=" + g.toString()
+            }
+            if (m != 0) {
+                timer += " m=" + m.toString()
+            }
+        }
 
         if (rtcOnly) {
-            return "rtc-only=1"
+            timer += " rtc-only=1"
+            return timer
         }
 
         if (hasAstro) {
@@ -50,59 +105,30 @@ class TfmcuTimerData {
 }
 
 
-class TfmcuModel(activity: MainActivity) {
-
-    var ma = WeakReference(activity)
-    var tcp = McuTcp(activity.mMessageHandler)
+class TfmcuModel(msgHandler: Handler) {
+    var tcp = McuTcp(msgHandler)
     var messagePending = 0
 
     @Throws(IOException::class)
     fun transmit(s: String): Boolean {
-        ma.get()?.logWriteLine("transmit: " + s)
+        //FIXME: ma.get()?.logWriteLine("transmit: " + s)
         return tcpSocketTransmit(s)
     }
 
-
-    fun transmitSend(c: String, mid: Int = 0, a: Int = 0, g: Int = 0, m: Int = 0, sep: Boolean = false): Boolean {
-        val s = makeSendString(c, mid, a, g, m, sep)
+    fun transmitSend(cmd: TfmcuSendData, sep: Boolean = false): Boolean {
+        val s = cmd.toString() + ";"
         return transmit(s)
     }
 
-    fun transmitTimer(timer: String, mid: Int = 0, a: Int = 0, g: Int = 0, m: Int = 0): Boolean {
-        val s = makeTimerString(timer, mid, a, g, m)
-        return transmit(s)
-    }
+    fun transmitTimer(timer: TfmcuTimerData, mid: Int = 0): Boolean {
 
-    fun transmitTimer(timer: TfmcuTimerData, mid: Int = 0, a: Int = 0, g: Int = 0, m: Int = 0): Boolean {
-        val s = makeTimerString(timer.toString(), mid, a, g, m)
-        return transmit(s)
-    }
-
-    private fun makeSendString(c: String, mid: Int = 0, a: Int = 0, g: Int = 0, m: Int = 0, sep: Boolean = false): String {
-        var s = "send c=" + c;
+        var s = timer.toString()
 
         if (mid != 0) {
-            s += String.format(" mid=%d", mid)
-        }
-        if (a != 0) {
-            s += String.format(" a=%x", a)
-
-        }
-        if (a == 0 || (a and 0xF00000) == 0x800000) {
-            if (g != 0) {
-                s += String.format(" g=%d", g)
-
-                if (m != 0) {
-                    s += String.format(" m=%d", m)
-                }
-            }
+            s += String.format(" mid=%d", if (mid == -1) getMsgId() else mid)
         }
 
-        if (sep != false) {
-            s += " SEP"
-        }
-
-        return s + ";"
+        return transmit("$s;")
     }
 
     private fun tcpSocketTransmit(s: String): Boolean {
@@ -110,53 +136,24 @@ class TfmcuModel(activity: MainActivity) {
         if (messagePending != 0 || !tcp.isConnected) {
             if (!tcp.isConnecting) {
                 tcp.reconnect()
-                ma.get()?.logWriteLine("tcp: try to reconnect...")
+                //FIXME: ma.get()?.logWriteLine("tcp: try to reconnect...")
             }
             messagePending = 0
             return false
         }
 
-        messagePending = MainActivity.msgid
+        messagePending = msgid
         tcp.transmit(s)
         return true
     }
 
-    private fun makeTimerString(timer: String, mid: Int = 0, a: Int = 0, g: Int = 0, m: Int = 0): String {
-        var s = "timer";
-        var mid = mid
-
-        if (mid == -1) {
-            mid = getMsgId();
-        }
-
-        if (mid != 0) {
-            s += String.format(" mid=%d", mid)
-        }
-
-        if (a != 0) {
-            s += String.format(" a=%x", a)
-
-        }
-        if (a == 0 || (a and 0xF00000) == 0x800000) {
-            if (g != 0) {
-                s += String.format(" g=%d", g)
-                if (m != 0) {
-                    s += String.format(" m=%d", m)
-                }
-            }
-
-        }
-
-        return s + " " + timer + ";"
-    }
-
     fun getMsgId(): Int {
-        return ++MainActivity.msgid
+        return ++msgid
     }
 
     @Throws(java.io.IOException::class)
     fun getSavedTimer(g: Int, m: Int) {
-        transmit(makeTimerString(timer = " rs=2", mid = getMsgId(), g = g, m = m) + "mcu cs=?;" + makeSendString(g = g, m = m, c = "?"))
+        transmit("timer g=$g m=$m rs=2;mcu cs=?;send g=$g m=$m c=?;")
     }
 
 
@@ -308,24 +305,15 @@ class TfmcuModel(activity: MainActivity) {
                     }
                 }
             }
-
-
-
-
-            if (!td.daily.startsWith("-")) {
-                td.dailyUp = td.daily.substring(0, 2) + ":" + td.daily.substring(2, 4)
-                td.daily = td.daily.substring(4)
-            } else {
-                td.daily = td.daily.substring(1)
-            }
-
-            if (!td.daily.startsWith("-")) {
-                td.dailyDown = td.daily.substring(0, 2) + ":" + td.daily.substring(2, 4)
-            }
-
-
         } catch (e: Exception) {
         }
         return td;
+    }
+
+
+    companion object {
+        internal var msgid = 1
+        internal const val MSG_ID_NONE = 0
+        internal const val MSG_ID_AUTO = -1
     }
 }

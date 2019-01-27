@@ -75,21 +75,6 @@
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintRight_creator="1" />
 
-    <CheckBox
-        android:id="@+id/checkBox_rtc_only"
-        android:layout_width="76dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:onClick="onCheckedClick"
-        android:text="@string/rtc"
-        app:layout_constraintBottom_toBottomOf="@+id/checkBox_sun_auto"
-        app:layout_constraintStart_toEndOf="@+id/checkBox_sun_auto"
-        app:layout_constraintTop_toTopOf="@+id/checkBox_sun_auto"
-        app:layout_constraintVertical_bias="1.0"
-        tools:layout_constraintBaseline_creator="1"
-        tools:layout_constraintLeft_creator="1"
-        tools:layout_constraintRight_creator="1" />
-
 
     <EditText
         android:id="@+id/editText_dailyUpTime"
@@ -376,17 +361,17 @@
         android:id="@+id/barrier"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="219dp"
-        android:layout_marginEnd="383dp"
         android:layout_marginTop="291dp"
+        android:layout_marginEnd="383dp"
+        android:layout_marginRight="383dp"
+        android:layout_marginBottom="219dp"
         app:barrierDirection="top"
         app:constraint_referenced_ids="textView_e,button_g,button_e,button_up,button_stop,button_down,textView_g,button_sun_pos,button_timer"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0"
-        android:layout_marginRight="383dp" />
+        app:layout_constraintVertical_bias="1.0" />
 
     <EditText
         android:id="@+id/editText_weeklyTimer"

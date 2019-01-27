@@ -35,9 +35,8 @@ fun <T : Comparable<T>> max(a: T, b: T): T {
 class MainActivity : AppCompatActivity() {
 
     public val mMessageHandler = MessageHandler(this)
-    private var tfmcuModel = TfmcuModel(this);
-    public var tcp = tfmcuModel.tcp //FIXME
-    val pr = TfmcuPresenter(tfmcuModel)
+    val pr = TfmcuPresenter(mMessageHandler)
+    //val tfmcuModel = pr.model
 
 
     private lateinit var vcbDailyUp: CheckBox
@@ -46,7 +45,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var vcbAstro: CheckBox
     private lateinit var vcbRandom: CheckBox
     private lateinit var vcbSunAuto: CheckBox
-    private lateinit var vcbRtcOnly: CheckBox
     private lateinit var vcbFerId: CheckBox
 
     private lateinit var vtvLog: TextView
@@ -73,7 +71,7 @@ class MainActivity : AppCompatActivity() {
         val iv = View.INVISIBLE
         val vi = View.VISIBLE
 
-        when(mode) {
+        when (mode) {
             VIS_NORMAL -> {
                 vcbDailyUp.visibility = vi
                 vcbDailyDown.visibility = vi
@@ -81,7 +79,6 @@ class MainActivity : AppCompatActivity() {
                 vcbAstro.visibility = vi
                 vcbRandom.visibility = vi
                 vcbSunAuto.visibility = vi
-                vcbRtcOnly.visibility = vi
                 vcbFerId.visibility = vi
 
                 vtvLog.visibility = vi
@@ -110,7 +107,6 @@ class MainActivity : AppCompatActivity() {
                 vcbAstro.visibility = iv
                 vcbRandom.visibility = iv
                 vcbSunAuto.visibility = iv
-                vcbRtcOnly.visibility = iv
                 vcbFerId.visibility = vi
 
                 vtvLog.visibility = vi
@@ -149,38 +145,22 @@ class MainActivity : AppCompatActivity() {
             booleanArrayOf(false, false, false, false, false, false, false, false));
 
 
-
     private lateinit var alertDialog: AlertDialog
     private lateinit var progressDialog: ProgressDialog
     private var cuasInProgress = false
     private var mMenu: Menu? = null
 
 
-
     private val onCheckedChanged = CompoundButton.OnCheckedChangeListener { button, isChecked ->
         when (button.id) {
 
-            R.id.checkBox_rtc_only -> {
-
-                vcbDailyUp.isEnabled = !isChecked
-                vcbDailyDown.isEnabled = !isChecked
-                vcbWeekly.isEnabled = !isChecked
-                vcbAstro.isEnabled = !isChecked
-                vetDailyUpTime.isEnabled = !isChecked && vcbDailyUp.isChecked
-                vetDailyDownTime.isEnabled = !isChecked && vcbDailyDown.isChecked
-                vetWeeklyTimer.isEnabled = !isChecked && vcbWeekly.isChecked
-                vetAstroMinuteOffset.isEnabled = !isChecked && vcbAstro.isChecked
-                vcbRandom.isEnabled = !isChecked
-                vcbSunAuto.isEnabled = !isChecked
-            }
-
             R.id.checkBox_daily_up -> {
-                vetDailyUpTime.isEnabled = isChecked && !vcbRtcOnly.isChecked
+                vetDailyUpTime.isEnabled = isChecked
                 if (!isChecked) vetDailyUpTime.setText("")
             }
 
             R.id.checkBox_daily_down -> {
-                vetDailyDownTime.isEnabled = isChecked && !vcbRtcOnly.isChecked
+                vetDailyDownTime.isEnabled = isChecked
                 if (!isChecked) vetDailyDownTime.setText("")
             }
 
@@ -190,7 +170,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             R.id.checkBox_astro -> {
-                vetAstroMinuteOffset.isEnabled = isChecked && !vcbRtcOnly.isChecked
+                vetAstroMinuteOffset.isEnabled = isChecked
                 if (!isChecked) vetAstroMinuteOffset.setText("")
             }
 
@@ -208,8 +188,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun set_member_max(g: Int, max: Int) {
         membMax[g] = max; // old
-         for (i in 0..6) {
-           membMap[g-1][i] = i < max;
+        for (i in 0..6) {
+            membMap[g - 1][i] = i < max;
         }
     }
 
@@ -251,7 +231,6 @@ class MainActivity : AppCompatActivity() {
         group = pref.getInt("mGroup", 0);
         memb = pref.getInt("mMemb", 0);
 
-        vcbRtcOnly.isChecked = pref.getBoolean("vcbRtcOnlyIsChecked", false)
         vcbFerId.isChecked = pref.getBoolean("vcbFerIdIsChecked", false)
 
         vcbDailyUp.isChecked = pref.getBoolean("vcbDailyUpIsChecked", false)
@@ -280,7 +259,6 @@ class MainActivity : AppCompatActivity() {
         ed.putInt("mGroup", group);
         ed.putInt("mMemb", memb);
 
-        ed.putBoolean("vcbRtcOnlyIsChecked", vcbRtcOnly.isChecked)
         ed.putBoolean("vcbFerIdIsChecked", vcbFerId.isChecked)
         ed.putBoolean("vcbDailyUpIsChecked", vcbDailyUp.isChecked)
         ed.putBoolean("vcbDailyDownIsChecked", vcbDailyDown.isChecked)
@@ -328,7 +306,6 @@ class MainActivity : AppCompatActivity() {
         vcbAstro = findViewById(R.id.checkBox_astro)
         vcbRandom = findViewById(R.id.checkBox_random)
         vcbSunAuto = findViewById(R.id.checkBox_sun_auto)
-        vcbRtcOnly = findViewById(R.id.checkBox_rtc_only)
         vcbFerId = findViewById(R.id.checkBox_ferID)
 
         vetDailyUpTime = findViewById(R.id.editText_dailyUpTime)
@@ -356,7 +333,6 @@ class MainActivity : AppCompatActivity() {
         vcbAstro.setOnCheckedChangeListener(onCheckedChanged)
         vcbRandom.setOnCheckedChangeListener(onCheckedChanged)
         vcbSunAuto.setOnCheckedChangeListener(onCheckedChanged)
-        vcbRtcOnly.setOnCheckedChangeListener(onCheckedChanged)
         vcbFerId.setOnCheckedChangeListener(onCheckedChanged)
 
 
@@ -370,7 +346,6 @@ class MainActivity : AppCompatActivity() {
         progressDialog = ProgressDialog(this)
 
 
-
     }
 
 
@@ -379,31 +354,21 @@ class MainActivity : AppCompatActivity() {
         //  vtvLog.append(String.format("read alive: %b, wa: %b, ca: %b\n", tcpReadThread.isAlive, tcpWriteThread.isAlive, tcpConnectThread.isAlive))
 
         enableSendButtons(false, 0)
-        tcp.connect()
-
+        pr.onResume()
         //  vtvLog.append("-----onResume----\n")
     }
 
     override fun onBackPressed() {
-      //  supportFragmentManager.fragments[supportFragmentManager.backStackEntryCount - 1].onResume()
-       super.onBackPressed()
-     }
+        //  supportFragmentManager.fragments[supportFragmentManager.backStackEntryCount - 1].onResume()
+        super.onBackPressed()
+    }
 
 
     public override fun onPause() {
         super.onPause()
-      //  vtvLog.append("-----onPause----\n")
-
-        tcp.close()
-
+        //  vtvLog.append("-----onPause----\n")
+        pr.onPause()
         savePreferences()
-    }
-
-
-    private fun transmit(s: String) {
-        if (!tfmcuModel.transmit(s)) {
-            enableSendButtons(false, 0)
-        }
     }
 
     public fun logWriteLine(line: String) {
@@ -417,16 +382,17 @@ class MainActivity : AppCompatActivity() {
             val ma = mActivity.get()
             if (ma == null)
                 return
+            var s = ""
             when (msg.what) {
 
                 McuTcp.MSG_TCP_INPUT_EOF -> {
                     //FIXME: what to do here?
-                    ma.tcp.close()
+                    ma.pr.reset()
                 }
 
 
                 McuTcp.MSG_TCP_OUTPUT_ERROR, McuTcp.MSG_TCP_INPUT_ERROR -> {
-                    ma.tcp.close()
+                    ma.pr.reset()
                 }
 
                 McuTcp.MSG_TCP_CONNECTED -> {
@@ -438,16 +404,16 @@ class MainActivity : AppCompatActivity() {
                         ma.configureMcu()
                     }
 
-                    ma.tcp.transmit("config longitude=? latitude=? time-zone=? dst=? wlan-ssid=? baud=? verbose=? dst=?;")
+                    ma.pr.configSend("longitude=? latitude=? time-zone=? dst=? wlan-ssid=? baud=? verbose=? dst=?")
                 }
 
                 McuTcp.MSG_TCP_CONNECTION_FAILED -> {
-                    val s = msg.obj as String
+                    s = msg.obj as String
                     ma.vtvLog.append("tcp connection failed: " + s + "\n")
                 }
 
                 McuTcp.MSG_LINE_RECEIVED -> try {
-                    val s = msg.obj as String
+                    s = msg.obj as String
                     if (s.equals("ready:")) {
 
                     } else if (s.isEmpty()) {
@@ -455,7 +421,7 @@ class MainActivity : AppCompatActivity() {
                     } else {
                         ma.vtvLog.append(s + "\n")
                     }
-                    ma.tfmcuModel.messagePending = 0;  // FIXME: check msgid?
+                    ma.pr.model.messagePending = 0;  // FIXME: check msgid?
 
                     if (s.contains("rs=data")) {
                         ma.parseReceivedTimer(s)
@@ -482,7 +448,7 @@ class MainActivity : AppCompatActivity() {
                     }
 
                 } catch (e: Exception) {
-                    ma.vtvLog.append("MLR:error: " + e.toString() + "\n")
+                    ma.vtvLog.append("MLR:error: " + e.toString() + "\n" + "...line: $s")
 
                 }
 
@@ -504,7 +470,6 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
     fun onCheckedClick(view: View) {
         val isChecked = (view as CheckBox).isChecked
 
@@ -523,10 +488,29 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    fun td2dailyUp(td: TfmcuTimerData): String {
+        var daily = td.daily
 
+        if (daily.isEmpty()) {
+            return ""
+        }
+
+        return if (daily.startsWith("-")) "" else daily.substring(0, 2) + ":" + daily.substring(2, 4)
+    }
+
+    fun td2dailyDown(td: TfmcuTimerData): String {
+        var daily = td.daily
+
+        if (daily.isEmpty()) {
+            return ""
+        }
+
+        daily = if (daily.startsWith("-")) daily.substring(1) else daily.substring(4)
+        return if (daily.startsWith("-")) "" else daily.substring(0, 2) + ":" + daily.substring(2, 4)
+    }
 
     internal fun parseReceivedTimer(s: String) {
-        var td = tfmcuModel.parseReceivedTimer(s)
+        var td = pr.model.parseReceivedTimer(s)
 
         vcbSunAuto.isChecked = td.sunAuto
         vcbRandom.isChecked = td.random
@@ -536,8 +520,52 @@ class MainActivity : AppCompatActivity() {
         vcbDailyUp.isChecked = !(td.daily.isEmpty() || td.daily.startsWith("-"))
         vcbDailyDown.isChecked = !(td.daily.isEmpty() || td.daily.endsWith("-"))
         vetAstroMinuteOffset.setText(if (td.hasAstro) td.astro.toString() else "")
-        vetDailyUpTime.setText(td.dailyUp)
-        vetDailyDownTime.setText(td.dailyDown)
+        vetDailyUpTime.setText(td2dailyUp(td))
+        vetDailyDownTime.setText(td2dailyDown(td))
+    }
+
+    fun sendRtc() {
+        pr.timerClear()
+        pr.td.a = getFerId()
+        pr.td.g = group
+        pr.td.m = memb
+
+
+        pr.td.rtcOnly = true
+        pr.timerSend()
+    }
+
+    fun sendTimer() {
+        pr.timerClear()
+        pr.td.a = getFerId()
+        pr.td.g = group
+        pr.td.m = memb
+
+        val dailyUpChecked = vcbDailyUp.isChecked
+        val dailyDownChecked = vcbDailyDown.isChecked
+        if (dailyUpChecked || dailyDownChecked) {
+            val upTime = vetDailyUpTime.text.toString()
+            val downTime = vetDailyDownTime.text.toString()
+            pr.td.daily += if (dailyUpChecked) upTime.substring(0, 2) + upTime.substring(3, 5) else "-"
+            pr.td.daily += if (dailyDownChecked) downTime.substring(0, 2) + downTime.substring(3, 5) else "-"
+        }
+
+        if (vcbAstro.isChecked) {
+            pr.td.astro = vetAstroMinuteOffset.text.toString().toInt()
+        }
+
+        if (vcbWeekly.isChecked) {
+            pr.td.weekly = vetWeeklyTimer.text.toString()
+        }
+
+
+
+        pr.td.sunAuto = vcbSunAuto.isChecked
+        pr.td.random = vcbRandom.isChecked
+
+        if (pr.timerSend()) {
+            enableSendButtons(false, 5)
+        }
     }
 
     fun saveMcuPreferecence () {
@@ -567,7 +595,7 @@ class MainActivity : AppCompatActivity() {
             val mk = mcuCfg_mcuKeys[i]
 
             if (pv != pv_old) {
-                tcp.transmit("config " + mk + "=" + pv + ";")
+                pr.configSend("$mk=$pv")
             }
         }
 
@@ -600,8 +628,8 @@ class MainActivity : AppCompatActivity() {
 
     // position code
     fun parseReceivedPosition(line: String) {
-        if (tfmcuModel.parseReceivedPosition(line)) {
-            editText_shutterPos.setText(tfmcuModel.showPos(group))
+        if (pr.model.parseReceivedPosition(line)) {
+            editText_shutterPos.setText(pr.model.showPos(group))
         }
     }
 
@@ -622,14 +650,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun onClick(view: View) {
-
+        var cd = TfmcuSendData(a=getFerId(), g = group, m = memb, sep = (mode == MODE_SEP) )
         try {
            // vtvLog.append(String.format("ra: %b, wa: %b, ca: %b\n", tcpReadThread.isAlive, tcpWriteThread.isAlive, tcpConnectThread.isAlive))
 
             when (view.id) {
-                R.id.button_stop -> (tfmcuModel.transmitSend(c = "stop", mid = MSG_ID_AUTO, a = getFerId(), g = group, m = memb))
-                R.id.button_up -> (tfmcuModel.transmitSend(c = "up", mid = MSG_ID_AUTO, a = getFerId(), g = group, m = memb, sep = (mode == MODE_SEP)))
-                R.id.button_down -> (tfmcuModel.transmitSend(c = "down", mid = MSG_ID_AUTO, a = getFerId(), g = group, m = memb, sep = (mode == MODE_SEP)))
+                R.id.button_stop -> { cd.cmd =  TfmcuSendData.CMD_STOP; pr.cmdSend(cd) }
+                R.id.button_up -> { cd.cmd =  TfmcuSendData.CMD_UP; pr.cmdSend(cd) }
+                R.id.button_down -> { cd.cmd =  TfmcuSendData.CMD_DOWN; pr.cmdSend(cd) }
 
                 R.id.button_g -> {
                     for (i in 0..7) {
@@ -643,58 +671,19 @@ class MainActivity : AppCompatActivity() {
                     if (memb > membMax[group])
                         memb = 1
                     vtvE.text = if (group == 0) "" else if (memb == 0) "A" else memb.toString()
-                    tfmcuModel.getSavedTimer(group, memb)
+                    pr.model.getSavedTimer(group, memb)
                 }
                 R.id.button_e -> {
                     memb = ++memb % (membMax[group] + 1)
                     vtvE.text = if (group == 0) "" else if (memb == 0) "A" else memb.toString()
-                    tfmcuModel.getSavedTimer(group, memb)
+                    logWriteLine("getSavedTimer(g=$group, m=$memb)")
+                    pr.model.getSavedTimer(group, memb)
                 }
 
-                R.id.button_sun_pos -> (tfmcuModel.transmitSend(c = "sun-down", mid = MSG_ID_AUTO, a = getFerId(), g = group, m = memb))
+                R.id.button_sun_pos -> { cd.cmd =  TfmcuSendData.CMD_DOWN; pr.cmdSend(cd) }
 
                 R.id.button_timer -> {
-
-                    val rtcOnly = vcbRtcOnly.isChecked
-
-                    pr.timerClear()
-
-                    if (rtcOnly) {
-                        pr.td.rtcOnly = true
-                        pr.timerSend()
-                    } else {
-
-
-                        val dailyUpChecked = vcbDailyUp.isChecked
-                        val dailyDownChecked = vcbDailyDown.isChecked
-                        if (dailyUpChecked || dailyDownChecked) {
-                            val upTime = vetDailyUpTime.text.toString()
-                            val downTime = vetDailyDownTime.text.toString()
-                            pr.td.daily += if (dailyUpChecked) upTime.substring(0, 2) + upTime.substring(3, 5) else "-"
-                            pr.td.daily += if (dailyDownChecked) downTime.substring(0, 2) + downTime.substring(3, 5) else "-"
-                        }
-
-                        if (vcbAstro.isChecked) {
-                            pr.td.astro = vetAstroMinuteOffset.text.toString().toInt()
-                        }
-
-                        if (vcbWeekly.isChecked) {
-                            pr.td.weekly = vetWeeklyTimer.text.toString()
-                        }
-
-                    }
-
-
-                    pr.td.sunAuto = vcbSunAuto.isChecked
-                    pr.td.random = vcbRandom.isChecked
-
-                    pr.td.g = group
-                    pr.td.m = memb
-
-                    pr.timerSend()
-
-                    // disable buttons while sending timer data which takes 5 seconds
-                    enableSendButtons(false, 5)
+                    sendTimer()
 
                 }
             }
@@ -804,12 +793,12 @@ class MainActivity : AppCompatActivity() {
 
 
             R.id.action_cuAutoSet -> {
-                transmit(String.format(configFmt, tfmcuModel.getMsgId(), "cu=auto"))
+                pr.configSend("cu=auto")
                 showProgressDialog("Press the Stop-Button on your Fernotron Central Unit in the next 60 seconds...", 60)
             }
 
             R.id.action_setFunc -> {
-                (tfmcuModel.transmitSend(c = "set", mid = MSG_ID_AUTO, a = getFerId(), g = group, m = memb))
+                pr.cmdSend(TfmcuSendData(a = getFerId(), g = group, m = memb, cmd = TfmcuSendData.CMD_SET))
                 showAlertDialog("You now have 60 seconds remaining to press STOP on the transmitter you want to add/remove. Beware: If you press STOP on the central unit, the device will be removed from it. To add it again, you would need the code. If you don't have the code, then you would have to press the physical set-button on the device")
             }
 
@@ -824,6 +813,10 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
             }
 
+            R.id.action_sendRtc -> {
+                sendRtc()
+            }
+
             else -> return super.onOptionsItemSelected(item)
         }
 
@@ -831,9 +824,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     companion object {
-        internal var msgid = 1
-        internal const val MSG_ID_NONE = 0
-        internal const val MSG_ID_AUTO = -1
+
 
         internal const val MODE_NORMAL = 0
         internal const val MODE_SEP = 1
