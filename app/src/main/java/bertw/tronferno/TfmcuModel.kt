@@ -43,6 +43,8 @@ class TfmcuSendData(a: Int = 0, g: Int = 0, m: Int = 0, cmd: String = "", sep: B
         const val CMD_DOWN = "down"
         const val CMD_STOP = "stop"
         const val CMD_SET = "set"
+        const val CMD_SUN_DOWN = "sun-down"
+
     }
 }
 

@@ -671,7 +671,7 @@ class MainActivity : AppCompatActivity() {
                     pr.model.getSavedTimer(group, memb)
                 }
 
-                R.id.button_sun_pos -> { cd.cmd =  TfmcuSendData.CMD_DOWN; pr.cmdSend(cd) }
+                R.id.button_sun_pos -> { cd.cmd =  TfmcuSendData.CMD_SUN_DOWN; pr.cmdSend(cd) }
 
                 R.id.button_timer -> {
                     sendTimer()
