@@ -115,7 +115,7 @@ class TfmcuModel(msgHandler: Handler) {
         return tcpSocketTransmit(s)
     }
 
-    fun transmitSend(cmd: TfmcuSendData, sep: Boolean = false): Boolean {
+    fun transmitSend(cmd: TfmcuSendData): Boolean {
         val s = cmd.toString() + ";"
         return transmit(s)
     }

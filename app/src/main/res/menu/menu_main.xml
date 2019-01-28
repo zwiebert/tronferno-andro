@@ -37,11 +37,23 @@
         android:id="@+id/action_openMcuCfg"
         android:orderInCategory="100"
         android:title="@string/open_mcu_cfg"
+        android:visible="false"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_sendRtc"
         android:orderInCategory="101"
         android:title="Send RTC to Shutter"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_broadcastRtc"
+        android:orderInCategory="102"
+        android:title="Send RTC to ALL Shutters"
+        android:visible="false"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_motorCode"
+        android:checkable="true"
+        android:orderInCategory="103"
+        android:title="Enter Motor Code" />
 
 </menu>

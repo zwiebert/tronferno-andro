@@ -45,7 +45,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var vcbAstro: CheckBox
     private lateinit var vcbRandom: CheckBox
     private lateinit var vcbSunAuto: CheckBox
-    private lateinit var vcbFerId: CheckBox
 
     private lateinit var vtvLog: TextView
     private lateinit var vtvG: TextView
@@ -79,7 +78,6 @@ class MainActivity : AppCompatActivity() {
                 vcbAstro.visibility = vi
                 vcbRandom.visibility = vi
                 vcbSunAuto.visibility = vi
-                vcbFerId.visibility = vi
 
                 vtvLog.visibility = vi
                 vtvG.visibility = vi
@@ -89,13 +87,13 @@ class MainActivity : AppCompatActivity() {
                 vetDailyDownTime.visibility = vi
                 vetWeeklyTimer.visibility = vi
                 vetAstroMinuteOffset.visibility = vi
-                vetFerId.visibility = vi
+               // vetFerId.visibility = vi
 
                 vbtUp.visibility = vi
                 vbtDown.visibility = vi
                 vbtStop.visibility = vi
-                vbtG.visibility = vi
-                vbtE.visibility = vi
+               // vbtG.visibility = vi
+               // vbtE.visibility = vi
                 vbtTimer.visibility = vi
                 vbtSunPos.visibility = vi
             }
@@ -107,17 +105,16 @@ class MainActivity : AppCompatActivity() {
                 vcbAstro.visibility = iv
                 vcbRandom.visibility = iv
                 vcbSunAuto.visibility = iv
-                vcbFerId.visibility = vi
 
                 vtvLog.visibility = vi
-                vtvG.visibility = vi
-                vtvE.visibility = vi
+               // vtvG.visibility = vi
+               // vtvE.visibility = vi
 
                 vetDailyUpTime.visibility = iv
                 vetDailyDownTime.visibility = iv
                 vetWeeklyTimer.visibility = iv
                 vetAstroMinuteOffset.visibility = iv
-                vetFerId.visibility = vi
+               // vetFerId.visibility = vi
 
                 vbtUp.visibility = vi
                 vbtDown.visibility = vi
@@ -174,11 +171,6 @@ class MainActivity : AppCompatActivity() {
                 if (!isChecked) vetAstroMinuteOffset.setText("")
             }
 
-            R.id.checkBox_ferID -> {
-                vetFerId.isEnabled = isChecked
-                vtvG.isEnabled = !isChecked
-                vtvE.isEnabled = !isChecked
-            }
         }
     }
 
@@ -231,8 +223,6 @@ class MainActivity : AppCompatActivity() {
         group = pref.getInt("mGroup", 0);
         memb = pref.getInt("mMemb", 0);
 
-        vcbFerId.isChecked = pref.getBoolean("vcbFerIdIsChecked", false)
-
         vcbDailyUp.isChecked = pref.getBoolean("vcbDailyUpIsChecked", false)
         vcbDailyDown.isChecked = pref.getBoolean("vcbDailyDownIsChecked", false)
         vcbWeekly.isChecked = pref.getBoolean("vcbWeeklyIsChecked", false)
@@ -259,7 +249,6 @@ class MainActivity : AppCompatActivity() {
         ed.putInt("mGroup", group);
         ed.putInt("mMemb", memb);
 
-        ed.putBoolean("vcbFerIdIsChecked", vcbFerId.isChecked)
         ed.putBoolean("vcbDailyUpIsChecked", vcbDailyUp.isChecked)
         ed.putBoolean("vcbDailyDownIsChecked", vcbDailyDown.isChecked)
         ed.putBoolean("vcbWeeklyIsChecked", vcbWeekly.isChecked)
@@ -306,7 +295,6 @@ class MainActivity : AppCompatActivity() {
         vcbAstro = findViewById(R.id.checkBox_astro)
         vcbRandom = findViewById(R.id.checkBox_random)
         vcbSunAuto = findViewById(R.id.checkBox_sun_auto)
-        vcbFerId = findViewById(R.id.checkBox_ferID)
 
         vetDailyUpTime = findViewById(R.id.editText_dailyUpTime)
         vetDailyDownTime = findViewById(R.id.editText_dailyDownTime)
@@ -333,8 +321,6 @@ class MainActivity : AppCompatActivity() {
         vcbAstro.setOnCheckedChangeListener(onCheckedChanged)
         vcbRandom.setOnCheckedChangeListener(onCheckedChanged)
         vcbSunAuto.setOnCheckedChangeListener(onCheckedChanged)
-        vcbFerId.setOnCheckedChangeListener(onCheckedChanged)
-
 
         loadPreferences()
         vtvLog.setMovementMethod(ScrollingMovementMethod())
@@ -404,7 +390,9 @@ class MainActivity : AppCompatActivity() {
                         ma.configureMcu()
                     }
 
-                    ma.pr.configSend("longitude=? latitude=? time-zone=? dst=? wlan-ssid=? baud=? verbose=? dst=?")
+                   // ma.pr.configSend("longitude=? latitude=? time-zone=? dst=? wlan-ssid=? cu=? baud=? verbose=? dst=?")
+                    ma.pr.configSend("longitude=? latitude=? tz=? wlan-ssid=?")
+                    ma.pr.configSend("cu=? baud=? verbose=?")
                 }
 
                 McuTcp.MSG_TCP_CONNECTION_FAILED -> {
@@ -524,12 +512,13 @@ class MainActivity : AppCompatActivity() {
         vetDailyDownTime.setText(td2dailyDown(td))
     }
 
-    fun sendRtc() {
+    fun sendRtc(broadcast: Boolean = false) {
         pr.timerClear()
         pr.td.a = getFerId()
-        pr.td.g = group
-        pr.td.m = memb
-
+        if (!broadcast) {
+            pr.td.g = group
+            pr.td.m = memb
+        }
 
         pr.td.rtcOnly = true
         pr.timerSend()
@@ -551,6 +540,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         if (vcbAstro.isChecked) {
+            pr.td.hasAstro = true
             pr.td.astro = vetAstroMinuteOffset.text.toString().toInt()
         }
 
@@ -582,8 +572,8 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    val mcuCfg_prefKeys = arrayOf("geo_latitude", "geo_longitude", "geo_time_zone", "wlan_ssid", "serial_baud", "cli_verbosity", "time_dst")
-    val mcuCfg_mcuKeys = arrayOf("latitude", "longitude", "time-zone", "wlan-ssid", "baud", "verbose", "dst")
+    val mcuCfg_prefKeys = arrayOf("geo_latitude", "geo_longitude", "geo_time_zone", "wlan_ssid", "cu_id", "serial_baud", "cli_verbosity")
+    val mcuCfg_mcuKeys = arrayOf("latitude", "longitude", "tz", "wlan-ssid", "cu", "baud", "verbose")
     var mcuCfg_prefVals = arrayOf("","","","","","", "");
 
 
@@ -622,7 +612,7 @@ class MainActivity : AppCompatActivity() {
 
             }
             saveMcuPreferecence()
-            vtvLog.append("mcuconfig saved\n")
+            vtvLog.append("mcu preference saved\n")
         }
     }
 
@@ -636,7 +626,7 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun getFerId(): Int {
-        if (vcbFerId.isChecked) {
+        if (vetFerId.visibility == View.VISIBLE) {
             var s = vetFerId.text.toString()
             if (s.length == 5) {
                 s = "9$s"
@@ -659,21 +649,22 @@ class MainActivity : AppCompatActivity() {
                 R.id.button_up -> { cd.cmd =  TfmcuSendData.CMD_UP; pr.cmdSend(cd) }
                 R.id.button_down -> { cd.cmd =  TfmcuSendData.CMD_DOWN; pr.cmdSend(cd) }
 
-                R.id.button_g -> {
-                    for (i in 0..7) {
-                        group = ++group % 8
-                        if (group == 0 || membMax[group] != 0) {
-                            break;
+                R.id.button_g -> if (enableFerId(false)) {
+                        for (i in 0..7) {
+                            group = ++group % 8
+                            if (group == 0 || membMax[group] != 0) {
+                                break;
+                            }
                         }
-                    }
 
-                    vtvG.text = if (group == 0) "A" else group.toString()
-                    if (memb > membMax[group])
-                        memb = 1
-                    vtvE.text = if (group == 0) "" else if (memb == 0) "A" else memb.toString()
-                    pr.model.getSavedTimer(group, memb)
+                        vtvG.text = if (group == 0) "A" else group.toString()
+                        if (memb > membMax[group])
+                            memb = 1
+                        vtvE.text = if (group == 0) "" else if (memb == 0) "A" else memb.toString()
+                        pr.model.getSavedTimer(group, memb)
+
                 }
-                R.id.button_e -> {
+                R.id.button_e -> if (enableFerId(false)) {
                     memb = ++memb % (membMax[group] + 1)
                     vtvE.text = if (group == 0) "" else if (memb == 0) "A" else memb.toString()
                     logWriteLine("getSavedTimer(g=$group, m=$memb)")
@@ -773,6 +764,22 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    fun enableFerId(enable: Boolean) : Boolean {
+
+        val state_changed = (vetFerId.visibility == View.VISIBLE) == enable
+
+        mMenu?.findItem(R.id.action_motorCode)?.isChecked = enable
+
+        vetFerId.isEnabled = enable
+        vetFerId.visibility = if (enable) View.VISIBLE else View.INVISIBLE
+        vtvG.isEnabled = !enable
+        vtvE.isEnabled = !enable
+
+        vtvG.visibility = if (!enable) View.VISIBLE else View.INVISIBLE
+        vtvE.visibility = if (!enable) View.VISIBLE else View.INVISIBLE
+
+        return state_changed
+    }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
@@ -815,6 +822,14 @@ class MainActivity : AppCompatActivity() {
 
             R.id.action_sendRtc -> {
                 sendRtc()
+            }
+
+            R.id.action_broadcastRtc -> {
+                sendRtc(true)
+            }
+
+            R.id.action_motorCode -> {
+                enableFerId(!item.isChecked)
             }
 
             else -> return super.onOptionsItemSelected(item)

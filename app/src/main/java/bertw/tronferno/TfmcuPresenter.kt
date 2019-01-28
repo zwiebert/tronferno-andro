@@ -24,8 +24,8 @@ class TfmcuPresenter(msgHandler: Handler) {
         return true; // FIXME
     }
 
-    fun cmdSend(c: TfmcuSendData, sep: Boolean = false): Boolean {
-        return model.transmitSend(c, sep)
+    fun cmdSend(c: TfmcuSendData): Boolean {
+        return model.transmitSend(c)
     }
 
     @Throws(IOException::class)

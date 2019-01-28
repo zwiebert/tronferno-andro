@@ -16,7 +16,7 @@
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
-        android:title="Serial port baud rate" />
+        android:title="Serial Port Baud Rate" />
 
     <EditTextPreference
         android:inputType="numberSigned"
@@ -40,7 +40,7 @@
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
-        android:title="Time-Zone" />
+        android:title="Posix Time-Zone (TZ)" />
 
     <EditTextPreference
         android:key="wlan_ssid"
@@ -55,7 +55,17 @@
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
-        android:title="WLAN password" />
+        android:title="WLAN Password" />
+
+
+    <EditTextPreference
+        android:key="cu_id"
+        android:text="enter the actual ID (6 digit, hex) or enter auto for auto-scan ID"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="Central Unit ID" />
+
 
     <!-- NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to
          dismiss it. -->
@@ -67,13 +77,5 @@
         android:negativeButtonText="@null"
         android:positiveButtonText="@null"
         android:title="CLI Verbosity Level" />
-
-    <ListPreference
-        android:entries="@array/pref_mcu_dst_list_titles"
-        android:entryValues="@array/pref_mcu_dst_list_values"
-        android:key="time_dst"
-        android:negativeButtonText="@null"
-        android:positiveButtonText="@null"
-        android:title="Daylight Saving Time" />
 
 </PreferenceScreen>
