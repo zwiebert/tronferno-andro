@@ -179,18 +179,47 @@ class TfmcuModel(msgHandler: Handler) {
         posArr100[g] = if (p == 100) (posArr100[g] or (1 shl m)) else (posArr100[g] and (1 shl m).inv())
     }
 
-    fun showPos(group: Int): String {
+    fun showPos(group: Int, memb_count: Int = 7, format: Int = 0): String {
         var posText = ""
-        for (i in 1..7) {
+        var posText0 = ""
+        var posText50 = ""
+        var posText100 = ""
+
+        for (i in 1..memb_count) {
             if ((posArr0[group] and (1 shl i)) != 0) {
                 posText += "c"
+                posText0 += if (posText0.isEmpty()) "$i" else ",$i"
             } else if ((posArr50[group] and (1 shl i)) != 0) {
                 posText += "m"
+                posText50 += if (posText50.isEmpty()) "$i" else ",$i"
             } else if ((posArr100[group] and (1 shl i)) != 0) {
                 posText += "o"
+                posText100 += if (posText100.isEmpty()) "$i" else ",$i"
             } else {
                 posText += "?"
             }
+        }
+
+        if (format == 1) {
+            posText = ""
+            if (posText0.isNotEmpty()) {
+                posText += "0%=$posText0"
+            }
+
+            if (posText50.isNotEmpty()) {
+                if (posText.isNotEmpty()) {
+                    posText += " | "
+                }
+                posText += "50%=$posText50"
+            }
+
+            if (posText100.isNotEmpty()) {
+                if (posText.isNotEmpty()) {
+                    posText += " | "
+                }
+                posText += "100%=$posText100"
+            }
+
         }
         return posText
     }

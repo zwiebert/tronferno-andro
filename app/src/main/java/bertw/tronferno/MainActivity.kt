@@ -15,7 +15,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
-import kotlinx.android.synthetic.main.content_main.*
 import java.lang.ref.WeakReference
 import java.net.InetSocketAddress
 
@@ -55,6 +54,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var vetWeeklyTimer: EditText
     private lateinit var vetAstroMinuteOffset: EditText
     private lateinit var vetFerId: EditText
+    private lateinit var vetShutterPos: EditText
 
     private lateinit var vbtUp: Button
     private lateinit var vbtDown: Button
@@ -301,6 +301,7 @@ class MainActivity : AppCompatActivity() {
         vetWeeklyTimer = findViewById(R.id.editText_weeklyTimer)
         vetAstroMinuteOffset = findViewById(R.id.editText_astroMinuteOffset)
         vetFerId = findViewById(R.id.editText_ferID)
+        vetShutterPos = findViewById(R.id.editText_shutterPos)
 
         vtvLog = findViewById(R.id.textView_log)
         vtvG = findViewById(R.id.textView_g)
@@ -341,6 +342,7 @@ class MainActivity : AppCompatActivity() {
 
         enableSendButtons(false, 0)
         pr.onResume()
+        showShutterPositions()
         //  vtvLog.append("-----onResume----\n")
     }
 
@@ -616,10 +618,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun showShutterPositions() {
+        val positions =  pr.model.showPos(group, memb_count = membMax[group], format = 1)
+        vetShutterPos.setText(if (positions.isEmpty()) "" else "Pos-G$group: $positions" )
+    }
+
     // position code
     fun parseReceivedPosition(line: String) {
         if (pr.model.parseReceivedPosition(line)) {
-            editText_shutterPos.setText(pr.model.showPos(group))
+            showShutterPositions()
         }
     }
 
