@@ -1,4 +1,4 @@
-package bertw.tronferno;
+package de.bertw.tronferno;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("bertw.fernotron", appContext.getPackageName());
+        assertEquals("de.bertw.fernotron", appContext.getPackageName());
     }
 }

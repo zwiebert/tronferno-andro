@@ -1,4 +1,4 @@
-package bertw.tronferno
+package de.bertw.tronferno
 
 import android.content.res.Configuration
 import android.os.Bundle

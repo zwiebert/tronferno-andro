@@ -1,9 +1,8 @@
-package bertw.tronferno
+package de.bertw.tronferno
 
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.widget.ArrayAdapter
 import android.widget.EditText

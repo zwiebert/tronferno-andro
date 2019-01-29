@@ -4,16 +4,16 @@
 
 
     <header
-        android:fragment="bertw.tronferno.SettingsActivity$AppPreferenceFragment"
+        android:fragment="de.bertw.tronferno.SettingsActivity$AppPreferenceFragment"
         android:title="@string/pref_general" />
 
     <header
-        android:fragment="bertw.tronferno.SettingsActivity$DataSyncPreferenceFragment"
+        android:fragment="de.bertw.tronferno.SettingsActivity$DataSyncPreferenceFragment"
         android:title="@string/pref_header_members" />
 
 
     <header
-        android:fragment="bertw.tronferno.SettingsActivity$MCUPreferenceFragment"
+        android:fragment="de.bertw.tronferno.SettingsActivity$MCUPreferenceFragment"
         android:title="@string/pref_on_mcu" />
 
 

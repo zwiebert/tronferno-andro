@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="bertw.tronferno">
+    package="de.bertw.tronferno">
 
     <uses-feature android:name="android.hardware.usb.host" />
 
@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name="de.bertw.tronferno.MainActivity"
             android:label="Tronferno"
             android:screenOrientation="sensorPortrait"
             android:theme="@style/AppTheme.NoActionBar"
@@ -27,21 +27,21 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SettingsActivity"
+            android:name="de.bertw.tronferno.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName="de.bertw.tronferno.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="bertw.tronferno.MainActivity" />
+                android:value="de.bertw.tronferno.MainActivity" />
         </activity>
         <activity
-            android:name=".McuConfigActivity"
+            android:name="de.bertw.tronferno.McuConfigActivity"
             android:label="@string/title_activity_mcu_config"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName="de.bertw.tronferno.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="bertw.tronferno.MainActivity" />
+                android:value="de.bertw.tronferno.MainActivity" />
         </activity>
     </application>
 
