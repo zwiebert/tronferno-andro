@@ -4,7 +4,7 @@ Android GUI for [tronferno-mcu](https://github.com/zwiebert/tronferno-mcu)
 
 ### What it can do
 
-It can do mostly all things you can do with original hardware Fernotron 2411:
+You can do nearly all things you could do with original hardware Fernotron 2411:
 
 * control shutters (open, close, stop, set, ...)
 * addresses shutters by original group/member numbers
