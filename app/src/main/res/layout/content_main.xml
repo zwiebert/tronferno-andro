@@ -11,7 +11,7 @@
     tools:showIn="@layout/activity_main">
 
     <TextView
-        android:id="@+id/textView_log"
+        android:id="@+id/vtvLog"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="8dp"
@@ -23,7 +23,7 @@
         android:maxLines="20"
         android:scrollbars="vertical"
         android:text=""
-        app:layout_constraintBottom_toTopOf="@+id/editText_shutterPos"
+        app:layout_constraintBottom_toTopOf="@+id/vetShutterPos"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -33,22 +33,22 @@
 
 
     <CheckBox
-        android:id="@+id/checkBox_sun_auto"
+        android:id="@+id/vcbSunAuto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:text="@string/sun_auto"
-        app:layout_constraintBottom_toBottomOf="@+id/checkBox_daily_up"
-        app:layout_constraintStart_toEndOf="@+id/checkBox_daily_up"
-        app:layout_constraintTop_toTopOf="@+id/checkBox_daily_up"
+        app:layout_constraintBottom_toBottomOf="@+id/vcbDailyUp"
+        app:layout_constraintStart_toEndOf="@+id/vcbDailyUp"
+        app:layout_constraintTop_toTopOf="@+id/vcbDailyUp"
         tools:layout_constraintBottom_creator="1"
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintRight_creator="1"
         tools:layout_constraintTop_creator="1" />
 
     <CheckBox
-        android:id="@+id/checkBox_random"
+        android:id="@+id/vcbRandom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -56,33 +56,33 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:text="@string/random"
-        app:layout_constraintBottom_toBottomOf="@+id/checkBox_sun_auto"
+        app:layout_constraintBottom_toBottomOf="@+id/vcbSunAuto"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/checkBox_sun_auto"
-        app:layout_constraintTop_toTopOf="@+id/checkBox_sun_auto"
+        app:layout_constraintStart_toEndOf="@+id/vcbSunAuto"
+        app:layout_constraintTop_toTopOf="@+id/vcbSunAuto"
         tools:layout_constraintBaseline_creator="1"
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintRight_creator="1" />
 
     <CheckBox
-        android:id="@+id/checkBox_astro"
+        android:id="@+id/vcbAstro"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:onClick="onCheckedClick"
         android:text="@string/astro"
-        app:layout_constraintBottom_toBottomOf="@+id/checkBox_daily_down"
+        app:layout_constraintBottom_toBottomOf="@+id/vcbDailyDown"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/editText_astroMinuteOffset"
-        app:layout_constraintTop_toTopOf="@+id/checkBox_daily_down"
+        app:layout_constraintStart_toEndOf="@+id/vetAstroMinuteOffset"
+        app:layout_constraintTop_toTopOf="@+id/vcbDailyDown"
         tools:layout_constraintBaseline_creator="1"
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintRight_creator="1" />
 
 
     <EditText
-        android:id="@+id/editText_dailyUpTime"
+        android:id="@+id/vetDailyUpTime"
         android:layout_width="76dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -93,30 +93,30 @@
         android:enabled="false"
         android:inputType="time"
         android:text="06:56"
-        app:layout_constraintBottom_toTopOf="@+id/editText_dailyDownTime"
-        app:layout_constraintEnd_toStartOf="@+id/checkBox_daily_up"
+        app:layout_constraintBottom_toTopOf="@+id/vetDailyDownTime"
+        app:layout_constraintEnd_toStartOf="@+id/vcbDailyUp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText_weeklyTimer"
+        app:layout_constraintTop_toBottomOf="@+id/vetWeeklyTimer"
         tools:layout_constraintBaseline_creator="1"
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintRight_creator="1" />
 
     <CheckBox
-        android:id="@+id/checkBox_daily_up"
+        android:id="@+id/vcbDailyUp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:onClick="onCheckedClick"
         android:text="@string/daily_up"
-        app:layout_constraintStart_toEndOf="@+id/editText_dailyUpTime"
-        app:layout_constraintTop_toTopOf="@+id/editText_dailyUpTime"
+        app:layout_constraintStart_toEndOf="@+id/vetDailyUpTime"
+        app:layout_constraintTop_toTopOf="@+id/vetDailyUpTime"
         tools:layout_constraintBottom_creator="1"
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintRight_creator="1"
         tools:layout_constraintTop_creator="1" />
 
     <EditText
-        android:id="@+id/editText_astroMinuteOffset"
+        android:id="@+id/vetAstroMinuteOffset"
         android:layout_width="56dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -125,17 +125,17 @@
         android:enabled="false"
         android:inputType="numberDecimal|numberSigned"
         android:text="0"
-        app:layout_constraintBottom_toBottomOf="@+id/editText_dailyDownTime"
-        app:layout_constraintEnd_toStartOf="@+id/checkBox_astro"
-        app:layout_constraintStart_toEndOf="@+id/checkBox_daily_down"
-        app:layout_constraintTop_toTopOf="@+id/editText_dailyDownTime"
+        app:layout_constraintBottom_toBottomOf="@+id/vetDailyDownTime"
+        app:layout_constraintEnd_toStartOf="@+id/vcbAstro"
+        app:layout_constraintStart_toEndOf="@+id/vcbDailyDown"
+        app:layout_constraintTop_toTopOf="@+id/vetDailyDownTime"
         tools:layout_constraintBottom_creator="1"
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintRight_creator="1"
         tools:layout_constraintTop_creator="1" />
 
     <CheckBox
-        android:id="@+id/checkBox_weekly"
+        android:id="@+id/vcbWeekly"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -146,17 +146,17 @@
         android:layout_marginBottom="8dp"
         android:onClick="onCheckedClick"
         android:text="@string/weekly"
-        app:layout_constraintBottom_toBottomOf="@+id/editText_weeklyTimer"
+        app:layout_constraintBottom_toBottomOf="@+id/vetWeeklyTimer"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/editText_weeklyTimer"
-        app:layout_constraintTop_toTopOf="@+id/editText_weeklyTimer"
+        app:layout_constraintStart_toEndOf="@+id/vetWeeklyTimer"
+        app:layout_constraintTop_toTopOf="@+id/vetWeeklyTimer"
         tools:layout_constraintBottom_creator="1"
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintTop_creator="1" />
 
 
     <EditText
-        android:id="@+id/editText_dailyDownTime"
+        android:id="@+id/vetDailyDownTime"
         android:layout_width="76dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -166,9 +166,9 @@
         android:inputType="time"
         android:text="21:34"
         app:layout_constraintBottom_toTopOf="@+id/barrier"
-        app:layout_constraintEnd_toStartOf="@+id/checkBox_daily_down"
+        app:layout_constraintEnd_toStartOf="@+id/vcbDailyDown"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText_dailyUpTime"
+        app:layout_constraintTop_toBottomOf="@+id/vetDailyUpTime"
         app:layout_constraintVertical_bias="0.0"
         tools:layout_constraintBottom_creator="1"
         tools:layout_constraintLeft_creator="1"
@@ -176,21 +176,21 @@
         tools:layout_constraintTop_creator="1" />
 
     <CheckBox
-        android:id="@+id/checkBox_daily_down"
+        android:id="@+id/vcbDailyDown"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:onClick="onCheckedClick"
         android:text="@string/daily_down"
-        app:layout_constraintStart_toEndOf="@+id/editText_dailyDownTime"
-        app:layout_constraintTop_toTopOf="@+id/editText_dailyDownTime"
+        app:layout_constraintStart_toEndOf="@+id/vetDailyDownTime"
+        app:layout_constraintTop_toTopOf="@+id/vetDailyDownTime"
         tools:layout_constraintBaseline_creator="1"
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintRight_creator="1" />
 
 
     <TextView
-        android:id="@+id/textView_g"
+        android:id="@+id/vtvG"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -199,18 +199,18 @@
         android:layout_marginBottom="8dp"
         android:text="@string/a"
         android:textAppearance="@style/TextAppearance.AppCompat.Button"
-        app:layout_constraintBottom_toBottomOf="@+id/button_up"
-        app:layout_constraintEnd_toEndOf="@+id/button_g"
+        app:layout_constraintBottom_toBottomOf="@+id/vbtUp"
+        app:layout_constraintEnd_toEndOf="@+id/vbtG"
         app:layout_constraintHorizontal_bias="0.512"
-        app:layout_constraintStart_toStartOf="@+id/button_g"
-        app:layout_constraintTop_toTopOf="@+id/button_up"
+        app:layout_constraintStart_toStartOf="@+id/vbtG"
+        app:layout_constraintTop_toTopOf="@+id/vbtUp"
         app:layout_constraintVertical_bias="1.0"
         tools:layout_constraintBottom_creator="1"
         tools:layout_constraintRight_creator="1"
         tools:layout_constraintTop_creator="1" />
 
     <TextView
-        android:id="@+id/textView_e"
+        android:id="@+id/vtvE"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -219,11 +219,11 @@
         android:layout_marginBottom="8dp"
         android:text="@string/a"
         android:textAppearance="@style/TextAppearance.AppCompat.Button"
-        app:layout_constraintBottom_toBottomOf="@+id/button_up"
-        app:layout_constraintEnd_toEndOf="@+id/button_e"
+        app:layout_constraintBottom_toBottomOf="@+id/vbtUp"
+        app:layout_constraintEnd_toEndOf="@+id/vbtE"
         app:layout_constraintHorizontal_bias="0.515"
-        app:layout_constraintStart_toStartOf="@+id/button_e"
-        app:layout_constraintTop_toTopOf="@+id/button_up"
+        app:layout_constraintStart_toStartOf="@+id/vbtE"
+        app:layout_constraintTop_toTopOf="@+id/vbtUp"
         app:layout_constraintVertical_bias="1.0"
         tools:layout_constraintBottom_creator="1"
         tools:layout_constraintLeft_creator="1"
@@ -231,7 +231,7 @@
 
 
     <Button
-        android:id="@+id/button_g"
+        android:id="@+id/vbtG"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -239,12 +239,12 @@
         android:layout_marginBottom="8dp"
         android:onClick="onClick"
         android:text="@string/g"
-        app:layout_constraintBottom_toTopOf="@+id/button_down"
-        app:layout_constraintEnd_toStartOf="@+id/button_stop"
+        app:layout_constraintBottom_toTopOf="@+id/vbtDown"
+        app:layout_constraintEnd_toStartOf="@+id/vbtStop"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/button_stop"
+        app:layout_constraintTop_toTopOf="@+id/vbtStop"
         app:layout_constraintVertical_bias="0.0"
         app:layout_constraintVertical_chainStyle="packed"
         tools:layout_constraintBottom_creator="1"
@@ -252,7 +252,7 @@
         tools:layout_constraintRight_creator="1" />
 
     <Button
-        android:id="@+id/button_up"
+        android:id="@+id/vbtUp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -261,17 +261,17 @@
         android:layout_marginBottom="8dp"
         android:onClick="onClick"
         android:text="@string/up"
-        app:layout_constraintBottom_toTopOf="@+id/button_stop"
+        app:layout_constraintBottom_toTopOf="@+id/vbtStop"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText_dailyDownTime"
+        app:layout_constraintTop_toBottomOf="@+id/vetDailyDownTime"
         app:layout_constraintVertical_chainStyle="spread"
         tools:layout_constraintBottom_creator="1"
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintRight_creator="1" />
 
     <Button
-        android:id="@+id/button_e"
+        android:id="@+id/vbtE"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -279,11 +279,11 @@
         android:layout_marginBottom="8dp"
         android:onClick="onClick"
         android:text="@string/e"
-        app:layout_constraintBottom_toTopOf="@+id/button_down"
+        app:layout_constraintBottom_toTopOf="@+id/vbtDown"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.02"
-        app:layout_constraintStart_toEndOf="@+id/button_stop"
-        app:layout_constraintTop_toTopOf="@+id/button_stop"
+        app:layout_constraintStart_toEndOf="@+id/vbtStop"
+        app:layout_constraintTop_toTopOf="@+id/vbtStop"
         app:layout_constraintVertical_bias="0.0"
         app:layout_constraintVertical_chainStyle="packed"
         tools:layout_constraintBottom_creator="1"
@@ -291,7 +291,7 @@
 
 
     <Button
-        android:id="@+id/button_stop"
+        android:id="@+id/vbtStop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -300,11 +300,11 @@
         android:layout_marginBottom="8dp"
         android:onClick="onClick"
         android:text="@string/stop"
-        app:layout_constraintBottom_toTopOf="@+id/button_down"
-        app:layout_constraintEnd_toEndOf="@+id/button_up"
+        app:layout_constraintBottom_toTopOf="@+id/vbtDown"
+        app:layout_constraintEnd_toEndOf="@+id/vbtUp"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/button_up"
-        app:layout_constraintTop_toBottomOf="@+id/button_up"
+        app:layout_constraintStart_toStartOf="@+id/vbtUp"
+        app:layout_constraintTop_toBottomOf="@+id/vbtUp"
         app:layout_constraintVertical_bias="1.0"
         tools:layout_constraintBottom_creator="1"
         tools:layout_constraintLeft_creator="1"
@@ -312,7 +312,7 @@
 
 
     <Button
-        android:id="@+id/button_sun_pos"
+        android:id="@+id/vbtSunPos"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -320,12 +320,12 @@
         android:layout_marginTop="8dp"
         android:onClick="onClick"
         android:text="@string/sun_pos"
-        app:layout_constraintBottom_toBottomOf="@+id/button_down"
-        app:layout_constraintEnd_toEndOf="@+id/button_g"
+        app:layout_constraintBottom_toBottomOf="@+id/vbtDown"
+        app:layout_constraintEnd_toEndOf="@+id/vbtG"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toStartOf="@+id/button_g"
-        app:layout_constraintTop_toTopOf="@+id/button_down"
+        app:layout_constraintStart_toStartOf="@+id/vbtG"
+        app:layout_constraintTop_toTopOf="@+id/vbtDown"
         app:layout_constraintVertical_bias="1.0"
         tools:layout_constraintBottom_creator="1"
         tools:layout_constraintLeft_creator="1"
@@ -333,7 +333,7 @@
 
 
     <Button
-        android:id="@+id/button_down"
+        android:id="@+id/vbtDown"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -342,28 +342,28 @@
         android:onClick="onClick"
         android:text="@string/down"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/button_stop"
+        app:layout_constraintEnd_toEndOf="@+id/vbtStop"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/button_stop"
-        app:layout_constraintTop_toBottomOf="@+id/button_stop"
+        app:layout_constraintStart_toStartOf="@+id/vbtStop"
+        app:layout_constraintTop_toBottomOf="@+id/vbtStop"
         tools:layout_constraintBottom_creator="1"
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintRight_creator="1" />
 
 
     <Button
-        android:id="@+id/button_timer"
+        android:id="@+id/vbtTimer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:onClick="onClick"
         android:text="@string/timer"
-        app:layout_constraintBottom_toBottomOf="@+id/button_down"
-        app:layout_constraintEnd_toEndOf="@+id/button_e"
+        app:layout_constraintBottom_toBottomOf="@+id/vbtDown"
+        app:layout_constraintEnd_toEndOf="@+id/vbtE"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/button_e"
-        app:layout_constraintTop_toTopOf="@+id/button_down"
+        app:layout_constraintStart_toStartOf="@+id/vbtE"
+        app:layout_constraintTop_toTopOf="@+id/vbtDown"
         app:layout_constraintVertical_bias="0.0"
         tools:layout_constraintBottom_creator="1"
         tools:layout_constraintLeft_creator="1"
@@ -378,7 +378,7 @@
         android:layout_marginRight="383dp"
         android:layout_marginBottom="219dp"
         app:barrierDirection="top"
-        app:constraint_referenced_ids="editText_ferID,button_up,textView_e,textView_g"
+        app:constraint_referenced_ids="vetFerId,vbtUp,vtvE,vtvG"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -386,7 +386,7 @@
         app:layout_constraintVertical_bias="1.0" />
 
     <EditText
-        android:id="@+id/editText_weeklyTimer"
+        android:id="@+id/vetWeeklyTimer"
         android:layout_width="0dp"
         android:layout_height="41dp"
         android:layout_marginEnd="61dp"
@@ -396,12 +396,12 @@
         android:enabled="false"
         android:inputType="textPersonName"
         android:text="0700-++++0900-+"
-        app:layout_constraintEnd_toStartOf="@+id/checkBox_weekly"
+        app:layout_constraintEnd_toStartOf="@+id/vcbWeekly"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText_shutterPos" />
+        app:layout_constraintTop_toBottomOf="@+id/vetShutterPos" />
 
     <EditText
-        android:id="@+id/editText_ferID"
+        android:id="@+id/vetFerId"
         android:layout_width="102dp"
         android:layout_height="wrap_content"
         android:digits="0123456789ABCDEF"
@@ -411,13 +411,13 @@
         android:maxLength="6"
         android:text="90ABCD"
         android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/button_up"
-        app:layout_constraintEnd_toEndOf="@+id/button_g"
-        app:layout_constraintStart_toStartOf="@+id/button_g"
-        app:layout_constraintTop_toTopOf="@+id/button_up" />
+        app:layout_constraintBottom_toBottomOf="@+id/vbtUp"
+        app:layout_constraintEnd_toEndOf="@+id/vbtG"
+        app:layout_constraintStart_toStartOf="@+id/vbtG"
+        app:layout_constraintTop_toTopOf="@+id/vbtUp" />
 
     <EditText
-        android:id="@+id/editText_shutterPos"
+        android:id="@+id/vetShutterPos"
         android:layout_width="0dp"
         android:layout_height="41dp"
         android:layout_marginStart="8dp"
@@ -429,7 +429,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.504"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView_log" />
+        app:layout_constraintTop_toBottomOf="@+id/vtvLog" />
 
 
 </android.support.constraint.ConstraintLayout>

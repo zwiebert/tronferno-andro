@@ -14,7 +14,9 @@ import android.text.method.ScrollingMovementMethod
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.*
+import android.widget.CheckBox
+import android.widget.CompoundButton
+import kotlinx.android.synthetic.main.content_main.*
 import java.lang.ref.WeakReference
 import java.net.InetSocketAddress
 
@@ -36,33 +38,6 @@ class MainActivity : AppCompatActivity() {
     public val mMessageHandler = MessageHandler(this)
     val pr = TfmcuPresenter(mMessageHandler)
     //val tfmcuModel = pr.model
-
-
-    private lateinit var vcbDailyUp: CheckBox
-    private lateinit var vcbDailyDown: CheckBox
-    private lateinit var vcbWeekly: CheckBox
-    private lateinit var vcbAstro: CheckBox
-    private lateinit var vcbRandom: CheckBox
-    private lateinit var vcbSunAuto: CheckBox
-
-    private lateinit var vtvLog: TextView
-    private lateinit var vtvG: TextView
-    private lateinit var vtvE: TextView
-
-    private lateinit var vetDailyUpTime: EditText
-    private lateinit var vetDailyDownTime: EditText
-    private lateinit var vetWeeklyTimer: EditText
-    private lateinit var vetAstroMinuteOffset: EditText
-    private lateinit var vetFerId: EditText
-    private lateinit var vetShutterPos: EditText
-
-    private lateinit var vbtUp: Button
-    private lateinit var vbtDown: Button
-    private lateinit var vbtStop: Button
-    private lateinit var vbtG: Button
-    private lateinit var vbtE: Button
-    private lateinit var vbtTimer: Button
-    private lateinit var vbtSunPos: Button
 
     private var mode = VIS_NORMAL;
 
@@ -151,22 +126,22 @@ class MainActivity : AppCompatActivity() {
     private val onCheckedChanged = CompoundButton.OnCheckedChangeListener { button, isChecked ->
         when (button.id) {
 
-            R.id.checkBox_daily_up -> {
+            R.id.vcbDailyUp -> {
                 vetDailyUpTime.isEnabled = isChecked
                 if (!isChecked) vetDailyUpTime.setText("")
             }
 
-            R.id.checkBox_daily_down -> {
+            R.id.vcbDailyDown -> {
                 vetDailyDownTime.isEnabled = isChecked
                 if (!isChecked) vetDailyDownTime.setText("")
             }
 
-            R.id.checkBox_weekly -> {
+            R.id.vcbWeekly -> {
                 vetWeeklyTimer.isEnabled = isChecked
                 if (!isChecked) vetWeeklyTimer.setText("")
             }
 
-            R.id.checkBox_astro -> {
+            R.id.vcbAstro -> {
                 vetAstroMinuteOffset.isEnabled = isChecked
                 if (!isChecked) vetAstroMinuteOffset.setText("")
             }
@@ -286,35 +261,6 @@ class MainActivity : AppCompatActivity() {
 
         val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
-
-
-
-        vcbDailyUp = findViewById(R.id.checkBox_daily_up)
-        vcbDailyDown = findViewById(R.id.checkBox_daily_down)
-        vcbWeekly = findViewById(R.id.checkBox_weekly)
-        vcbAstro = findViewById(R.id.checkBox_astro)
-        vcbRandom = findViewById(R.id.checkBox_random)
-        vcbSunAuto = findViewById(R.id.checkBox_sun_auto)
-
-        vetDailyUpTime = findViewById(R.id.editText_dailyUpTime)
-        vetDailyDownTime = findViewById(R.id.editText_dailyDownTime)
-        vetWeeklyTimer = findViewById(R.id.editText_weeklyTimer)
-        vetAstroMinuteOffset = findViewById(R.id.editText_astroMinuteOffset)
-        vetFerId = findViewById(R.id.editText_ferID)
-        vetShutterPos = findViewById(R.id.editText_shutterPos)
-
-        vtvLog = findViewById(R.id.textView_log)
-        vtvG = findViewById(R.id.textView_g)
-        vtvE = findViewById(R.id.textView_e)
-
-        vbtTimer = findViewById(R.id.button_timer)
-        vbtUp = findViewById(R.id.button_up)
-        vbtStop = findViewById(R.id.button_stop)
-        vbtSunPos = findViewById(R.id.button_sun_pos)
-        vbtDown = findViewById(R.id.button_down)
-        vbtE = findViewById(R.id.button_e)
-        vbtG = findViewById(R.id.button_g)
-
 
         vcbDailyUp.setOnCheckedChangeListener(onCheckedChanged)
         vcbDailyDown.setOnCheckedChangeListener(onCheckedChanged)
@@ -466,13 +412,13 @@ class MainActivity : AppCompatActivity() {
 
         if (isChecked)
             when (view.getId()) {
-                R.id.checkBox_daily_up -> vetDailyUpTime.setText(def_dailyUp)
+                R.id.vcbDailyUp -> vetDailyUpTime.setText(def_dailyUp)
 
-                R.id.checkBox_daily_down -> vetDailyDownTime.setText(def_dailyDown)
+                R.id.vcbDailyDown -> vetDailyDownTime.setText(def_dailyDown)
 
-                R.id.checkBox_weekly -> vetWeeklyTimer.setText(def_weekly)
+                R.id.vcbWeekly -> vetWeeklyTimer.setText(def_weekly)
 
-                R.id.checkBox_astro -> vetAstroMinuteOffset.setText(def_astro)
+                R.id.vcbAstro -> vetAstroMinuteOffset.setText(def_astro)
             }
 
     }
@@ -652,11 +598,11 @@ class MainActivity : AppCompatActivity() {
            // vtvLog.append(String.format("ra: %b, wa: %b, ca: %b\n", tcpReadThread.isAlive, tcpWriteThread.isAlive, tcpConnectThread.isAlive))
 
             when (view.id) {
-                R.id.button_stop -> { cd.cmd =  TfmcuSendData.CMD_STOP; pr.data2Mcu(cd) }
-                R.id.button_up -> { cd.cmd =  TfmcuSendData.CMD_UP; pr.data2Mcu(cd) }
-                R.id.button_down -> { cd.cmd =  TfmcuSendData.CMD_DOWN; pr.data2Mcu(cd) }
+                R.id.vbtStop -> { cd.cmd =  TfmcuSendData.CMD_STOP; pr.data2Mcu(cd) }
+                R.id.vbtUp -> { cd.cmd =  TfmcuSendData.CMD_UP; pr.data2Mcu(cd) }
+                R.id.vbtDown -> { cd.cmd =  TfmcuSendData.CMD_DOWN; pr.data2Mcu(cd) }
 
-                R.id.button_g -> if (enableFerId(false)) {
+                R.id.vbtG -> if (enableFerId(false)) {
                         for (i in 0..7) {
                             group = ++group % 8
                             if (group == 0 || membMax[group] != 0) {
@@ -671,16 +617,16 @@ class MainActivity : AppCompatActivity() {
                         pr.model.getSavedTimer(group, memb)
 
                 }
-                R.id.button_e -> if (enableFerId(false)) {
+                R.id.vbtE -> if (enableFerId(false)) {
                     memb = ++memb % (membMax[group] + 1)
                     vtvE.text = if (group == 0) "" else if (memb == 0) "A" else memb.toString()
                     logWriteLine("getSavedTimer(g=$group, m=$memb)")
                     pr.model.getSavedTimer(group, memb)
                 }
 
-                R.id.button_sun_pos -> { cd.cmd =  TfmcuSendData.CMD_SUN_DOWN; pr.data2Mcu(cd) }
+                R.id.vbtSunPos -> { cd.cmd =  TfmcuSendData.CMD_SUN_DOWN; pr.data2Mcu(cd) }
 
-                R.id.button_timer -> {
+                R.id.vbtTimer -> {
                     sendTimer()
 
                 }
