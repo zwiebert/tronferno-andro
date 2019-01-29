@@ -392,9 +392,9 @@ class MainActivity : AppCompatActivity() {
                         ma.configureMcu()
                     }
 
-                   // ma.pr.configSend("longitude=? latitude=? time-zone=? dst=? wlan-ssid=? cu=? baud=? verbose=? dst=?")
-                    ma.pr.configSend("longitude=? latitude=? tz=? wlan-ssid=?")
-                    ma.pr.configSend("cu=? baud=? verbose=?")
+                   // ma.pr.data2Mcu(TfmcuConfigData("longitude=? latitude=? time-zone=? dst=? wlan-ssid=? cu=? baud=? verbose=? dst=?"))
+                    ma.pr.data2Mcu(TfmcuConfigData("longitude=? latitude=? tz=? wlan-ssid=?"))
+                    ma.pr.data2Mcu(TfmcuConfigData("cu=? baud=? verbose=?"))
                 }
 
                 McuTcp.MSG_TCP_CONNECTION_FAILED -> {
@@ -523,7 +523,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         pr.td.rtcOnly = true
-        pr.timerSend()
+        pr.data2Mcu(pr.td)
     }
 
     fun sendTimer() {
@@ -555,7 +555,7 @@ class MainActivity : AppCompatActivity() {
         pr.td.sunAuto = vcbSunAuto.isChecked
         pr.td.random = vcbRandom.isChecked
 
-        if (pr.timerSend()) {
+        if (pr.data2Mcu(pr.td)) {
             enableSendButtons(false, 5)
         }
     }
@@ -587,7 +587,7 @@ class MainActivity : AppCompatActivity() {
             val mk = mcuCfg_mcuKeys[i]
 
             if (pv != pv_old) {
-                pr.configSend("$mk=$pv")
+                pr.data2Mcu(TfmcuConfigData("$mk=$pv"))
             }
         }
 
@@ -652,9 +652,9 @@ class MainActivity : AppCompatActivity() {
            // vtvLog.append(String.format("ra: %b, wa: %b, ca: %b\n", tcpReadThread.isAlive, tcpWriteThread.isAlive, tcpConnectThread.isAlive))
 
             when (view.id) {
-                R.id.button_stop -> { cd.cmd =  TfmcuSendData.CMD_STOP; pr.cmdSend(cd) }
-                R.id.button_up -> { cd.cmd =  TfmcuSendData.CMD_UP; pr.cmdSend(cd) }
-                R.id.button_down -> { cd.cmd =  TfmcuSendData.CMD_DOWN; pr.cmdSend(cd) }
+                R.id.button_stop -> { cd.cmd =  TfmcuSendData.CMD_STOP; pr.data2Mcu(cd) }
+                R.id.button_up -> { cd.cmd =  TfmcuSendData.CMD_UP; pr.data2Mcu(cd) }
+                R.id.button_down -> { cd.cmd =  TfmcuSendData.CMD_DOWN; pr.data2Mcu(cd) }
 
                 R.id.button_g -> if (enableFerId(false)) {
                         for (i in 0..7) {
@@ -678,7 +678,7 @@ class MainActivity : AppCompatActivity() {
                     pr.model.getSavedTimer(group, memb)
                 }
 
-                R.id.button_sun_pos -> { cd.cmd =  TfmcuSendData.CMD_SUN_DOWN; pr.cmdSend(cd) }
+                R.id.button_sun_pos -> { cd.cmd =  TfmcuSendData.CMD_SUN_DOWN; pr.data2Mcu(cd) }
 
                 R.id.button_timer -> {
                     sendTimer()
@@ -807,12 +807,12 @@ class MainActivity : AppCompatActivity() {
 
 
             R.id.action_cuAutoSet -> {
-                pr.configSend("cu=auto")
+                pr.data2Mcu(TfmcuConfigData("cu=auto"))
                 showProgressDialog("Press the Stop-Button on your Fernotron Central Unit in the next 60 seconds...", 60)
             }
 
             R.id.action_setFunc -> {
-                pr.cmdSend(TfmcuSendData(a = getFerId(), g = group, m = memb, cmd = TfmcuSendData.CMD_SET))
+                pr.data2Mcu(TfmcuSendData(a = getFerId(), g = group, m = memb, cmd = TfmcuSendData.CMD_SET))
                 showAlertDialog("You now have 60 seconds remaining to press STOP on the transmitter you want to add/remove. Beware: If you press STOP on the central unit, the device will be removed from it. To add it again, you would need the code. If you don't have the code, then you would have to press the physical set-button on the device")
             }
 

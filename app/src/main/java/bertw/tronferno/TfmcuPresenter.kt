@@ -15,17 +15,17 @@ class TfmcuPresenter(msgHandler: Handler) {
         td = TfmcuTimerData()
     }
 
-    fun timerSend() : Boolean {
-        return model.transmitTimer(timer = td, mid = TfmcuModel.MSG_ID_AUTO)
+    fun data2Mcu(timerData : TfmcuTimerData) : Boolean {
+        return model.transmitTimer(timer = timerData, mid = TfmcuModel.MSG_ID_AUTO)
     }
 
-    fun configSend(config: String) : Boolean{
-        model.tcp.transmit ("config $config;")
+    fun data2Mcu(configData : TfmcuConfigData) : Boolean {
+        model.tcp.transmit (configData.toString())
         return true; // FIXME
     }
 
-    fun cmdSend(c: TfmcuSendData): Boolean {
-        return model.transmitSend(c)
+    fun data2Mcu(cmdData: TfmcuSendData): Boolean {
+        return model.transmitSend(cmdData)
     }
 
     @Throws(IOException::class)
@@ -33,7 +33,7 @@ class TfmcuPresenter(msgHandler: Handler) {
         val c = Calendar.getInstance()
         val sd = SimpleDateFormat("yyyy-MM-dd", Locale.US).format(c.time)
         val st = SimpleDateFormat("HH:mm:ss", Locale.US).format(c.time)
-        configSend("rtc=${sd}T$st")
+        data2Mcu(TfmcuConfigData("rtc=${sd}T$st"))
     }
 
     fun onPause() {

@@ -106,6 +106,15 @@ class TfmcuTimerData(a: Int = 0, g: Int = 0, m: Int = 0) {
     }
 }
 
+class TfmcuConfigData(s : String = "") {
+    var s = s;
+
+    override fun toString(): String {
+
+        return "config $s;"
+    }
+}
+
 
 class TfmcuModel(msgHandler: Handler) {
     var tcp = McuTcp(msgHandler)
