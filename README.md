@@ -10,8 +10,8 @@ You can do nearly all things you could do with original hardware Fernotron 2411:
 * addresses shutters by original group/member numbers
 * program and view internal shutter timers and options (daily, weekly, astro, random, sun automatic, ...)
 * configure the MCU (timezone, longitude, latitude, ...)
-* scan the ID of the original 2411 (mcu config option cu=auto)
-* set shutter upper and lower limit (requires a hardware button conneted to the MCU for safety reasons)
+* scan the ID of the original 2411
+* set shutter upper and lower limit (to avoid possible damage, this feature requires a hardware button connected to the MCU)
 * a motor code can be used to activate its pairing mode or to set shutter limits
 
 
