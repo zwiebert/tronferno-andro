@@ -18,7 +18,8 @@ You can do nearly all things you could do with original hardware Fernotron 2411:
 
 ### How to install and getting started
 
-  * Download and install the APK file from [app/release/app-release.apk](https://github.com/zwiebert/tronferno-andro/blob/master/app/release/app-release.apk) on your Android device.
+  * [Download](https://raw.githubusercontent.com/zwiebert/tronferno-andro/master/app/release/app-release.apk) the file app/release/app-release.apk to your Android device
+  * Install the downloaded APK
   * Open the Tronferno App and go to Menu.Settings.General to configure the IP4-Address of your Tronferno-MCU
   * If Tronferno-MCU is not already configured you can do it now via Menu.Settings.MCU_Remote_Settings
   * Now disable unused Groups/Members via Menu.Settings.Groups_and_Members
