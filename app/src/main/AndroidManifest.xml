@@ -34,15 +34,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="de.bertw.tronferno.MainActivity" />
         </activity>
-        <activity
-            android:name="de.bertw.tronferno.McuConfigActivity"
-            android:label="@string/title_activity_mcu_config"
-            android:parentActivityName="de.bertw.tronferno.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="de.bertw.tronferno.MainActivity" />
-        </activity>
     </application>
 
 </manifest>

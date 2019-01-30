@@ -765,11 +765,6 @@ class MainActivity : AppCompatActivity() {
                 mode = if (item.isChecked) MODE_SEP else MODE_NORMAL
             }
 
-            R.id.action_openMcuCfg -> {
-                val intent = Intent(this, McuConfigActivity::class.java)
-                startActivity(intent)
-            }
-
             R.id.action_sendRtc -> {
                 sendRtc()
             }

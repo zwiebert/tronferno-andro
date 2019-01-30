@@ -34,12 +34,6 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_openMcuCfg"
-        android:orderInCategory="100"
-        android:title="@string/open_mcu_cfg"
-        android:visible="false"
-        app:showAsAction="never" />
-    <item
         android:id="@+id/action_sendRtc"
         android:orderInCategory="101"
         android:title="Send RTC to Shutter"
