@@ -409,7 +409,7 @@
         android:enabled="false"
         android:inputType="textCapCharacters"
         android:maxLength="6"
-        android:text="90ABCD"
+        android:text="90ABC"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/vbtUp"
         app:layout_constraintEnd_toEndOf="@+id/vbtG"

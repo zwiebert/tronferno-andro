@@ -27,7 +27,7 @@ class McuConfigActivity : AppCompatActivity() {
         vetLatitude = findViewById(R.id.editText_mcuLatitude)
         lvMcuCfg = findViewById(R.id.listView_mcuConfig)
 
-        listAdapter = ArrayAdapter<String>(this, R.layout.simplerow, stringList)
+        listAdapter = ArrayAdapter(this, R.layout.simplerow, stringList)
 
         lvMcuCfg.setAdapter(listAdapter)
 
@@ -47,7 +47,7 @@ class McuConfigActivity : AppCompatActivity() {
         super.onPause()
         tcp.close()
     }
-    private var stringList = ArrayList<String>();
+    private var stringList = ArrayList<String>()
     private lateinit var listAdapter : ArrayAdapter<String>
 
     private lateinit var vtvLog: TextView
@@ -56,7 +56,7 @@ class McuConfigActivity : AppCompatActivity() {
     private lateinit var lvMcuCfg: ListView
 
     private val mMessageHandler = MessageHandler(this)
-    private var tcp = McuTcp(mMessageHandler);
+    private var tcp = McuTcp(mMessageHandler)
 
     fun parseReceivedData(line: String) {
 
@@ -122,7 +122,7 @@ class McuConfigActivity : AppCompatActivity() {
                     } else {
                         ma.vtvLog.append(s + "\n")
                     }
-                    //ma.messagePending = 0;  // FIXME: check msgid?
+                    //ma.messagePending = 0  // FIXME: check msgid?
 
                     if (s.startsWith("config ")) {
                         ma.parseReceivedData(s)

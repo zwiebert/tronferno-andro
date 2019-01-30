@@ -15,7 +15,7 @@ class McuTcp(msgHandler: Handler) {
     private var tcpConnectThread: Thread
     private var tcpWriteThread: Thread
     private var tcpReadThread: Thread
-    private var mMessageHandler: Handler = msgHandler;
+    private var mMessageHandler: Handler = msgHandler
     private val q = ArrayBlockingQueue<String>(1000)
 
     @Volatile
@@ -31,7 +31,7 @@ class McuTcp(msgHandler: Handler) {
                         val data = q.take()
                         mTcpSocket.getOutputStream().write(data.toByteArray())
                     } catch (e: Exception) {
-                        mMessageHandler.obtainMessage(MSG_TCP_OUTPUT_ERROR, "tcp-wt:error: ${e.toString()}").sendToTarget()
+                        mMessageHandler.obtainMessage(MSG_TCP_OUTPUT_ERROR, "tcp-wt:error: $e").sendToTarget()
                         return
                     }
                 }
@@ -39,7 +39,6 @@ class McuTcp(msgHandler: Handler) {
         }
 
         tcpReadThread = object : Thread() {
-            internal var buf = ByteArray(256)
 
             override fun run() {
                 try {
@@ -48,12 +47,12 @@ class McuTcp(msgHandler: Handler) {
                         val line = br.readLine()
                         if (line == null) {
                             mMessageHandler.obtainMessage(MSG_TCP_INPUT_EOF, line).sendToTarget()
-                            return; // EOF
+                            return // EOF
                         }
                         mMessageHandler.obtainMessage(MSG_LINE_RECEIVED, line).sendToTarget()
                     }
                 } catch (e: Exception) {
-                    mMessageHandler.obtainMessage(MSG_TCP_INPUT_ERROR, "tcp-rt:error: ${e.toString()}").sendToTarget()
+                    mMessageHandler.obtainMessage(MSG_TCP_INPUT_ERROR, "tcp-rt:error: $e").sendToTarget()
                     return
                 }
             }
@@ -63,7 +62,7 @@ class McuTcp(msgHandler: Handler) {
 
             override fun run() {
                 try {
-                    stopThread = true;
+                    stopThread = true
                     if (mTcpSocket.isClosed) {
                         mTcpSocket = Socket()
                     }
@@ -71,16 +70,16 @@ class McuTcp(msgHandler: Handler) {
                         mTcpSocket.connect(socketAddress)
                         if (mTcpSocket.isConnected) {
                             mMessageHandler.obtainMessage(MSG_TCP_CONNECTED, "").sendToTarget()
-                            break;
+                            break
                         }
                     }
 
-                    stopThread = false;
+                    stopThread = false
                     if (!tcpWriteThread.isAlive) tcpWriteThread.start()
                     tcpReadThread.start()
                 } catch (e: Exception) {
                     mMessageHandler.obtainMessage(MSG_TCP_CONNECTION_FAILED, e.toString()).sendToTarget()
-                    return;
+                    return
                 }
             }
         }

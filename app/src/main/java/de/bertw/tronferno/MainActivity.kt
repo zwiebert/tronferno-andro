@@ -35,13 +35,13 @@ fun <T : Comparable<T>> max(a: T, b: T): T {
 
 class MainActivity : AppCompatActivity() {
 
-    public val mMessageHandler = MessageHandler(this)
+    val mMessageHandler = MessageHandler(this)
     val pr = TfmcuPresenter(mMessageHandler)
     //val tfmcuModel = pr.model
 
-    private var mode = VIS_NORMAL;
+    private var mode = VIS_NORMAL
 
-    private fun visibility_mode(mode: Int = VIS_NORMAL) {
+    private fun switchVisibility(mode: Int = VIS_NORMAL) {
         val iv = View.INVISIBLE
         val vi = View.VISIBLE
 
@@ -114,7 +114,7 @@ class MainActivity : AppCompatActivity() {
             booleanArrayOf(false, false, false, false, false, false, false, false),
             booleanArrayOf(false, false, false, false, false, false, false, false),
             booleanArrayOf(false, false, false, false, false, false, false, false),
-            booleanArrayOf(false, false, false, false, false, false, false, false));
+            booleanArrayOf(false, false, false, false, false, false, false, false))
 
 
     private lateinit var alertDialog: AlertDialog
@@ -149,23 +149,19 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun set_member_max(m: Int, arr: Set<String>) {
-
-    }
-
-    private fun set_member_max(g: Int, max: Int) {
-        membMax[g] = max; // old
+    private fun setMemberCount(g: Int, max: Int) {
+        membMax[g] = max // old
         for (i in 0..6) {
-            membMap[g - 1][i] = i < max;
+            membMap[g - 1][i] = i < max
         }
     }
 
     private fun loadPreferences() {
         val pref = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-
-
-        var tcpHostname = pref.getString("tcpHostName", DEFAULT_TCP_HOSTNAME)
         var tcpPort = DEFAULT_TCP_PORT
+
+        var tcpHostname = pref.getString("tcpHostName", DEFAULT_TCP_HOSTNAME)!!
+
         if (tcpHostname.contains(":")) {
             val pos = tcpHostname.indexOf(':')
             tcpPort = Integer.parseInt(tcpHostname.substring(pos + 1))
@@ -186,17 +182,17 @@ class MainActivity : AppCompatActivity() {
             membMax[i] = 0
         }
 
-        set_member_max(1, Integer.parseInt(pref.getString("group1_members", "7")))
-        set_member_max(2, Integer.parseInt(pref.getString("group2_members", "7")))
-        set_member_max(3, Integer.parseInt(pref.getString("group3_members", "7")))
-        set_member_max(4, Integer.parseInt(pref.getString("group4_members", "7")))
-        set_member_max(5, Integer.parseInt(pref.getString("group5_members", "7")))
-        set_member_max(6, Integer.parseInt(pref.getString("group6_members", "7")))
-        set_member_max(7, Integer.parseInt(pref.getString("group7_members", "7")))
+        setMemberCount(1, Integer.parseInt(pref.getString("group1_members", "7")!!))
+        setMemberCount(2, Integer.parseInt(pref.getString("group2_members", "7")!!))
+        setMemberCount(3, Integer.parseInt(pref.getString("group3_members", "7")!!))
+        setMemberCount(4, Integer.parseInt(pref.getString("group4_members", "7")!!))
+        setMemberCount(5, Integer.parseInt(pref.getString("group5_members", "7")!!))
+        setMemberCount(6, Integer.parseInt(pref.getString("group6_members", "7")!!))
+        setMemberCount(7, Integer.parseInt(pref.getString("group7_members", "7")!!))
 
 
-        group = pref.getInt("mGroup", 0);
-        memb = pref.getInt("mMemb", 0);
+        group = pref.getInt("mGroup", 0)
+        memb = pref.getInt("mMemb", 0)
 
         vcbDailyUp.isChecked = pref.getBoolean("vcbDailyUpIsChecked", false)
         vcbDailyDown.isChecked = pref.getBoolean("vcbDailyDownIsChecked", false)
@@ -219,10 +215,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun savePreferences() {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-        val ed = sharedPreferences.edit();
+        val ed = sharedPreferences.edit()
 
-        ed.putInt("mGroup", group);
-        ed.putInt("mMemb", memb);
+        ed.putInt("mGroup", group)
+        ed.putInt("mMemb", memb)
 
         ed.putBoolean("vcbDailyUpIsChecked", vcbDailyUp.isChecked)
         ed.putBoolean("vcbDailyDownIsChecked", vcbDailyDown.isChecked)
@@ -248,7 +244,7 @@ class MainActivity : AppCompatActivity() {
 
         // ed.putString("Text", .text.toString())
 
-        ed.apply();
+        ed.apply()
     }
 
 
@@ -305,11 +301,11 @@ class MainActivity : AppCompatActivity() {
         savePreferences()
     }
 
-    public fun logWriteLine(line: String) {
+    fun logWriteLine(line: String) {
         vtvLog.append(line + "\n")
     }
 
-    public class MessageHandler(activity: MainActivity) : Handler() {
+    class MessageHandler(activity: MainActivity) : Handler() {
         private val mActivity = WeakReference(activity)
 
         override fun handleMessage(msg: Message) {
@@ -357,7 +353,7 @@ class MainActivity : AppCompatActivity() {
                     } else {
                         ma.vtvLog.append(s + "\n")
                     }
-                    ma.pr.model.messagePending = 0;  // FIXME: check msgid?
+                    ma.pr.model.messagePending = 0  // FIXME: check msgid?
 
                     if (s.contains("rs=data")) {
                         ma.parseReceivedTimer(s)
@@ -398,8 +394,8 @@ class MainActivity : AppCompatActivity() {
                 MainActivity.MSG_SEND_ENABLE -> ma.enableSendButtons(true, 0)
 
                 MainActivity.MSG_ERROR -> {
-                    val s = msg.obj as String
-                    ma.vtvLog.append(s + "\n")
+                    val errMsg = msg.obj as String
+                    ma.vtvLog.append(errMsg + "\n")
                 }
             }
         }
@@ -511,28 +507,28 @@ class MainActivity : AppCompatActivity() {
         val ed = sharedPreferences.edit()
 
 
-       for(i in 0..mcuCfg_prefKeys.size - 1) {
-           ed.putString(mcuCfg_prefKeys[i], mcuCfg_prefVals[i])
-           ed.putString(mcuCfg_prefKeys[i] + "_old", mcuCfg_prefVals[i])
+       for(i in 0..mcuCfgPrefKeys.size - 1) {
+           ed.putString(mcuCfgPrefKeys[i], mcuCfgPrefVals[i])
+           ed.putString(mcuCfgPrefKeys[i] + "_old", mcuCfgPrefVals[i])
        }
 
         ed.apply()
 
     }
 
-    val mcuCfg_prefKeys = arrayOf("geo_latitude", "geo_longitude", "geo_time_zone", "wlan_ssid", "cu_id", "serial_baud", "cli_verbosity")
-    val mcuCfg_mcuKeys = arrayOf("latitude", "longitude", "tz", "wlan-ssid", "cu", "baud", "verbose")
-    var mcuCfg_prefVals = arrayOf("","","","","","", "");
+    val mcuCfgPrefKeys = arrayOf("geo_latitude", "geo_longitude", "geo_time_zone", "wlan_ssid", "cu_id", "serial_baud", "cli_verbosity")
+    val mcuCfgMcuKeys = arrayOf("latitude", "longitude", "tz", "wlan-ssid", "cu", "baud", "verbose")
+    var mcuCfgPrefVals = arrayOf("","","","","","", "")
 
 
     fun configureMcu() {
         val pref = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-        for(i in 0..mcuCfg_prefKeys.size - 1) {
-            val pv = pref.getString(mcuCfg_prefKeys[i], "")
-            val pv_old = pref.getString(mcuCfg_prefKeys[i] + "_old", "")
-            val mk = mcuCfg_mcuKeys[i]
+        for(i in 0..mcuCfgPrefKeys.size - 1) {
+            val pv = pref.getString(mcuCfgPrefKeys[i], "")
+            val pvOld = pref.getString(mcuCfgPrefKeys[i] + "_old", "")
+            val mk = mcuCfgMcuKeys[i]
 
-            if (pv != pv_old) {
+            if (pv != pvOld) {
                 pr.data2Mcu(TfmcuConfigData("$mk=$pv"))
             }
         }
@@ -550,9 +546,9 @@ class MainActivity : AppCompatActivity() {
                 s = s.substringAfter(' ', ";")
 
                // listAdapter.add(k + "=" + v)
-                for(i in 0..mcuCfg_prefKeys.size - 1) {
-                    if (mcuCfg_mcuKeys[i] == k) {
-                        mcuCfg_prefVals[i] = v
+                for(i in 0..mcuCfgPrefKeys.size - 1) {
+                    if (mcuCfgMcuKeys[i] == k) {
+                        mcuCfgPrefVals[i] = v
                     }
                 }
 
@@ -579,6 +575,7 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun getFerId(): Int {
+        var result = 0
         if (vetFerId.visibility == View.VISIBLE) {
             var s = vetFerId.text.toString()
             if (s.length == 5) {
@@ -586,10 +583,10 @@ class MainActivity : AppCompatActivity() {
             } else if (s.length != 6) {
                 throw Exception("id must have 6 digits ($s)")
             }
-            val result = Integer.parseInt(s, 16)
-            return result
+            result = Integer.parseInt(s, 16)
+
         }
-        return 0
+        return result
     }
 
     fun onClick(view: View) {
@@ -606,7 +603,7 @@ class MainActivity : AppCompatActivity() {
                         for (i in 0..7) {
                             group = ++group % 8
                             if (group == 0 || membMax[group] != 0) {
-                                break;
+                                break
                             }
                         }
 
@@ -643,7 +640,7 @@ class MainActivity : AppCompatActivity() {
         val builder = AlertDialog.Builder(this)
         builder.setMessage(msg)
 
-        builder.setPositiveButton("OK") { dialog, id -> alertDialog.hide() }
+        builder.setPositiveButton("OK") { _, _ -> alertDialog.hide() }
 
         alertDialog = builder.create()
         alertDialog.show()
@@ -651,7 +648,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun showProgressDialog(msg: String, time_out: Int) {
 
-        progressDialog.setMessage("Press the Stop-Button on your Fernotron Central Unit in the next 60 seconds...")
+        progressDialog.setMessage(msg)
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
         progressDialog.isIndeterminate = false
         progressDialog.max = 60
@@ -705,11 +702,11 @@ class MainActivity : AppCompatActivity() {
 
 
         }
-        vbtTimer.isEnabled = enable;
-        vbtUp.isEnabled = enable;
-        vbtStop.isEnabled = enable;
-        vbtSunPos.isEnabled = enable;
-        vbtDown.isEnabled = enable;
+        vbtTimer.isEnabled = enable
+        vbtUp.isEnabled = enable
+        vbtStop.isEnabled = enable
+        vbtSunPos.isEnabled = enable
+        vbtDown.isEnabled = enable
 
         mMenu?.findItem(R.id.action_cuAutoSet)?.isEnabled = enable
         mMenu?.findItem(R.id.action_setFunc)?.isEnabled = enable
@@ -719,7 +716,7 @@ class MainActivity : AppCompatActivity() {
 
     fun enableFerId(enable: Boolean) : Boolean {
 
-        val state_changed = (vetFerId.visibility == View.VISIBLE) == enable
+        val stateHasChanged = (vetFerId.visibility == View.VISIBLE) == enable
 
         mMenu?.findItem(R.id.action_motorCode)?.isChecked = enable
 
@@ -731,7 +728,7 @@ class MainActivity : AppCompatActivity() {
         vtvG.visibility = if (!enable) View.VISIBLE else View.INVISIBLE
         vtvE.visibility = if (!enable) View.VISIBLE else View.INVISIBLE
 
-        return state_changed
+        return stateHasChanged
     }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -764,7 +761,7 @@ class MainActivity : AppCompatActivity() {
 
             R.id.action_setEndPos -> {
                 item.isChecked = !item.isChecked
-                visibility_mode(if (item.isChecked) VIS_SEP else VIS_NORMAL)
+                switchVisibility(if (item.isChecked) VIS_SEP else VIS_NORMAL)
                 mode = if (item.isChecked) MODE_SEP else MODE_NORMAL
             }
 
@@ -788,7 +785,7 @@ class MainActivity : AppCompatActivity() {
             else -> return super.onOptionsItemSelected(item)
         }
 
-        return true;
+        return true
     }
 
     companion object {
@@ -799,7 +796,7 @@ class MainActivity : AppCompatActivity() {
 
         internal const val VIS_NORMAL = 0
         internal const val VIS_SEP = 1
-        internal const val VIS_XXX = 2
+        //internal const val VIS_XXX = 2
 
         internal const val MSG_CUAS_TIME_OUT = 3
         internal const val MSG_SEND_ENABLE = 4
@@ -809,10 +806,8 @@ class MainActivity : AppCompatActivity() {
         internal const val def_dailyDown = "19:30"
         internal const val def_weekly = "0700-++++0900-+"
         internal const val def_astro = "0"
-        internal const val configFmt = "config mid=%d %s;"
-        internal const val timeFormat = "%4d-%02d-%02dT%02d:%02d:%02d"
 
-        var mcuConfig_changed = false;
+        var mcuConfig_changed = false
     }
 
 

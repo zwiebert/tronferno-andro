@@ -4,12 +4,7 @@ import android.os.Handler
 import java.io.IOException
 import java.util.regex.Pattern
 
-class TfmcuSendData(a: Int = 0, g: Int = 0, m: Int = 0, cmd: String = "", sep: Boolean = false) {
-    var a = a
-    var g = g
-    var m = m
-    var cmd = cmd
-    var sep = sep
+class TfmcuSendData(var a: Int = 0, var g: Int = 0, var m: Int = 0, var cmd: String = "", var sep: Boolean = false) {
 
     override fun toString(): String {
         var s = "send"
@@ -48,18 +43,15 @@ class TfmcuSendData(a: Int = 0, g: Int = 0, m: Int = 0, cmd: String = "", sep: B
     }
 }
 
-class TfmcuTimerData(a: Int = 0, g: Int = 0, m: Int = 0) {
-    var a = a
-    var g = g
-    var m = m
+class TfmcuTimerData(var a: Int = 0, var g: Int = 0, var m: Int = 0) {
     var sunAuto = false
     var random = false
     var daily = ""
     var weekly = ""
     var hasAstro = false
     var astro = 0
-     var rtcOnly = false
-    var rs = 0;
+    var rtcOnly = false
+    var rs = 0
 
     override fun toString(): String {
         var timer = "timer"
@@ -106,8 +98,7 @@ class TfmcuTimerData(a: Int = 0, g: Int = 0, m: Int = 0) {
     }
 }
 
-class TfmcuConfigData(s : String = "") {
-    var s = s;
+class TfmcuConfigData(var s : String = "") {
 
     override fun toString(): String {
 
@@ -164,7 +155,7 @@ class TfmcuModel(msgHandler: Handler) {
 
     @Throws(java.io.IOException::class)
     fun getSavedTimer(g: Int, m: Int) {
-        transmit("timer g=$g m=$m rs=2;mcu cs=?;send g=$g m=$m c=?;")
+        transmit("timer g=$g m=$m rs=2mcu cs=?;send g=$g m=$m c=?;")
     }
 
 
@@ -172,7 +163,7 @@ class TfmcuModel(msgHandler: Handler) {
     private var posArr0 = intArrayOf(0, 0, 0, 0, 0, 0, 0, 0)
     private var posArr50 = intArrayOf(0, 0, 0, 0, 0, 0, 0, 0)
     private var posArr100 = intArrayOf(0, 0, 0, 0, 0, 0, 0, 0)
-    private var posDataValid = true;
+    private var posDataValid = true
 
     private fun clearPosArr() {
         for (i in 0..7) {
@@ -234,18 +225,18 @@ class TfmcuModel(msgHandler: Handler) {
     }
 
     fun parseReceivedPosition(line: String): Boolean {
-        var posChanged = false;
+        var posChanged = false
 
         if (line.startsWith("U:position:start;")) {
             clearPosArr()
         } else if (line.startsWith("U:position:end;")) {
             posDataValid = true
-            posChanged = true;
+            posChanged = true
         } else if (line.startsWith("A:position: ") || line.startsWith("U:position: ")) {
-            var g = -1;
-            var m = -1;
-            var p = -1;
-            var mm = "";
+            var g = -1
+            var m = -1
+            var p = -1
+            var mm = ""
 
             var s = line.substringAfter(":position: ")
             while (s.contains('=')) {
@@ -257,12 +248,12 @@ class TfmcuModel(msgHandler: Handler) {
                     "g" -> g = v.toInt()
                     "m" -> m = v.toInt()
                     "p" -> p = v.toInt()
-                    "mm" -> mm = v;
+                    "mm" -> mm = v
                 }
             }
 
             if (!mm.isEmpty() && p != -1) {
-                var arr = mm.split(',');
+                var arr = mm.split(',')
                 if (arr.size == 8) {
                     for (i in 1..7) {
                         var temp = arr[i].toInt(radix = 16)
@@ -273,29 +264,29 @@ class TfmcuModel(msgHandler: Handler) {
                         }
 
                     }
-                    posDataValid = true;
-                    posChanged = true;
+                    posDataValid = true
+                    posChanged = true
 
                 }
             }
 
             if (g != -1 && m != -1 && p != -1) {
                 updPosArr(g, m, p)
-                posDataValid = true;
-                posChanged = true;
+                posDataValid = true
+                posChanged = true
             }
 
         }
         return posChanged
     }
 
-    fun parseReceivedTimer(s: String): TfmcuTimerData {
-        var s = s
+    fun parseReceivedTimer(timer: String): TfmcuTimerData {
+        var s = timer
         var td = TfmcuTimerData()
         try {
             s = s.substring(s.indexOf(":rs=data: "))
 
-            //     tvRec.append(String.format("###%s###\n", s));
+            //     tvRec.append(String.format("###%s###\n", s))
 
 
             if (s.startsWith(":rs=data: none")) {
@@ -347,7 +338,7 @@ class TfmcuModel(msgHandler: Handler) {
             }
         } catch (e: Exception) {
         }
-        return td;
+        return td
     }
 
 

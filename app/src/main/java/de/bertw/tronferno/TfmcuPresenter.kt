@@ -21,7 +21,7 @@ class TfmcuPresenter(msgHandler: Handler) {
 
     fun data2Mcu(configData : TfmcuConfigData) : Boolean {
         model.tcp.transmit (configData.toString())
-        return true; // FIXME
+        return true // FIXME
     }
 
     fun data2Mcu(cmdData: TfmcuSendData): Boolean {
