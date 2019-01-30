@@ -259,7 +259,7 @@ class TfmcuModel(msgHandler: Handler) {
                 val arr = mm.split(',')
                 if (arr.size == 8) {
                     for (i in 1..7) {
-                        var temp = arr[i].toInt(radix = 16)
+                        val temp = arr[i].toInt(radix = 16)
                         when (p) {
                             0 -> posArr0[i] = temp
                             50 -> posArr50[i] = temp
@@ -285,7 +285,7 @@ class TfmcuModel(msgHandler: Handler) {
 
     fun parseReceivedTimer(timer: String): TfmcuTimerData {
         var s = timer
-        var td = TfmcuTimerData()
+        val td = TfmcuTimerData()
         try {
             s = s.substring(s.indexOf(":rs=data: "))
 

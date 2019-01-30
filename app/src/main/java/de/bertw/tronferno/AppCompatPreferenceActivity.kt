@@ -41,10 +41,6 @@ abstract class AppCompatPreferenceActivity : PreferenceActivity() {
         delegate?.onPostCreate(savedInstanceState)
     }
 
-    fun setSupportActionBar(toolbar: Toolbar?) {
-        delegate?.setSupportActionBar(toolbar)
-    }
-
     override fun getMenuInflater(): MenuInflater? {
         return delegate?.menuInflater
     }

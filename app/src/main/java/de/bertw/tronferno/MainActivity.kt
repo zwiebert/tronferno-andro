@@ -236,9 +236,9 @@ class MainActivity : AppCompatActivity() {
         ed.putString("vetWeeklyTimerText", vetWeeklyTimer.text.toString())
         ed.putString("vetAstroMinuteOffsetText", vetAstroMinuteOffset.text.toString())
 
-        val start = vtvLog.getLayout().getLineStart(max(0, vtvLog.getLineCount() - 20))
-        val end = vtvLog.getLayout().getLineEnd(vtvLog.getLineCount() - 1)
-        val logText = vtvLog.getText().toString().substring(start, end)
+        val start = vtvLog.layout.getLineStart(max(0, vtvLog.lineCount - 20))
+        val end = vtvLog.layout.getLineEnd(vtvLog.lineCount - 1)
+        val logText = vtvLog.text.toString().substring(start, end)
         ed.putString("vtvLogText", logText)
 
 
@@ -266,7 +266,7 @@ class MainActivity : AppCompatActivity() {
         vcbSunAuto.setOnCheckedChangeListener(onCheckedChanged)
 
         loadPreferences()
-        vtvLog.setMovementMethod(ScrollingMovementMethod())
+        vtvLog.movementMethod = ScrollingMovementMethod()
 
         vtvG.text = if (group != 0) group.toString() else "A"
         vtvE.text = if (memb != 0) memb.toString() else if (group != 0) "A" else ""
@@ -286,11 +286,6 @@ class MainActivity : AppCompatActivity() {
         pr.onResume()
         showShutterPositions()
         //  vtvLog.append("-----onResume----\n")
-    }
-
-    override fun onBackPressed() {
-        //  supportFragmentManager.fragments[supportFragmentManager.backStackEntryCount - 1].onResume()
-        super.onBackPressed()
     }
 
 
@@ -344,12 +339,14 @@ class MainActivity : AppCompatActivity() {
 
                 McuTcp.MSG_LINE_RECEIVED -> try {
                     s = msg.obj as String
-                    if (s == "ready:") {
+                    when {
+                        s == "ready:" -> {
 
-                    } else if (s.isEmpty()) {
+                        }
+                        s.isEmpty() -> {
 
-                    } else {
-                        ma.vtvLog.append(s + "\n")
+                        }
+                        else -> ma.vtvLog.append(s + "\n")
                     }
 
                     ma.pr.model.messagePending = 0  // FIXME: check msgid?
@@ -379,7 +376,7 @@ class MainActivity : AppCompatActivity() {
                     }
 
                 } catch (e: Exception) {
-                    ma.vtvLog.append("MLR:error: " + e.toString() + "\n" + "...line: $s")
+                    ma.vtvLog.append("MLR:error: $e\n...line: $s")
 
                 }
 
@@ -441,7 +438,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     internal fun parseReceivedTimer(s: String) {
-        var td = pr.model.parseReceivedTimer(s)
+        val td = pr.model.parseReceivedTimer(s)
 
         vcbSunAuto.isChecked = td.sunAuto
         vcbRandom.isChecked = td.random
@@ -522,7 +519,7 @@ class MainActivity : AppCompatActivity() {
 
     fun configureMcu() {
         val pref = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-        for(i in 0..mcuCfgPrefKeys.size - 1) {
+        for(i in 0 until mcuCfgPrefKeys.size) {
             val pv = pref.getString(mcuCfgPrefKeys[i], "")
             val pvOld = pref.getString(mcuCfgPrefKeys[i] + "_old", "")
             val mk = mcuCfgMcuKeys[i]
@@ -545,7 +542,7 @@ class MainActivity : AppCompatActivity() {
                 s = s.substringAfter(' ', ";")
 
                // listAdapter.add(k + "=" + v)
-                for(i in 0..mcuCfgPrefKeys.size - 1) {
+                for(i in 0 until mcuCfgPrefKeys.size) {
                     if (mcuCfgMcuKeys[i] == k) {
                         mcuCfgPrefVals[i] = v
                     }
@@ -589,7 +586,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun onClick(view: View) {
-        var cd = TfmcuSendData(a=getFerId(), g = group, m = memb, sep = (mode == MODE_SEP) )
+        val cd = TfmcuSendData(a=getFerId(), g = group, m = memb, sep = (mode == MODE_SEP) )
         try {
            // vtvLog.append(String.format("ra: %b, wa: %b, ca: %b\n", tcpReadThread.isAlive, tcpWriteThread.isAlive, tcpConnectThread.isAlive))
 
@@ -630,7 +627,7 @@ class MainActivity : AppCompatActivity() {
 
 
         } catch (e: Exception) {
-            vtvLog.append("OCH:error: " + e.toString() + "...\n")
+            vtvLog.append("OCH:error: $e...\n")
         }
 
     }
