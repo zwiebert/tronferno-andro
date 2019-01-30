@@ -15,10 +15,10 @@ class TfmcuSendData(var a: Int = 0, var g: Int = 0, var m: Int = 0, var cmd: Str
 
         if (a == 0 || (a and 0xF00000) == 0x800000) {
             if (g != 0) {
-                s += " g=" + g.toString()
+                s += " g=$g"
             }
             if (m != 0) {
-                s += " m=" + m.toString()
+                s += " m=$m"
             }
         }
 
@@ -62,10 +62,10 @@ class TfmcuTimerData(var a: Int = 0, var g: Int = 0, var m: Int = 0) {
 
         if (a == 0 || (a and 0xF00000) == 0x800000) {
             if (g != 0) {
-                timer += " g=" + g.toString()
+                timer += " g=$g"
             }
             if (m != 0) {
-                timer += " m=" + m.toString()
+                timer += " m=$m"
             }
         }
 
@@ -75,15 +75,15 @@ class TfmcuTimerData(var a: Int = 0, var g: Int = 0, var m: Int = 0) {
         }
 
         if (hasAstro) {
-            timer += " astro=" + astro.toString()
+            timer += " astro=$astro"
         }
 
         if (daily.isNotEmpty()) {
-            timer += " daily=" + daily
+            timer += " daily=$daily"
         }
 
         if (weekly.isNotEmpty()) {
-            timer += " weekly=" + weekly
+            timer += " weekly=$weekly"
         }
 
         if (sunAuto) {
@@ -98,7 +98,7 @@ class TfmcuTimerData(var a: Int = 0, var g: Int = 0, var m: Int = 0) {
     }
 }
 
-class TfmcuConfigData(var s : String = "") {
+class TfmcuConfigData(private var s : String = "") {
 
     override fun toString(): String {
 
@@ -118,7 +118,7 @@ class TfmcuModel(msgHandler: Handler) {
     }
 
     fun transmitSend(cmd: TfmcuSendData): Boolean {
-        val s = cmd.toString() + ";"
+        val s = "$cmd;"
         return transmit(s)
     }
 
@@ -149,7 +149,7 @@ class TfmcuModel(msgHandler: Handler) {
         return true
     }
 
-    fun getMsgId(): Int {
+    private fun getMsgId(): Int {
         return ++msgid
     }
 
@@ -186,17 +186,20 @@ class TfmcuModel(msgHandler: Handler) {
         var posText100 = ""
 
         for (i in 1..memb_count) {
-            if ((posArr0[group] and (1 shl i)) != 0) {
-                posText += "c"
-                posText0 += if (posText0.isEmpty()) "$i" else ",$i"
-            } else if ((posArr50[group] and (1 shl i)) != 0) {
-                posText += "m"
-                posText50 += if (posText50.isEmpty()) "$i" else ",$i"
-            } else if ((posArr100[group] and (1 shl i)) != 0) {
-                posText += "o"
-                posText100 += if (posText100.isEmpty()) "$i" else ",$i"
-            } else {
-                posText += "?"
+            when {
+                (posArr0[group] and (1 shl i)) != 0 -> {
+                    posText += "c"
+                    posText0 += if (posText0.isEmpty()) "$i" else ",$i"
+                }
+                (posArr50[group] and (1 shl i)) != 0 -> {
+                    posText += "m"
+                    posText50 += if (posText50.isEmpty()) "$i" else ",$i"
+                }
+                (posArr100[group] and (1 shl i)) != 0 -> {
+                    posText += "o"
+                    posText100 += if (posText100.isEmpty()) "$i" else ",$i"
+                }
+                else -> posText += "?"
             }
         }
 
@@ -253,7 +256,7 @@ class TfmcuModel(msgHandler: Handler) {
             }
 
             if (!mm.isEmpty() && p != -1) {
-                var arr = mm.split(',')
+                val arr = mm.split(',')
                 if (arr.size == 8) {
                     for (i in 1..7) {
                         var temp = arr[i].toInt(radix = 16)
@@ -295,10 +298,10 @@ class TfmcuModel(msgHandler: Handler) {
                 val scIdx = s.indexOf(';')
 
 
-                if (scIdx > 16) {
-                    s = s.substring(16, scIdx)
+                s = if (scIdx > 16) {
+                    s.substring(16, scIdx)
                 } else {
-                    s = s.substring(16)
+                    s.substring(16)
                 }
 
                 val p = Pattern.compile("\\s+")

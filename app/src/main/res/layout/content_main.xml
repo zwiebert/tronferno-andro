@@ -99,7 +99,8 @@
         app:layout_constraintTop_toBottomOf="@+id/vetWeeklyTimer"
         tools:layout_constraintBaseline_creator="1"
         tools:layout_constraintLeft_creator="1"
-        tools:layout_constraintRight_creator="1" />
+        tools:layout_constraintRight_creator="1"
+        android:importantForAutofill="no" />
 
     <CheckBox
         android:id="@+id/vcbDailyUp"
@@ -132,7 +133,8 @@
         tools:layout_constraintBottom_creator="1"
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintRight_creator="1"
-        tools:layout_constraintTop_creator="1" />
+        tools:layout_constraintTop_creator="1"
+        android:importantForAutofill="no" />
 
     <CheckBox
         android:id="@+id/vcbWeekly"
@@ -173,7 +175,8 @@
         tools:layout_constraintBottom_creator="1"
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintRight_creator="1"
-        tools:layout_constraintTop_creator="1" />
+        tools:layout_constraintTop_creator="1"
+        android:importantForAutofill="no" />
 
     <CheckBox
         android:id="@+id/vcbDailyDown"
@@ -398,7 +401,8 @@
         android:text="0700-++++0900-+"
         app:layout_constraintEnd_toStartOf="@+id/vcbWeekly"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/vetShutterPos" />
+        app:layout_constraintTop_toBottomOf="@+id/vetShutterPos"
+        android:importantForAutofill="no" />
 
     <EditText
         android:id="@+id/vetFerId"
@@ -414,7 +418,8 @@
         app:layout_constraintBottom_toBottomOf="@+id/vbtUp"
         app:layout_constraintEnd_toEndOf="@+id/vbtG"
         app:layout_constraintStart_toStartOf="@+id/vbtG"
-        app:layout_constraintTop_toTopOf="@+id/vbtUp" />
+        app:layout_constraintTop_toTopOf="@+id/vbtUp"
+        android:importantForAutofill="no" />
 
     <EditText
         android:id="@+id/vetShutterPos"
@@ -429,7 +434,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.504"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/vtvLog" />
+        app:layout_constraintTop_toBottomOf="@+id/vtvLog"
+        android:importantForAutofill="no" />
 
 
 </android.support.constraint.ConstraintLayout>

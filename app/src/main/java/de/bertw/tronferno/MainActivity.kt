@@ -107,7 +107,7 @@ class MainActivity : AppCompatActivity() {
     private var memb = 0
     private var groupMax = 0
     private val membMax = intArrayOf(0, 0, 0, 0, 0, 0, 0, 0)
-    val membMap = arrayOf(
+    private val membMap = arrayOf(
             booleanArrayOf(false, false, false, false, false, false, false, false),
             booleanArrayOf(false, false, false, false, false, false, false, false),
             booleanArrayOf(false, false, false, false, false, false, false, false),
@@ -209,7 +209,7 @@ class MainActivity : AppCompatActivity() {
         vetWeeklyTimer.setText(pref.getString("vetWeeklyTimerText", ""))
         vetAstroMinuteOffset.setText(pref.getString("vetAstroMinuteOffsetText", ""))
 
-        vtvLog.setText(pref.getString("vtvLogText", ""))
+        vtvLog.text = pref.getString("vtvLogText", "")
 
     }
 
@@ -301,7 +301,7 @@ class MainActivity : AppCompatActivity() {
         savePreferences()
     }
 
-    fun logWriteLine(line: String) {
+    private fun logWriteLine(line: String) {
         vtvLog.append(line + "\n")
     }
 
@@ -309,9 +309,7 @@ class MainActivity : AppCompatActivity() {
         private val mActivity = WeakReference(activity)
 
         override fun handleMessage(msg: Message) {
-            val ma = mActivity.get()
-            if (ma == null)
-                return
+            val ma = mActivity.get() ?: return
             var s = ""
             when (msg.what) {
 
@@ -341,18 +339,19 @@ class MainActivity : AppCompatActivity() {
 
                 McuTcp.MSG_TCP_CONNECTION_FAILED -> {
                     s = msg.obj as String
-                    ma.vtvLog.append("tcp connection failed: " + s + "\n")
+                    ma.vtvLog.append("tcp connection failed: $s\n")
                 }
 
                 McuTcp.MSG_LINE_RECEIVED -> try {
                     s = msg.obj as String
-                    if (s.equals("ready:")) {
+                    if (s == "ready:") {
 
                     } else if (s.isEmpty()) {
 
                     } else {
                         ma.vtvLog.append(s + "\n")
                     }
+
                     ma.pr.model.messagePending = 0  // FIXME: check msgid?
 
                     if (s.contains("rs=data")) {
@@ -420,8 +419,8 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    fun td2dailyUp(td: TfmcuTimerData): String {
-        var daily = td.daily
+    private fun td2dailyUp(td: TfmcuTimerData): String {
+        val daily = td.daily
 
         if (daily.isEmpty()) {
             return ""
@@ -430,7 +429,7 @@ class MainActivity : AppCompatActivity() {
         return if (daily.startsWith("-")) "" else daily.substring(0, 2) + ":" + daily.substring(2, 4)
     }
 
-    fun td2dailyDown(td: TfmcuTimerData): String {
+    private fun td2dailyDown(td: TfmcuTimerData): String {
         var daily = td.daily
 
         if (daily.isEmpty()) {
@@ -456,7 +455,7 @@ class MainActivity : AppCompatActivity() {
         vetDailyDownTime.setText(td2dailyDown(td))
     }
 
-    fun sendRtc(broadcast: Boolean = false) {
+    private fun sendRtc(broadcast: Boolean = false) {
         pr.timerClear()
         pr.td.a = getFerId()
         if (!broadcast) {
@@ -468,7 +467,7 @@ class MainActivity : AppCompatActivity() {
         pr.data2Mcu(pr.td)
     }
 
-    fun sendTimer() {
+    private fun sendTimer() {
         pr.timerClear()
         pr.td.a = getFerId()
         pr.td.g = group
@@ -502,12 +501,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun saveMcuPreferecence () {
+    private fun saveMcuPreferecence () {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         val ed = sharedPreferences.edit()
 
 
-       for(i in 0..mcuCfgPrefKeys.size - 1) {
+       for(i in 0 until mcuCfgPrefKeys.size) {
            ed.putString(mcuCfgPrefKeys[i], mcuCfgPrefVals[i])
            ed.putString(mcuCfgPrefKeys[i] + "_old", mcuCfgPrefVals[i])
        }
@@ -516,9 +515,9 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    val mcuCfgPrefKeys = arrayOf("geo_latitude", "geo_longitude", "geo_time_zone", "wlan_ssid", "cu_id", "serial_baud", "cli_verbosity")
-    val mcuCfgMcuKeys = arrayOf("latitude", "longitude", "tz", "wlan-ssid", "cu", "baud", "verbose")
-    var mcuCfgPrefVals = arrayOf("","","","","","", "")
+    private val mcuCfgPrefKeys = arrayOf("geo_latitude", "geo_longitude", "geo_time_zone", "wlan_ssid", "cu_id", "serial_baud", "cli_verbosity")
+    private val mcuCfgMcuKeys = arrayOf("latitude", "longitude", "tz", "wlan-ssid", "cu", "baud", "verbose")
+    private var mcuCfgPrefVals = arrayOf("","","","","","", "")
 
 
     fun configureMcu() {
@@ -560,7 +559,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun showShutterPositions() {
+    private fun showShutterPositions() {
         val positions =  pr.model.showPos(group, memb_count = membMax[group], format = 1)
         vetShutterPos.setText(if (positions.isEmpty()) "" else "Pos-G$group: $positions" )
     }
@@ -714,7 +713,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    fun enableFerId(enable: Boolean) : Boolean {
+    private fun enableFerId(enable: Boolean) : Boolean {
 
         val stateHasChanged = (vetFerId.visibility == View.VISIBLE) == enable
 
