@@ -8,7 +8,7 @@
         android:title="@string/pref_general" />
 
     <header
-        android:fragment="de.bertw.tronferno.SettingsActivity$DataSyncPreferenceFragment"
+        android:fragment="de.bertw.tronferno.SettingsActivity$GroupMembersPreferenceFragment"
         android:title="@string/pref_header_members" />
 
 
