@@ -65,6 +65,7 @@ class MainActivity : AppCompatActivity() {
                 vetAstroMinuteOffset.visibility = vi
                // vetFerId.visibility = vi
 
+                vbtEdWeekly.visibility = vi
                 vbtUp.visibility = vi
                 vbtDown.visibility = vi
                 vbtStop.visibility = vi
@@ -91,6 +92,9 @@ class MainActivity : AppCompatActivity() {
                 vetWeeklyTimer.visibility = iv
                 vetAstroMinuteOffset.visibility = iv
                // vetFerId.visibility = vi
+
+                vbtEdWeekly.visibility = iv
+
 
                 vbtUp.visibility = vi
                 vbtDown.visibility = vi

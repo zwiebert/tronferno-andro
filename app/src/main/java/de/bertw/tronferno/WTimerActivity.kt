@@ -121,7 +121,7 @@ class WTimerActivity : AppCompatActivity() {
                 val len = wtimer.length
 
                 while(!wday_done) {
-                    if (t + 1 >= len) {
+                    if (t >= len) {
                         return
                     }
                     when (wtimer[t]) {
@@ -140,7 +140,7 @@ class WTimerActivity : AppCompatActivity() {
                         }
 
                         else -> {
-                            if (t + 4 >= len) {
+                            if (t + 4 > len) {
                                 return
                             }
                             val time = wtimer.substring(t, t + 4)
