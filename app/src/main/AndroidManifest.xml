@@ -14,8 +14,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".WTimerActivity"></activity>
         <activity
-            android:name="de.bertw.tronferno.MainActivity"
+            android:name=".MainActivity"
             android:label="Tronferno"
             android:screenOrientation="sensorPortrait"
             android:theme="@style/AppTheme.NoActionBar"
@@ -27,9 +28,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="de.bertw.tronferno.SettingsActivity"
+            android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:parentActivityName="de.bertw.tronferno.MainActivity">
+            android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="de.bertw.tronferno.MainActivity" />

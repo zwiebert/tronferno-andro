@@ -1,5 +1,6 @@
 package de.bertw.tronferno
 
+import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
@@ -623,6 +624,14 @@ class MainActivity : AppCompatActivity() {
                     sendTimer()
 
                 }
+
+                R.id.vbtEdWeekly -> {
+                    val intent = Intent(this, WTimerActivity::class.java)
+                    val tws = if (vetWeeklyTimer.text.isBlank()) def_weekly else vetWeeklyTimer.text.toString()
+                    intent.putExtra("wtimer", tws)
+                    startActivityForResult(intent, REQ_WEEKLY_EDITOR)
+
+                }
             }
 
 
@@ -630,6 +639,17 @@ class MainActivity : AppCompatActivity() {
             vtvLog.append("OCH:error: $e...\n")
         }
 
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                REQ_WEEKLY_EDITOR -> {
+                    val result = data?.getStringExtra("message_return") ?: ""
+                    vetWeeklyTimer.setText(result)
+                }
+            }
+        }
     }
 
     internal fun showAlertDialog(msg: String) {
@@ -799,6 +819,7 @@ class MainActivity : AppCompatActivity() {
         internal const val def_astro = "0"
 
         var mcuConfig_changed = false
+        internal const val REQ_WEEKLY_EDITOR = 1
     }
 
 

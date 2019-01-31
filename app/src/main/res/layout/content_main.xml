@@ -150,8 +150,9 @@
         android:text="@string/weekly"
         app:layout_constraintBottom_toBottomOf="@+id/vetWeeklyTimer"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/vetWeeklyTimer"
+        app:layout_constraintStart_toEndOf="@+id/vbtEdWeekly"
         app:layout_constraintTop_toTopOf="@+id/vetWeeklyTimer"
+        app:layout_constraintVertical_bias="1.0"
         tools:layout_constraintBottom_creator="1"
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintTop_creator="1" />
@@ -392,17 +393,14 @@
         android:id="@+id/vetWeeklyTimer"
         android:layout_width="0dp"
         android:layout_height="41dp"
-        android:layout_marginEnd="61dp"
-        android:layout_marginRight="61dp"
         android:layout_weight="2"
         android:ems="10"
         android:enabled="false"
+        android:importantForAutofill="no"
         android:inputType="textPersonName"
         android:text="0700-++++0900-+"
-        app:layout_constraintEnd_toStartOf="@+id/vcbWeekly"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/vetShutterPos"
-        android:importantForAutofill="no" />
+        app:layout_constraintTop_toBottomOf="@+id/vetShutterPos" />
 
     <EditText
         android:id="@+id/vetFerId"
@@ -436,6 +434,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/vtvLog"
         android:importantForAutofill="no" />
+
+    <Button
+        android:id="@+id/vbtEdWeekly"
+        android:layout_width="22dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginLeft="12dp"
+        android:onClick="onClick"
+        android:text="..."
+        app:layout_constraintBottom_toBottomOf="@+id/vcbWeekly"
+        app:layout_constraintStart_toEndOf="@+id/vetWeeklyTimer"
+        app:layout_constraintTop_toTopOf="@+id/vcbWeekly"
+        app:layout_constraintVertical_bias="0.461" />
 
 
 </android.support.constraint.ConstraintLayout>
