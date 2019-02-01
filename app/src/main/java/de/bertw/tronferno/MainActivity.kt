@@ -20,6 +20,7 @@ import android.widget.CheckBox
 import android.widget.CompoundButton
 import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.fragment_cmd_button.*
+import kotlinx.android.synthetic.main.fragment_timer.*
 import java.lang.ref.WeakReference
 import java.net.InetSocketAddress
 
@@ -36,7 +37,7 @@ fun <T : Comparable<T>> max(a: T, b: T): T {
     return if (a > b) a else b
 }
 
-class MainActivity : AppCompatActivity(), CmdButtonFragment.OnFragmentInteractionListener {
+class MainActivity : AppCompatActivity(), CmdButtonFragment.OnFragmentInteractionListener, TimerFragment.OnFragmentInteractionListener {
 
     val mMessageHandler = MessageHandler(this)
     val pr = TfmcuPresenter(mMessageHandler)
