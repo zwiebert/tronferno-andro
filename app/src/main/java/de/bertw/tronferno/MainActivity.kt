@@ -3,6 +3,7 @@ package de.bertw.tronferno
 import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
@@ -18,6 +19,7 @@ import android.view.View
 import android.widget.CheckBox
 import android.widget.CompoundButton
 import kotlinx.android.synthetic.main.content_main.*
+import kotlinx.android.synthetic.main.fragment_cmd_button.*
 import java.lang.ref.WeakReference
 import java.net.InetSocketAddress
 
@@ -34,11 +36,13 @@ fun <T : Comparable<T>> max(a: T, b: T): T {
     return if (a > b) a else b
 }
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), CmdButtonFragment.OnFragmentInteractionListener {
 
     val mMessageHandler = MessageHandler(this)
     val pr = TfmcuPresenter(mMessageHandler)
     //val tfmcuModel = pr.model
+
+    override fun onFragmentInteraction(uri: Uri) {}
 
     private var mode = VIS_NORMAL
 
@@ -804,6 +808,7 @@ class MainActivity : AppCompatActivity() {
 
         return true
     }
+
 
     companion object {
 
