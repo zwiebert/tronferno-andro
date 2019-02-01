@@ -155,7 +155,7 @@ class TfmcuModel(msgHandler: Handler) {
 
     @Throws(java.io.IOException::class)
     fun getSavedTimer(g: Int, m: Int) {
-        transmit("timer g=$g m=$m rs=2mcu cs=?;send g=$g m=$m c=?;")
+        transmit("timer g=$g m=$m rs=2;mcu cs=?;send g=$g m=$m c=?;")
     }
 
 
