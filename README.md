@@ -52,3 +52,6 @@ The Menu:
  * Set End Position: activates mode to adjust the motor to the upper and lower limit of the shutter.  Press UP or DOWN. Then press the hardware button (one or more times) to move the motor up or down to the end point. Then press STOP to save the end point. Should be used with a motor code make sure only a single motor is addressed.
  * Send RTC to Shutter: Send the current MCU time to the selected receiver(s).
  * Enter Motor Code: activates a textfield above the G button where a motor code (or any other valid ID) can be entered. As long as its visible, all commands will be sent there. If you press G or E button, it goes back to normal mode.
+
+
+ ![ScreenShot](Screenshot.png)
