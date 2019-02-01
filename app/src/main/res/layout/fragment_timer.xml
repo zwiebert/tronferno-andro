@@ -11,17 +11,14 @@
     tools:showIn="@layout/content_main">
 
 
-
     <CheckBox
         android:id="@+id/vcbSunAuto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
         android:text="@string/sun_auto"
-        app:layout_constraintBottom_toBottomOf="@+id/vcbDailyUp"
-        app:layout_constraintStart_toEndOf="@+id/vcbDailyUp"
-        app:layout_constraintTop_toTopOf="@+id/vcbDailyUp"
+        app:layout_constraintBottom_toBottomOf="@+id/vcbDailyDown"
+        app:layout_constraintStart_toEndOf="@+id/vcbDailyDown"
+        app:layout_constraintTop_toTopOf="@+id/vcbDailyDown"
         tools:layout_constraintBottom_creator="1"
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintRight_creator="1"
@@ -31,15 +28,10 @@
         android:id="@+id/vcbRandom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
         android:text="@string/random"
-        app:layout_constraintBottom_toBottomOf="@+id/vcbSunAuto"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/vcbSunAuto"
-        app:layout_constraintTop_toTopOf="@+id/vcbSunAuto"
+        app:layout_constraintBottom_toBottomOf="@+id/vcbDailyUp"
+        app:layout_constraintStart_toEndOf="@+id/vcbDailyUp"
+        app:layout_constraintTop_toTopOf="@+id/vcbDailyUp"
         tools:layout_constraintBaseline_creator="1"
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintRight_creator="1" />
@@ -48,14 +40,13 @@
         android:id="@+id/vcbAstro"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="5dp"
         android:onClick="onCheckedClick"
         android:text="@string/astro"
-        app:layout_constraintBottom_toBottomOf="@+id/vcbDailyDown"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/vetAstroMinuteOffset"
         app:layout_constraintStart_toEndOf="@+id/vetAstroMinuteOffset"
-        app:layout_constraintTop_toTopOf="@+id/vcbDailyDown"
+        app:layout_constraintTop_toTopOf="@+id/vetAstroMinuteOffset"
         tools:layout_constraintBaseline_creator="1"
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintRight_creator="1" />
@@ -63,32 +54,33 @@
 
     <EditText
         android:id="@+id/vetDailyUpTime"
-        android:layout_width="76dp"
+        android:layout_width="60dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
         android:ems="10"
         android:enabled="false"
+        android:importantForAutofill="no"
         android:inputType="time"
         android:text="06:56"
         app:layout_constraintBottom_toTopOf="@+id/vetDailyDownTime"
         app:layout_constraintEnd_toStartOf="@+id/vcbDailyUp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/vetWeeklyTimer"
         tools:layout_constraintBaseline_creator="1"
         tools:layout_constraintLeft_creator="1"
-        tools:layout_constraintRight_creator="1"
-        android:importantForAutofill="no" />
+        tools:layout_constraintRight_creator="1" />
 
     <CheckBox
         android:id="@+id/vcbDailyUp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
+        android:layout_marginBottom="8dp"
         android:onClick="onCheckedClick"
         android:text="@string/daily_up"
+        app:layout_constraintBottom_toBottomOf="@+id/vetDailyUpTime"
         app:layout_constraintStart_toEndOf="@+id/vetDailyUpTime"
         app:layout_constraintTop_toTopOf="@+id/vetDailyUpTime"
         tools:layout_constraintBottom_creator="1"
@@ -98,23 +90,21 @@
 
     <EditText
         android:id="@+id/vetAstroMinuteOffset"
-        android:layout_width="56dp"
+        android:layout_width="60dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:ems="10"
         android:enabled="false"
+        android:importantForAutofill="no"
         android:inputType="numberDecimal|numberSigned"
         android:text="0"
-        app:layout_constraintBottom_toBottomOf="@+id/vetDailyDownTime"
-        app:layout_constraintEnd_toStartOf="@+id/vcbAstro"
-        app:layout_constraintStart_toEndOf="@+id/vcbDailyDown"
-        app:layout_constraintTop_toTopOf="@+id/vetDailyDownTime"
+        app:layout_constraintBottom_toTopOf="@+id/vetDailyUpTime"
+        app:layout_constraintStart_toStartOf="parent"
         tools:layout_constraintBottom_creator="1"
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintRight_creator="1"
-        tools:layout_constraintTop_creator="1"
-        android:importantForAutofill="no" />
+        tools:layout_constraintTop_creator="1" />
 
     <CheckBox
         android:id="@+id/vcbWeekly"
@@ -132,7 +122,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/vbtEdWeekly"
         app:layout_constraintTop_toTopOf="@+id/vetWeeklyTimer"
-        app:layout_constraintVertical_bias="1.0"
         tools:layout_constraintBottom_creator="1"
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintTop_creator="1" />
@@ -140,20 +129,17 @@
 
     <EditText
         android:id="@+id/vetDailyDownTime"
-        android:layout_width="76dp"
+        android:layout_width="60dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
         android:ems="10"
         android:enabled="false"
         android:importantForAutofill="no"
         android:inputType="time"
         android:text="21:34"
-        app:layout_constraintBottom_toTopOf="@+id/frameLayout"
-        app:layout_constraintEnd_toStartOf="@+id/vcbDailyDown"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/vetDailyUpTime"
-        app:layout_constraintVertical_bias="0.0"
         tools:layout_constraintBottom_creator="1"
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintRight_creator="1"
@@ -164,10 +150,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:onClick="onCheckedClick"
         android:text="@string/daily_down"
+        app:layout_constraintBottom_toBottomOf="@+id/vetDailyDownTime"
         app:layout_constraintStart_toEndOf="@+id/vetDailyDownTime"
         app:layout_constraintTop_toTopOf="@+id/vetDailyDownTime"
+        app:layout_constraintVertical_bias="1.0"
         tools:layout_constraintBaseline_creator="1"
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintRight_creator="1" />
@@ -176,15 +165,18 @@
     <EditText
         android:id="@+id/vetWeeklyTimer"
         android:layout_width="0dp"
-        android:layout_height="41dp"
+        android:layout_height="wrap_content"
         android:layout_weight="2"
         android:ems="10"
         android:enabled="false"
         android:importantForAutofill="no"
         android:inputType="textPersonName"
         android:text="0700-++++0900-+"
+        app:layout_constraintBottom_toTopOf="@+id/vetAstroMinuteOffset"
+        app:layout_constraintEnd_toStartOf="@+id/vbtEdWeekly"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/vetShutterPos" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <Button
@@ -196,10 +188,11 @@
         android:onClick="onClick"
         android:text="..."
         app:layout_constraintBottom_toBottomOf="@+id/vcbWeekly"
+        app:layout_constraintEnd_toStartOf="@+id/vcbWeekly"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/vetWeeklyTimer"
         app:layout_constraintTop_toTopOf="@+id/vcbWeekly"
         app:layout_constraintVertical_bias="0.461" />
-
 
 
 </android.support.constraint.ConstraintLayout>

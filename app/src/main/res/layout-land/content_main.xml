@@ -16,9 +16,10 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginRight="8dp"
         android:layout_weight="1"
         android:gravity="bottom"
         android:maxLines="20"
@@ -35,11 +36,10 @@
 
     <EditText
         android:id="@+id/vetShutterPos"
-        android:layout_width="0dp"
+        android:layout_width="667dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
@@ -48,21 +48,17 @@
         android:inputType="number"
         app:layout_constraintBottom_toTopOf="@+id/timer_frameLayout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/vtvLog" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <FrameLayout
         android:id="@+id/timer_frameLayout"
-        android:layout_width="395dp"
-        android:layout_height="0dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        app:layout_constraintBottom_toTopOf="@id/cmd_button_frameLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/cmd_button_frameLayout"
         app:layout_constraintStart_toStartOf="parent">
 
         <fragment
@@ -76,24 +72,21 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
-            tools:layout="@layout/fragment_timer"
-            />
+            tools:layout="@layout/fragment_timer" />
     </FrameLayout>
-
 
 
     <FrameLayout
         android:id="@+id/cmd_button_frameLayout"
-        android:layout_width="395dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/timer_frameLayout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toEndOf="@+id/timer_frameLayout"
+        app:layout_constraintTop_toTopOf="@+id/timer_frameLayout">
 
 
         <fragment
@@ -107,8 +100,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
-            tools:layout="@layout/fragment_cmd_button"
-            />
+            tools:layout="@layout/fragment_cmd_button" />
     </FrameLayout>
 
 
