@@ -17,7 +17,9 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.CheckBox
 import android.widget.CompoundButton
+import kotlinx.android.synthetic.main.cmd_buttons_main.*
 import kotlinx.android.synthetic.main.content_main.*
+import kotlinx.android.synthetic.main.timers_main.*
 import java.lang.ref.WeakReference
 import java.net.InetSocketAddress
 
@@ -48,25 +50,15 @@ class MainActivity : AppCompatActivity() {
 
         when (mode) {
             VIS_NORMAL -> {
-                vcbDailyUp.visibility = vi
-                vcbDailyDown.visibility = vi
-                vcbWeekly.visibility = vi
-                vcbAstro.visibility = vi
-                vcbRandom.visibility = vi
-                vcbSunAuto.visibility = vi
+                timer_group_main.visibility = vi
 
                 vtvLog.visibility = vi
                 vtvG.visibility = vi
                 vtvE.visibility = vi
 
-                vetDailyUpTime.visibility = vi
-                vetDailyDownTime.visibility = vi
-                vetWeeklyTimer.visibility = vi
-                vetAstroMinuteOffset.visibility = vi
                 vetShutterPos.visibility = vi
                // vetFerId.visibility = vi
 
-                vbtEdWeekly.visibility = vi
                 vbtUp.visibility = vi
                 vbtDown.visibility = vi
                 vbtStop.visibility = vi
@@ -77,25 +69,15 @@ class MainActivity : AppCompatActivity() {
             }
 
             VIS_SEP -> {
-                vcbDailyUp.visibility = iv
-                vcbDailyDown.visibility = iv
-                vcbWeekly.visibility = iv
-                vcbAstro.visibility = iv
-                vcbRandom.visibility = iv
-                vcbSunAuto.visibility = iv
+                timer_group_main.visibility = View.GONE
+
 
                 vtvLog.visibility = vi
                // vtvG.visibility = vi
                // vtvE.visibility = vi
 
-                vetDailyUpTime.visibility = iv
-                vetDailyDownTime.visibility = iv
-                vetWeeklyTimer.visibility = iv
-                vetAstroMinuteOffset.visibility = iv
-               // vetFerId.visibility = vi
-                vetShutterPos.visibility = iv
 
-                vbtEdWeekly.visibility = iv
+                vetShutterPos.visibility = iv
 
 
                 vbtUp.visibility = vi
