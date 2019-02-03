@@ -36,6 +36,9 @@ class TfmcuPresenter(msgHandler: Handler) {
         data2Mcu(TfmcuConfigData("rtc=${sd}T$st"))
     }
 
+    fun onConnect() {
+        model.getShutterPos()
+    }
     fun onPause() {
         model.tcp.close()
     }

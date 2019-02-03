@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/colorButtonNormal">
+
+    <ProgressBar
+        android:id="@+id/vpbPiM1"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:max="100"
+        android:progress="50"
+        android:progressDrawable="@drawable/progress_drawable_vertical"
+        app:layout_constraintBottom_toTopOf="@+id/vtvPiM1"
+        app:layout_constraintEnd_toStartOf="@+id/vpbPiM2"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/vtvPiM1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/vpbPiM1"
+        app:layout_constraintStart_toStartOf="@+id/vpbPiM1" />
+
+    <ProgressBar
+        android:id="@+id/vpbPiM2"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:max="100"
+        android:progress="0"
+        android:progressDrawable="@drawable/progress_drawable_vertical"
+        app:layout_constraintBottom_toTopOf="@+id/vtvPiM2"
+        app:layout_constraintEnd_toStartOf="@+id/vpbPiM3"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/vpbPiM1"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/vtvPiM2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/vpbPiM2"
+        app:layout_constraintStart_toStartOf="@+id/vpbPiM2" />
+
+
+    <ProgressBar
+        android:id="@+id/vpbPiM3"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:max="100"
+        android:progress="100"
+        android:progressDrawable="@drawable/progress_drawable_vertical"
+        app:layout_constraintBottom_toTopOf="@+id/vtvPiM3"
+        app:layout_constraintEnd_toStartOf="@+id/vpbPiM4"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/vpbPiM2"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/vtvPiM3"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="3"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/vpbPiM3"
+        app:layout_constraintStart_toStartOf="@+id/vpbPiM3" />
+
+    <ProgressBar
+        android:id="@+id/vpbPiM4"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:max="100"
+        android:progress="33"
+        android:progressDrawable="@drawable/progress_drawable_vertical"
+        app:layout_constraintBottom_toTopOf="@+id/vtvPiM4"
+        app:layout_constraintEnd_toStartOf="@+id/vpbPiM5"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/vpbPiM3"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/vtvPiM4"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="4"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/vpbPiM4"
+        app:layout_constraintStart_toStartOf="@+id/vpbPiM4" />
+
+    <ProgressBar
+        android:id="@+id/vpbPiM5"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:max="100"
+        android:progress="33"
+        android:progressDrawable="@drawable/progress_drawable_vertical"
+        app:layout_constraintBottom_toTopOf="@+id/vtvPiM5"
+        app:layout_constraintEnd_toStartOf="@+id/vpbPiM6"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/vpbPiM4"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/vtvPiM5"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="5"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/vpbPiM5"
+        app:layout_constraintStart_toStartOf="@+id/vpbPiM5" />
+
+    <ProgressBar
+        android:id="@+id/vpbPiM6"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:max="100"
+        android:progress="33"
+        android:progressDrawable="@drawable/progress_drawable_vertical"
+        app:layout_constraintBottom_toTopOf="@+id/vtvPiM6"
+        app:layout_constraintEnd_toStartOf="@+id/vpbPiM7"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/vpbPiM5"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/vtvPiM6"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="6"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/vpbPiM6"
+        app:layout_constraintStart_toStartOf="@+id/vpbPiM6" />
+
+    <ProgressBar
+        android:id="@+id/vpbPiM7"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:max="100"
+        android:progress="33"
+        android:progressDrawable="@drawable/progress_drawable_vertical"
+        app:layout_constraintBottom_toTopOf="@+id/vtvPiM7"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/vpbPiM6"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/vtvPiM7"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="7"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/vpbPiM7"
+        app:layout_constraintStart_toStartOf="@+id/vpbPiM7" />
+
+
+</android.support.constraint.ConstraintLayout>

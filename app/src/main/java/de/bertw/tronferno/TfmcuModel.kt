@@ -155,9 +155,13 @@ class TfmcuModel(msgHandler: Handler) {
 
     @Throws(java.io.IOException::class)
     fun getSavedTimer(g: Int, m: Int) {
-        transmit("timer g=$g m=$m rs=2;mcu cs=?;send g=$g m=$m c=?;")
+        transmit("timer g=$g m=$m rs=2")
     }
 
+    @Throws(java.io.IOException::class)
+    fun getShutterPos(g: Int = 0, m: Int = 0) {
+        transmit("mcu cs=?;send g=$g m=$m c=?;") // FIXME: remove experimental syntax "mcu cs=?;" here later
+    }
 
     // position code
     private var posArr0 = intArrayOf(0, 0, 0, 0, 0, 0, 0, 0)

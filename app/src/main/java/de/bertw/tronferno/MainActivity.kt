@@ -19,6 +19,7 @@ import android.widget.CheckBox
 import android.widget.CompoundButton
 import kotlinx.android.synthetic.main.cmd_buttons_main.*
 import kotlinx.android.synthetic.main.content_main.*
+import kotlinx.android.synthetic.main.position_indicator.*
 import kotlinx.android.synthetic.main.timers_main.*
 import java.lang.ref.WeakReference
 import java.net.InetSocketAddress
@@ -273,7 +274,6 @@ class MainActivity : AppCompatActivity() {
 
         enableSendButtons(false, 0)
         pr.onResume()
-        showShutterPositions()
         //  vtvLog.append("-----onResume----\n")
     }
 
@@ -309,6 +309,7 @@ class MainActivity : AppCompatActivity() {
 
                 McuTcp.MSG_TCP_CONNECTED -> {
                     ma.enableSendButtons(true, 0)
+                    ma.pr.onConnect()
                     ma.vtvLog.append("tcp connected\n")
 
                     if (mcuConfig_changed) {
@@ -548,6 +549,27 @@ class MainActivity : AppCompatActivity() {
     private fun showShutterPositions() {
         val positions =  pr.model.showPos(group, memb_count = membMax[group], format = 1)
         vetShutterPos.setText(if (positions.isEmpty()) "" else "Pos-G$group: $positions" )
+
+        vltShutterPos.visibility = if (group == 0) View.INVISIBLE else View.VISIBLE
+
+        if (group == 0) {
+            return
+        }
+
+
+        val pos = pr.model.showPos(group, 7 )
+        val pbs = arrayOf(vpbPiM1, vpbPiM2, vpbPiM3, vpbPiM4, vpbPiM5, vpbPiM6, vpbPiM7)
+
+        for (i in 0..6){
+            pbs[i].visibility =  if(pos[i] != '?' && membMax[group] >= i+1) View.VISIBLE else View.INVISIBLE
+            when (pos[i]) {
+                'o' -> pbs[i].progress = 100
+                'c' -> pbs[i].progress = 0
+                'm' -> pbs[i].progress = 50
+                '?' -> pbs[i].progress = 0
+            }
+
+        }
     }
 
     // position code
@@ -597,6 +619,7 @@ class MainActivity : AppCompatActivity() {
                             memb = 1
                         vtvE.text = if (group == 0) "" else if (memb == 0) "A" else memb.toString()
                         pr.model.getSavedTimer(group, memb)
+                        showShutterPositions()
 
                 }
                 R.id.vbtE -> if (enableFerId(false)) {

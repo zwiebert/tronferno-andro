@@ -18,6 +18,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:layout_weight="1"
         android:gravity="bottom"
         android:maxLines="20"
@@ -25,6 +26,7 @@
         android:text=""
         app:layout_constraintBottom_toTopOf="@+id/vetShutterPos"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_constraintLeft_creator="1"
@@ -43,11 +45,22 @@
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
         android:ems="10"
-        app:layout_constraintBottom_toTopOf="@+id/timer_frameLayout"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/vltShutterPos"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/vtvLog" />
+
+    <include
+        android:id="@+id/vltShutterPos"
+        layout="@layout/position_indicator"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        app:layout_constraintBottom_toTopOf="@+id/timer_frameLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        app:layout_constraintStart_toStartOf="parent" />
 
 
     <FrameLayout
@@ -91,6 +104,5 @@
             android:layout_height="match_parent" />
 
     </FrameLayout>
-
 
 </android.support.constraint.ConstraintLayout>
