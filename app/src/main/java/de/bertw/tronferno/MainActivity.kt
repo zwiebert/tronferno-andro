@@ -58,13 +58,13 @@ class MainActivity : AppCompatActivity() {
                 vtvE.visibility = vi
 
                 vetShutterPos.visibility = vi
-               // vetFerId.visibility = vi
+                // vetFerId.visibility = vi
 
                 vbtUp.visibility = vi
                 vbtDown.visibility = vi
                 vbtStop.visibility = vi
-               // vbtG.visibility = vi
-               // vbtE.visibility = vi
+                // vbtG.visibility = vi
+                // vbtE.visibility = vi
                 vbtTimer.visibility = vi
                 vbtSunPos.visibility = vi
             }
@@ -74,8 +74,8 @@ class MainActivity : AppCompatActivity() {
 
 
                 vtvLog.visibility = vi
-               // vtvG.visibility = vi
-               // vtvE.visibility = vi
+                // vtvG.visibility = vi
+                // vtvE.visibility = vi
 
 
                 vetShutterPos.visibility = iv
@@ -159,7 +159,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         McuTcp.socketAddress = InetSocketAddress(tcpHostname, tcpPort)
-
 
         val sgam = pref.getString("groupsAndMembers", "77777777")
         val sgamLength1 = Math.min(7, sgam!!.length - 1)
@@ -297,34 +296,47 @@ class MainActivity : AppCompatActivity() {
             var s = ""
             when (msg.what) {
 
-                McuTcp.MSG_TCP_INPUT_EOF -> {
-                    //FIXME: what to do here?
-                    ma.pr.reset()
+                McuTcp.MSG_TCP_DO_RECV -> {
+                    ma.pr.model.tcp.doReadTick()
                 }
 
+                McuTcp.MSG_TCP_INPUT_EOF -> {
+                    //FIXME: what to do here?
+                    //ma.pr.reset()
+                }
 
-                McuTcp.MSG_TCP_OUTPUT_ERROR, McuTcp.MSG_TCP_INPUT_ERROR -> {
-                    ma.pr.reset()
+                McuTcp.MSG_TCP_OUTPUT_ERROR -> {
+                    ma.vtvLog.append("tcp write error: " + msg.obj as String + "\n")
+                    //ma.pr.reset()
+                }
+
+                McuTcp.MSG_TCP_INPUT_ERROR -> {
+                    ma.vtvLog.append("tcp read error: " + msg.obj as String + "\n")
+                    //ma.pr.reset()
                 }
 
                 McuTcp.MSG_TCP_CONNECTED -> {
                     ma.enableSendButtons(true, 0)
                     ma.pr.onConnect()
                     ma.vtvLog.append("tcp connected\n")
+                    ma.pr.model.tcp.doReadTick()
 
                     if (mcuConfig_changed) {
                         mcuConfig_changed = false
                         ma.configureMcu()
                     }
 
-                   // ma.pr.data2Mcu(TfmcuConfigData("longitude=? latitude=? time-zone=? dst=? wlan-ssid=? cu=? baud=? verbose=? dst=?"))
+                    // ma.pr.data2Mcu(TfmcuConfigData("longitude=? latitude=? time-zone=? dst=? wlan-ssid=? cu=? baud=? verbose=? dst=?"))
                     ma.pr.data2Mcu(TfmcuConfigData("longitude=? latitude=? tz=? wlan-ssid=?"))
                     ma.pr.data2Mcu(TfmcuConfigData("cu=? baud=? verbose=?"))
                 }
 
                 McuTcp.MSG_TCP_CONNECTION_FAILED -> {
-                    s = msg.obj as String
-                    ma.vtvLog.append("tcp connection failed: $s\n")
+                    ma.vtvLog.append("tcp connect error: " + msg.obj as String + "\n")
+                }
+
+                McuTcp.MSG_TCP_REQ_RECONNECT -> {
+                    ma.pr.reset()
                 }
 
                 McuTcp.MSG_LINE_RECEIVED -> try {
@@ -339,7 +351,7 @@ class MainActivity : AppCompatActivity() {
                         else -> ma.vtvLog.append(s + "\n")
                     }
 
-                    ma.pr.model.messagePending = 0  // FIXME: check msgid?
+                    ma.pr.model.tcp.doReadTick()
 
                     if (s.contains("rs=data")) {
                         ma.parseReceivedTimer(s)
@@ -488,15 +500,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun saveMcuPreferecence () {
+    private fun saveMcuPreferecence() {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         val ed = sharedPreferences.edit()
 
 
-       for(i in 0 until mcuCfgPrefKeys.size) {
-           ed.putString(mcuCfgPrefKeys[i], mcuCfgPrefVals[i])
-           ed.putString(mcuCfgPrefKeys[i] + "_old", mcuCfgPrefVals[i])
-       }
+        for (i in 0 until mcuCfgPrefKeys.size) {
+            ed.putString(mcuCfgPrefKeys[i], mcuCfgPrefVals[i])
+            ed.putString(mcuCfgPrefKeys[i] + "_old", mcuCfgPrefVals[i])
+        }
 
         ed.apply()
 
@@ -504,12 +516,12 @@ class MainActivity : AppCompatActivity() {
 
     private val mcuCfgPrefKeys = arrayOf("geo_latitude", "geo_longitude", "geo_time_zone", "wlan_ssid", "cu_id", "serial_baud", "cli_verbosity")
     private val mcuCfgMcuKeys = arrayOf("latitude", "longitude", "tz", "wlan-ssid", "cu", "baud", "verbose")
-    private var mcuCfgPrefVals = arrayOf("","","","","","", "")
+    private var mcuCfgPrefVals = arrayOf("", "", "", "", "", "", "")
 
 
     fun configureMcu() {
         val pref = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-        for(i in 0 until mcuCfgPrefKeys.size) {
+        for (i in 0 until mcuCfgPrefKeys.size) {
             val pv = pref.getString(mcuCfgPrefKeys[i], "")
             val pvOld = pref.getString(mcuCfgPrefKeys[i] + "_old", "")
             val mk = mcuCfgMcuKeys[i]
@@ -531,14 +543,14 @@ class MainActivity : AppCompatActivity() {
                 val v = s.substringAfter('=').substringBefore(';').substringBefore(' ')
                 s = s.substringAfter(' ', ";")
 
-               // listAdapter.add(k + "=" + v)
-                for(i in 0 until mcuCfgPrefKeys.size) {
+                // listAdapter.add(k + "=" + v)
+                for (i in 0 until mcuCfgPrefKeys.size) {
                     if (mcuCfgMcuKeys[i] == k) {
                         mcuCfgPrefVals[i] = v
                     }
                 }
 
-               // vtvLog.append("key: " + k + "\nval: " + v + "\n")
+                // vtvLog.append("key: " + k + "\nval: " + v + "\n")
 
             }
             saveMcuPreferecence()
@@ -547,8 +559,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showShutterPositions() {
-        val positions =  pr.model.showPos(group, memb_count = membMax[group], format = 1)
-        vetShutterPos.setText(if (positions.isEmpty()) "" else "Pos-G$group: $positions" )
+        val positions = pr.model.showPos(group, memb_count = membMax[group], format = 1)
+        vetShutterPos.setText(if (positions.isEmpty()) "" else "Pos-G$group: $positions")
 
         vltShutterPos.visibility = if (group == 0) View.INVISIBLE else View.VISIBLE
 
@@ -557,11 +569,11 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-        val pos = pr.model.showPos(group, 7 )
+        val pos = pr.model.showPos(group, 7)
         val pbs = arrayOf(vpbPiM1, vpbPiM2, vpbPiM3, vpbPiM4, vpbPiM5, vpbPiM6, vpbPiM7)
 
-        for (i in 0..6){
-            pbs[i].visibility =  if(pos[i] != '?' && membMax[group] >= i+1) View.VISIBLE else View.INVISIBLE
+        for (i in 0..6) {
+            pbs[i].visibility = if (pos[i] != '?' && membMax[group] >= i + 1) View.VISIBLE else View.INVISIBLE
             when (pos[i]) {
                 'o' -> pbs[i].progress = 100
                 'c' -> pbs[i].progress = 0
@@ -580,7 +592,6 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
     private fun getFerId(): Int {
         var result = 0
         if (vetFerId.visibility == View.VISIBLE) {
@@ -597,29 +608,35 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun onClick(view: View) {
-        val cd = TfmcuSendData(a=getFerId(), g = group, m = memb, sep = (mode == MODE_SEP) )
+        val cd = TfmcuSendData(a = getFerId(), g = group, m = memb, sep = (mode == MODE_SEP))
         try {
-           // vtvLog.append(String.format("ra: %b, wa: %b, ca: %b\n", tcpReadThread.isAlive, tcpWriteThread.isAlive, tcpConnectThread.isAlive))
+            // vtvLog.append(String.format("ra: %b, wa: %b, ca: %b\n", tcpReadThread.isAlive, tcpWriteThread.isAlive, tcpConnectThread.isAlive))
 
             when (view.id) {
-                R.id.vbtStop -> { cd.cmd =  TfmcuSendData.CMD_STOP; pr.data2Mcu(cd) }
-                R.id.vbtUp -> { cd.cmd =  TfmcuSendData.CMD_UP; pr.data2Mcu(cd) }
-                R.id.vbtDown -> { cd.cmd =  TfmcuSendData.CMD_DOWN; pr.data2Mcu(cd) }
+                R.id.vbtStop -> {
+                    cd.cmd = TfmcuSendData.CMD_STOP; pr.data2Mcu(cd)
+                }
+                R.id.vbtUp -> {
+                    cd.cmd = TfmcuSendData.CMD_UP; pr.data2Mcu(cd)
+                }
+                R.id.vbtDown -> {
+                    cd.cmd = TfmcuSendData.CMD_DOWN; pr.data2Mcu(cd)
+                }
 
                 R.id.vbtG -> if (enableFerId(false)) {
-                        for (i in 0..7) {
-                            group = ++group % 8
-                            if (group == 0 || membMax[group] != 0) {
-                                break
-                            }
+                    for (i in 0..7) {
+                        group = ++group % 8
+                        if (group == 0 || membMax[group] != 0) {
+                            break
                         }
+                    }
 
-                        vtvG.text = if (group == 0) "A" else group.toString()
-                        if (memb > membMax[group])
-                            memb = 1
-                        vtvE.text = if (group == 0) "" else if (memb == 0) "A" else memb.toString()
-                        pr.model.getSavedTimer(group, memb)
-                        showShutterPositions()
+                    vtvG.text = if (group == 0) "A" else group.toString()
+                    if (memb > membMax[group])
+                        memb = 1
+                    vtvE.text = if (group == 0) "" else if (memb == 0) "A" else memb.toString()
+                    pr.model.getSavedTimer(group, memb)
+                    showShutterPositions()
 
                 }
                 R.id.vbtE -> if (enableFerId(false)) {
@@ -629,7 +646,9 @@ class MainActivity : AppCompatActivity() {
                     pr.model.getSavedTimer(group, memb)
                 }
 
-                R.id.vbtSunPos -> { cd.cmd =  TfmcuSendData.CMD_SUN_DOWN; pr.data2Mcu(cd) }
+                R.id.vbtSunPos -> {
+                    cd.cmd = TfmcuSendData.CMD_SUN_DOWN; pr.data2Mcu(cd)
+                }
 
                 R.id.vbtTimer -> {
                     sendTimer()
@@ -741,7 +760,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun enableFerId(enable: Boolean) : Boolean {
+    private fun enableFerId(enable: Boolean): Boolean {
 
         val stateHasChanged = (vetFerId.visibility == View.VISIBLE) == enable
 
@@ -757,6 +776,7 @@ class MainActivity : AppCompatActivity() {
 
         return stateHasChanged
     }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
