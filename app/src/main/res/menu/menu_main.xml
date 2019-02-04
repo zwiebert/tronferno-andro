@@ -48,5 +48,9 @@
         android:checkable="true"
         android:orderInCategory="103"
         android:title="Enter Motor Code" />
+    <item
+        android:id="@+id/action_editShutterName"
+        android:orderInCategory="104"
+        android:title="Edit Shutter Name" />
 
 </menu>

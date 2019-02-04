@@ -107,7 +107,7 @@ class MainActivity : AppCompatActivity() {
             booleanArrayOf(false, false, false, false, false, false, false, false),
             booleanArrayOf(false, false, false, false, false, false, false, false))
 
-
+    private var mMemberNames = HashMap<String, String>()
     private lateinit var alertDialog: AlertDialog
     private lateinit var progressDialog: ProgressDialog
     private var cuasInProgress = false
@@ -201,6 +201,13 @@ class MainActivity : AppCompatActivity() {
 
         vtvLog.text = pref.getString("vtvLogText", "")
 
+        for (g in 1..7) {
+            for (m in 1..7) {
+                val key = "memberName_$g$m"
+                val value = pref.getString(key, "") ?: continue
+                mMemberNames.put(key, value)
+            }
+        }
     }
 
     private fun savePreferences() {
@@ -231,8 +238,11 @@ class MainActivity : AppCompatActivity() {
         val logText = vtvLog.text.toString().substring(start, end)
         ed.putString("vtvLogText", logText)
 
-
         // ed.putString("Text", .text.toString())
+
+        for ((key, value) in mMemberNames) {
+            ed.putString(key, value)
+        }
 
         ed.apply()
     }
@@ -576,7 +586,7 @@ class MainActivity : AppCompatActivity() {
         val ptv = ptvArr //arrayOf(vtvPiM1, vtvPiM2, vtvPiM3, vtvPiM4, vtvPiM5, vtvPiM6, vtvPiM7)
 
         for (i in 0..6) {
-
+            val m = i + 1
             when (pos[i]) {
                 'o' -> pbs[i].progress = 100
                 'c' -> pbs[i].progress = 0
@@ -588,6 +598,8 @@ class MainActivity : AppCompatActivity() {
             val vi = if (membMax[group] < i) View.GONE else if (pos[i] == '?') View.INVISIBLE else View.VISIBLE
             pbs[i].visibility = vi
             ptv[i].visibility = if (vi == View.GONE) vi else View.VISIBLE
+            val name = mMemberNames.get("memberName_$group$m") ?: ""
+            ptv[i].text = if (name.isNotBlank()) name else "$m"
         }
     }
 
@@ -813,6 +825,31 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
+    fun editShutterNameDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Edit Name of member $memb group $group:")
+
+// Set up the input
+        val input = EditText(this)
+// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+        input.inputType = InputType.TYPE_CLASS_TEXT
+        input.setText(ptvArr[memb-1].text)
+        builder.setView(input)
+
+
+// Set up the buttons
+        builder.setPositiveButton("OK") { dialog, which ->
+            run {
+                val shutterName = input.text.toString()
+                ptvArr[memb - 1].text = if (shutterName.isNotBlank()) shutterName else "$memb"
+                this.mMemberNames.put("memberName_$group$memb", shutterName)
+            }
+        }
+        builder.setNegativeButton("Cancel") { dialog, which -> dialog.cancel() }
+
+        builder.show()
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -852,6 +889,11 @@ class MainActivity : AppCompatActivity() {
             R.id.action_motorCode -> {
                 enableFerId(!item.isChecked)
             }
+
+            R.id.action_editShutterName -> {
+                editShutterNameDialog()
+            }
+
 
             else -> return super.onOptionsItemSelected(item)
         }
