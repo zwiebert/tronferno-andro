@@ -15,12 +15,12 @@ class TfmcuPresenter(msgHandler: Handler) {
         td = TfmcuTimerData()
     }
 
-    fun data2Mcu(timerData : TfmcuTimerData) : Boolean {
+    fun data2Mcu(timerData: TfmcuTimerData): Boolean {
         return model.transmitTimer(timer = timerData, mid = TfmcuModel.MSG_ID_AUTO)
     }
 
-    fun data2Mcu(configData : TfmcuConfigData) : Boolean {
-        model.tcp.transmit (configData.toString())
+    fun data2Mcu(configData: TfmcuConfigData): Boolean {
+        model.tcp.transmit(configData.toString())
         return true // FIXME
     }
 
@@ -39,15 +39,17 @@ class TfmcuPresenter(msgHandler: Handler) {
     fun onConnect() {
         model.getShutterPos()
     }
+
     fun onPause() {
         model.tcp.close()
     }
+
     fun onResume() {
         model.tcp.connect()
     }
 
     fun reset() {
-        model.tcp.close()
+        model.tcp.reconnect()
     }
 
 

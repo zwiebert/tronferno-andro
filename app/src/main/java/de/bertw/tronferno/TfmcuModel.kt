@@ -98,7 +98,7 @@ class TfmcuTimerData(var a: Int = 0, var g: Int = 0, var m: Int = 0) {
     }
 }
 
-class TfmcuConfigData(private var s : String = "") {
+class TfmcuConfigData(private var s: String = "") {
 
     override fun toString(): String {
 
@@ -135,10 +135,10 @@ class TfmcuModel(msgHandler: Handler) {
 
     private fun tcpSocketTransmit(s: String): Boolean {
 
-        if (messagePending != 0 || !tcp.isConnected) {
+
+        if (!tcp.isConnected) {
             if (!tcp.isConnecting) {
                 tcp.reconnect()
-                //FIXME: ma.get()?.logWriteLine("tcp: try to reconnect...")
             }
             messagePending = 0
             return false
@@ -155,7 +155,7 @@ class TfmcuModel(msgHandler: Handler) {
 
     @Throws(java.io.IOException::class)
     fun getSavedTimer(g: Int, m: Int) {
-        transmit("timer g=$g m=$m rs=2")
+        transmit("timer g=$g m=$m rs=2;")
     }
 
     @Throws(java.io.IOException::class)
@@ -178,9 +178,11 @@ class TfmcuModel(msgHandler: Handler) {
     }
 
     private fun updPosArr(g: Int, m: Int, p: Int) {
-        posArr0[g] = if (p == 0) (posArr0[g] or (1 shl m)) else (posArr0[g] and (1 shl m).inv())
-        posArr50[g] = if (p == 50) (posArr50[g] or (1 shl m)) else (posArr50[g] and (1 shl m).inv())
-        posArr100[g] = if (p == 100) (posArr100[g] or (1 shl m)) else (posArr100[g] and (1 shl m).inv())
+        val mm = if (m == 0) 0.inv() else (1 shl m)
+
+        posArr0[g] = if (p == 0) (posArr0[g] or mm) else (posArr0[g] and mm.inv())
+        posArr50[g] = if (p == 50) (posArr50[g] or mm) else (posArr50[g] and mm.inv())
+        posArr100[g] = if (p == 100) (posArr100[g] or mm) else (posArr100[g] and mm.inv())
     }
 
     fun showPos(group: Int, memb_count: Int = 7, format: Int = 0): String {
