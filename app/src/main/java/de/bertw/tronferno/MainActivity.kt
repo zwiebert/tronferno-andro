@@ -559,9 +559,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showShutterPositions() {
-        val positions = pr.model.showPos(group, memb_count = membMax[group], format = 1)
-        vetShutterPos.setText(if (positions.isEmpty()) "" else "Pos-G$group: $positions")
-
         vltShutterPos.visibility = if (group == 0) View.INVISIBLE else View.VISIBLE
 
         if (group == 0) {
@@ -571,9 +568,10 @@ class MainActivity : AppCompatActivity() {
 
         val pos = pr.model.showPos(group, 7)
         val pbs = arrayOf(vpbPiM1, vpbPiM2, vpbPiM3, vpbPiM4, vpbPiM5, vpbPiM6, vpbPiM7)
+        val ptv = arrayOf(vtvPiM1, vtvPiM2, vtvPiM3, vtvPiM4, vtvPiM5, vtvPiM6, vtvPiM7)
 
         for (i in 0..6) {
-            pbs[i].visibility = if (pos[i] != '?' && membMax[group] >= i + 1) View.VISIBLE else View.INVISIBLE
+
             when (pos[i]) {
                 'o' -> pbs[i].progress = 100
                 'c' -> pbs[i].progress = 0
@@ -581,9 +579,20 @@ class MainActivity : AppCompatActivity() {
                 '?' -> pbs[i].progress = 0
             }
 
+            // visibility of undefined shutters and defined shutters with unknown status
+            val vi = if (membMax[group] < i) View.GONE else if (pos[i] == '?') View.INVISIBLE else View.VISIBLE
+            pbs[i].visibility = vi
+            ptv[i].visibility = if (vi == View.GONE) vi else View.VISIBLE
         }
     }
 
+    private fun showShutterPositionsText() {
+        val positions = pr.model.showPos(group, memb_count = membMax[group], format = 1)
+        vetShutterPos.setText(if (positions.isEmpty()) "" else "Pos-G$group: $positions")
+
+        vltShutterPos.visibility = if (group == 0) View.INVISIBLE else View.VISIBLE
+
+    }
     // position code
     fun parseReceivedPosition(line: String) {
         if (pr.model.parseReceivedPosition(line)) {
