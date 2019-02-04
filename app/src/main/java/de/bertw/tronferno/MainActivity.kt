@@ -11,18 +11,19 @@ import android.preference.PreferenceManager
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
+import android.text.InputType
 import android.text.method.ScrollingMovementMethod
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.CheckBox
-import android.widget.CompoundButton
+import android.widget.*
 import kotlinx.android.synthetic.main.cmd_buttons_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.position_indicator.*
 import kotlinx.android.synthetic.main.timers_main.*
 import java.lang.ref.WeakReference
 import java.net.InetSocketAddress
+
 
 const val DEFAULT_TCP_HOSTNAME = "fernotron.fritz.box."
 const val DEFAULT_TCP_PORT = 7777
@@ -236,6 +237,9 @@ class MainActivity : AppCompatActivity() {
         ed.apply()
     }
 
+    lateinit var pbsArr: Array<ProgressBar>
+    lateinit var ptvArr: Array<TextView>
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -260,6 +264,8 @@ class MainActivity : AppCompatActivity() {
         vtvG.text = if (group != 0) group.toString() else "A"
         vtvE.text = if (memb != 0) memb.toString() else if (group != 0) "A" else ""
 
+        pbsArr = arrayOf(vpbPiM1, vpbPiM2, vpbPiM3, vpbPiM4, vpbPiM5, vpbPiM6, vpbPiM7)
+        ptvArr = arrayOf(vtvPiM1, vtvPiM2, vtvPiM3, vtvPiM4, vtvPiM5, vtvPiM6, vtvPiM7)
 
         progressDialog = ProgressDialog(this)
 
@@ -565,10 +571,9 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-
         val pos = pr.model.showPos(group, 7)
-        val pbs = arrayOf(vpbPiM1, vpbPiM2, vpbPiM3, vpbPiM4, vpbPiM5, vpbPiM6, vpbPiM7)
-        val ptv = arrayOf(vtvPiM1, vtvPiM2, vtvPiM3, vtvPiM4, vtvPiM5, vtvPiM6, vtvPiM7)
+        val pbs = pbsArr //arrayOf(vpbPiM1, vpbPiM2, vpbPiM3, vpbPiM4, vpbPiM5, vpbPiM6, vpbPiM7)
+        val ptv = ptvArr //arrayOf(vtvPiM1, vtvPiM2, vtvPiM3, vtvPiM4, vtvPiM5, vtvPiM6, vtvPiM7)
 
         for (i in 0..6) {
 
@@ -593,6 +598,7 @@ class MainActivity : AppCompatActivity() {
         vltShutterPos.visibility = if (group == 0) View.INVISIBLE else View.VISIBLE
 
     }
+
     // position code
     fun parseReceivedPosition(line: String) {
         if (pr.model.parseReceivedPosition(line)) {
@@ -671,6 +677,14 @@ class MainActivity : AppCompatActivity() {
                     startActivityForResult(intent, REQ_WEEKLY_EDITOR)
 
                 }
+
+                R.id.vpbPiM1 -> setMemb(1)
+                R.id.vpbPiM2 -> setMemb(2)
+                R.id.vpbPiM3 -> setMemb(3)
+                R.id.vpbPiM4 -> setMemb(4)
+                R.id.vpbPiM5 -> setMemb(5)
+                R.id.vpbPiM6 -> setMemb(6)
+                R.id.vpbPiM7 -> setMemb(7)
             }
 
 
@@ -678,6 +692,12 @@ class MainActivity : AppCompatActivity() {
             vtvLog.append("OCH:error: $e...\n")
         }
 
+    }
+
+    fun setMemb(m: Int) {
+        memb = m
+        vtvE.text = m.toString()
+        pr.model.getSavedTimer(group, memb)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
