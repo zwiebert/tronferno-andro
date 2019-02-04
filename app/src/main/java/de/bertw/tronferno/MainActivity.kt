@@ -591,11 +591,11 @@ class MainActivity : AppCompatActivity() {
                 'o' -> pbs[i].progress = 100
                 'c' -> pbs[i].progress = 0
                 'm' -> pbs[i].progress = 50
-                '?' -> pbs[i].progress = 0
+                '?' -> pbs[i].progress = 100
             }
 
             // visibility of undefined shutters and defined shutters with unknown status
-            val vi = if (membMax[group] < i) View.GONE else if (pos[i] == '?') View.INVISIBLE else View.VISIBLE
+            val vi = if (membMax[group] < m) View.GONE else View.VISIBLE //onClick works only with VISIBLE
             pbs[i].visibility = vi
             ptv[i].visibility = if (vi == View.GONE) vi else View.VISIBLE
             val name = mMemberNames.get("memberName_$group$m") ?: ""
@@ -663,12 +663,14 @@ class MainActivity : AppCompatActivity() {
                         memb = 1
                     vtvE.text = if (group == 0) "" else if (memb == 0) "A" else memb.toString()
                     pr.model.getSavedTimer(group, memb)
+                    mMenu?.findItem(R.id.action_editShutterName)?.isEnabled = (group != 0 && memb != 0)
                     showShutterPositions()
 
                 }
                 R.id.vbtE -> if (enableFerId(false)) {
                     memb = ++memb % (membMax[group] + 1)
                     vtvE.text = if (group == 0) "" else if (memb == 0) "A" else memb.toString()
+                    mMenu?.findItem(R.id.action_editShutterName)?.isEnabled = (group != 0 && memb != 0)
                     logWriteLine("getSavedTimer(g=$group, m=$memb)")
                     pr.model.getSavedTimer(group, memb)
                 }
@@ -709,6 +711,7 @@ class MainActivity : AppCompatActivity() {
     fun setMemb(m: Int) {
         memb = m
         vtvE.text = m.toString()
+        mMenu?.findItem(R.id.action_editShutterName)?.isEnabled = (group != 0 && memb != 0)
         pr.model.getSavedTimer(group, memb)
     }
 
@@ -826,6 +829,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun editShutterNameDialog() {
+        if (group == 0 || memb == 0)
+            return
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Edit Name of member $memb group $group:")
 
