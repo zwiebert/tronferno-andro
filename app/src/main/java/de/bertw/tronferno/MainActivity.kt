@@ -8,6 +8,7 @@ import android.os.Handler
 import android.os.Message
 import android.os.StrictMode
 import android.preference.PreferenceManager
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
@@ -271,8 +272,6 @@ class MainActivity : AppCompatActivity() {
         loadPreferences()
         vtvLog.movementMethod = ScrollingMovementMethod()
 
-        vtvG.text = if (group != 0) group.toString() else "A"
-        vtvE.text = if (memb != 0) memb.toString() else if (group != 0) "A" else ""
 
         pbsArr = arrayOf(vpbPiM1, vpbPiM2, vpbPiM3, vpbPiM4, vpbPiM5, vpbPiM6, vpbPiM7)
         ptvArr = arrayOf(vtvPiM1, vtvPiM2, vtvPiM3, vtvPiM4, vtvPiM5, vtvPiM6, vtvPiM7)
@@ -289,6 +288,8 @@ class MainActivity : AppCompatActivity() {
 
         enableSendButtons(false, 0)
         pr.onResume()
+        vtvG.text = if (group != 0) group.toString() else "A"
+        setMemb(memb)
         //  vtvLog.append("-----onResume----\n")
     }
 
@@ -661,11 +662,7 @@ class MainActivity : AppCompatActivity() {
 
                 }
                 R.id.vbtE -> if (enableFerId(false)) {
-                    memb = ++memb % (membMax[group] + 1)
-                    vtvE.text = if (group == 0) "" else if (memb == 0) "A" else memb.toString()
-                    mMenu?.findItem(R.id.action_editShutterName)?.isEnabled = (group != 0 && memb != 0)
-                    logWriteLine("getSavedTimer(g=$group, m=$memb)")
-                    pr.model.getSavedTimer(group, memb)
+                    setMemb((memb+1) % (membMax[group] + 1))
                 }
 
                 R.id.vbtSunPos -> {
@@ -703,9 +700,16 @@ class MainActivity : AppCompatActivity() {
 
     fun setMemb(m: Int) {
         memb = m
-        vtvE.text = m.toString()
+        vtvE.text = if (group == 0) "" else if (memb == 0) "A" else memb.toString()
         mMenu?.findItem(R.id.action_editShutterName)?.isEnabled = (group != 0 && memb != 0)
         pr.model.getSavedTimer(group, memb)
+
+        val colorNormal = ContextCompat.getColor(this, R.color.background_material_light)
+        val colorSelected = ContextCompat.getColor(this, R.color.colorAccent)
+
+        for(i in 0 until membMax[group]) {
+            ptvArr[i].setBackgroundColor(if (m == 0 || i == (m-1)) colorSelected else colorNormal)
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

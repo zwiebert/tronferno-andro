@@ -125,7 +125,6 @@ class McuTcp(msgHandler: Handler) {
                     val os = outputStream ?: return
                     try {
                         os.write(data.toByteArray())
-                        mt.mMessageHandler.sendMessageDelayed(mt.mMessageHandler.obtainMessage(MSG_TCP_DO_RECV), 100)
                     } catch (e: Exception) {
                         mt.mMessageHandler.obtainMessage(McuTcp.MSG_TCP_OUTPUT_ERROR, "tcp-wt:error: $e").sendToTarget()
                         mt.mMessageHandler.obtainMessage(McuTcp.MSG_TCP_REQ_RECONNECT, "").sendToTarget()
