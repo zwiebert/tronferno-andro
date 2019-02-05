@@ -17,6 +17,10 @@ class McuTcp(msgHandler: Handler) {
     private val mMessageHandler: Handler = msgHandler
     var mMsgThread = MessageThread(this)
 
+    private fun sendMsgToGui(msg : Int, text : String? = null) {
+        mMessageHandler.obtainMessage(msg, text).sendToTarget()
+    }
+
     class MessageThread(val mcuTcp: McuTcp) : Thread() {
         var mHandler: MessageHandler? = null
 
@@ -39,7 +43,7 @@ class McuTcp(msgHandler: Handler) {
             var stop = false
             override fun run() {
                 while (!stop) {
-                    mWrTcp.get()?.mMsgThread?.mHandler?.obtainMessage(MSG_TCP_DO_RECV)?.sendToTarget()
+                    mWrTcp.get()?.sendMsgToTcp(MSG_TCP_DO_RECV)
                     sleep(50)
                 }
             }
@@ -64,10 +68,10 @@ class McuTcp(msgHandler: Handler) {
                 while (br.ready()) {
                     val line = br.readLine()
                     if (line == null) {
-                        mt.mMessageHandler.obtainMessage(MSG_TCP_INPUT_EOF, line).sendToTarget()
+                        mt.sendMsgToGui(MSG_TCP_INPUT_EOF, line)
                         return // EOF
                     }
-                    mt.mMessageHandler.obtainMessage(MSG_LINE_RECEIVED, line).sendToTarget()
+                    mt.sendMsgToGui(MSG_LINE_RECEIVED, line)
                 }
             } catch (e: java.lang.Exception) {
 
@@ -87,15 +91,15 @@ class McuTcp(msgHandler: Handler) {
                 //socketAddress = InetSocketAddress(ipAddr, ipPort)
                 mTcpSocket.connect(socketAddress, 5 * 1000)
             } catch (e: Exception) {
-                mt.mMessageHandler.obtainMessage(MSG_TCP_CONNECTION_FAILED, e.toString()).sendToTarget()
+                mt.sendMsgToGui(MSG_TCP_CONNECTION_FAILED, e.toString())
                 return false
             }
 
             if (!mTcpSocket.isConnected) {
-                mt.mMessageHandler.obtainMessage(MSG_TCP_CONNECTION_FAILED, "").sendToTarget()
+                mt.sendMsgToGui(MSG_TCP_CONNECTION_FAILED, "")
                 return false
             } else {
-                mt.mMessageHandler.obtainMessage(MSG_TCP_CONNECTED, "").sendToTarget()
+                mt.sendMsgToGui(MSG_TCP_CONNECTED, "")
             }
 
             bufferedReader = BufferedReader(InputStreamReader(mTcpSocket.getInputStream()))
@@ -126,8 +130,8 @@ class McuTcp(msgHandler: Handler) {
                     try {
                         os.write(data.toByteArray())
                     } catch (e: Exception) {
-                        mt.mMessageHandler.obtainMessage(McuTcp.MSG_TCP_OUTPUT_ERROR, "tcp-wt:error: $e").sendToTarget()
-                        mt.mMessageHandler.obtainMessage(McuTcp.MSG_TCP_REQ_RECONNECT, "").sendToTarget()
+                        mt.sendMsgToGui(McuTcp.MSG_TCP_OUTPUT_ERROR, "tcp-wt:error: $e")
+                        mt.sendMsgToGui(McuTcp.MSG_TCP_REQ_RECONNECT, "")
                         return
                     }
                 }
@@ -150,11 +154,11 @@ class McuTcp(msgHandler: Handler) {
 
 
     fun close() {
-        mMsgThread.mHandler?.obtainMessage(MSG_TCP_DO_DISCONNECT)?.sendToTarget()
+        sendMsgToTcp(MSG_TCP_DO_DISCONNECT)
     }
 
     fun transmit(s: String) {
-        mMsgThread.mHandler!!.obtainMessage(MSG_TCP_DO_SEND, s).sendToTarget()
+        sendMsgToTcp(MSG_TCP_DO_SEND, s)
     }
 
     fun reconnect() {
@@ -162,7 +166,11 @@ class McuTcp(msgHandler: Handler) {
     }
 
     fun connect() {
-        mMsgThread.mHandler?.obtainMessage(MSG_TCP_DO_CONNECT)?.sendToTarget()
+        sendMsgToTcp(MSG_TCP_DO_CONNECT)
+    }
+
+    private fun sendMsgToTcp(msg : Int, text : String? = null) {
+        mMsgThread.mHandler?.obtainMessage(msg, text)?.sendToTarget()
     }
 
     init {
