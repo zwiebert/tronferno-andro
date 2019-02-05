@@ -192,8 +192,8 @@ class MainActivity : AppCompatActivity() {
         vcbAstro.isChecked = pref.getBoolean("vcbAstroIsChecked", false)
         vcbRandom.isChecked = pref.getBoolean("vcbRandomIsChecked", false)
         vcbSunAuto.isChecked = pref.getBoolean("vcbSunAutoIsChecked", false)
-        mHideViewLog = pref.getBoolean("mHideViewLog", mHideViewLog )
-        mHideViewTimer = pref.getBoolean("mHideViewTimer", mHideViewTimer )
+        mHideViewLog = pref.getBoolean("mHideViewLog", mHideViewLog)
+        mHideViewTimer = pref.getBoolean("mHideViewTimer", mHideViewTimer)
 
 
         vetFerId.setText(pref.getString("vetFerIdText", "90ABCD"))
@@ -325,12 +325,14 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 McuTcp.MSG_TCP_OUTPUT_ERROR -> {
-                    ma.vtvLog.append("tcp write error: " + msg.obj as String + "\n")
+                    if (msg.obj is String)
+                        ma.vtvLog.append("tcp write error: " + msg.obj as String + "\n")
                     //ma.pr.reset()
                 }
 
                 McuTcp.MSG_TCP_INPUT_ERROR -> {
-                    ma.vtvLog.append("tcp read error: " + msg.obj as String + "\n")
+                    if (msg.obj is String)
+                        ma.vtvLog.append("tcp read error: " + msg.obj as String + "\n")
                     //ma.pr.reset()
                 }
 
@@ -350,7 +352,8 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 McuTcp.MSG_TCP_CONNECTION_FAILED -> {
-                    ma.vtvLog.append("tcp connect error: " + msg.obj as String + "\n")
+                    if (msg.obj is String)
+                        ma.vtvLog.append("tcp connect error: " + msg.obj as String + "\n")
                 }
 
                 McuTcp.MSG_TCP_REQ_RECONNECT -> {
@@ -668,7 +671,7 @@ class MainActivity : AppCompatActivity() {
 
                 }
                 R.id.vbtE -> if (enableFerId(false)) {
-                    setMemb((memb+1) % (membMax[group] + 1))
+                    setMemb((memb + 1) % (membMax[group] + 1))
                 }
 
                 R.id.vbtSunPos -> {
@@ -712,8 +715,8 @@ class MainActivity : AppCompatActivity() {
         val colorNormal = ContextCompat.getColor(this, R.color.background_material_light)
         val colorSelected = ContextCompat.getColor(this, R.color.colorAccent)
 
-        for(i in 0 until membMax[group]) {
-            ptvArr[i].setBackgroundColor(if (m == 0 || i == (m-1)) colorSelected else colorNormal)
+        for (i in 0 until membMax[group]) {
+            ptvArr[i].setBackgroundColor(if (m == 0 || i == (m - 1)) colorSelected else colorNormal)
         }
     }
 

@@ -99,7 +99,7 @@ class McuTcp(msgHandler: Handler) {
                 mt.sendMsgToGui(MSG_TCP_CONNECTION_FAILED, "")
                 return false
             } else {
-                mt.sendMsgToGui(MSG_TCP_CONNECTED, "")
+                mt.sendMsgToGui(MSG_TCP_CONNECTED)
             }
 
             bufferedReader = BufferedReader(InputStreamReader(mTcpSocket.getInputStream()))
@@ -131,7 +131,7 @@ class McuTcp(msgHandler: Handler) {
                         os.write(data.toByteArray())
                     } catch (e: Exception) {
                         mt.sendMsgToGui(McuTcp.MSG_TCP_OUTPUT_ERROR, "tcp-wt:error: $e")
-                        mt.sendMsgToGui(McuTcp.MSG_TCP_REQ_RECONNECT, "")
+                        mt.sendMsgToGui(McuTcp.MSG_TCP_REQ_RECONNECT)
                         return
                     }
                 }
