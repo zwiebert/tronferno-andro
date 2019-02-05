@@ -29,6 +29,8 @@ You can do nearly all things you could do with original hardware Fernotron 2411:
 
 GUI buttons located in the lower half of the screen are similar to the original Control Unit 2411:
 
+ ![ScreenShot](pics/sc_main_buttons.png)
+
  * G: Cycles through all group numbers and "A" for all groups
  * E: Cycles through all groups members (motors/receivers) and "A" for all Members
  * UP/STOP/DOWN: Sends these commands to the selected motors/receivers
@@ -37,7 +39,9 @@ GUI buttons located in the lower half of the screen are similar to the original 
 
  Timer area contains some text-input fields and checkboxes to configure and send a timer. Timer data can only be sent as a whole block. So configure all options first before sending them to the receiver.
 
-* Weekly: Check to activate weekly timer.  Press small edit button left of it to input the times via editor window
+![ScreenShot](pics/sc_timer_area.png)
+
+* Weekly: Check to activate weekly timer.  Press small edit button on the left of it to input the times via editor window
 * Up/Down: Check one or both to activate daily timer and edit it (format: HH:MM)
 * Astro: Check to activate closing shutter at civil dusk. A minute offset (positive or negative) can be entered to close N-minutes after or before civil dusk.
 * Sun:  Check to follow a paired sun sensor (otherwise its ignored)
@@ -47,6 +51,8 @@ GUI buttons located in the lower half of the screen are similar to the original 
 
 Position Indicator shows status of each shutter of the selected group. You can click on each Shutter to select it directly. The label below each shutter shows its number or its name (names can be edited in menu).
 Unused Shutter can be hidden by configuring the number of members of the group in settings menu.
+
+![ScreenShot](pics/sc_positions.png)
 
 
 The Menu:
