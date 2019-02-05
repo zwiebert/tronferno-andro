@@ -37,11 +37,11 @@ GUI buttons located in the lower half of the screen are similar to the original 
 
  Timer area contains some text-input fields and checkboxes to configure and send a timer. Timer data can only be sent as a whole block. So configure all options first before sending them to the receiver.
 
-* Weekly: check it to activate weekly timer
-* DailyUp/DailyDown: check one or both to activate daily timer
-* Astro: check it to activate closing shutter at civil dusk. A minute offset (positive or negative) can be entered to close N-minutes after or before civil dusk.
-* SunAuto: check it if you want to activate the paired sun sensor (or the SUN-POS button in this app)
-* Random: check it to activate randomly open/close the shutters
+* Weekly: Check to activate weekly timer.  Press small edit button left of it to input the times via editor window
+* Up/Down: Check one or both to activate daily timer and edit it (format: HH:MM)
+* Astro: Check to activate closing shutter at civil dusk. A minute offset (positive or negative) can be entered to close N-minutes after or before civil dusk.
+* Sun:  Check to follow a paired sun sensor (otherwise its ignored)
+* Rand: Open/close shutters at random times
 * Send: Press this to button to the timer data to the selected receiver. It takes 5 seconds to send. The motor will activate shortly to acknowledge receiving valid timer data.
 
 
