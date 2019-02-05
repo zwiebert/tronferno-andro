@@ -46,6 +46,9 @@ class MainActivity : AppCompatActivity() {
     //val tfmcuModel = pr.model
 
     private var mode = VIS_NORMAL
+    private var mHideViewTimer = false
+    private var mHideViewLog = false
+
 
     private fun switchVisibility(mode: Int = VIS_NORMAL) {
         val iv = View.INVISIBLE
@@ -67,7 +70,6 @@ class MainActivity : AppCompatActivity() {
                 vbtStop.visibility = vi
                 // vbtG.visibility = vi
                 // vbtE.visibility = vi
-                vbtTimer.visibility = vi
                 vbtSunPos.visibility = vi
             }
 
@@ -88,7 +90,6 @@ class MainActivity : AppCompatActivity() {
                 vbtStop.visibility = vi
                 vbtG.visibility = vi
                 vbtE.visibility = vi
-                vbtTimer.visibility = iv
                 vbtSunPos.visibility = iv
             }
         }
@@ -191,7 +192,8 @@ class MainActivity : AppCompatActivity() {
         vcbAstro.isChecked = pref.getBoolean("vcbAstroIsChecked", false)
         vcbRandom.isChecked = pref.getBoolean("vcbRandomIsChecked", false)
         vcbSunAuto.isChecked = pref.getBoolean("vcbSunAutoIsChecked", false)
-//                .isChecked = pref.getBoolean("IsChecked", false)
+        mHideViewLog = pref.getBoolean("mHideViewLog", mHideViewLog )
+        mHideViewTimer = pref.getBoolean("mHideViewTimer", mHideViewTimer )
 
 
         vetFerId.setText(pref.getString("vetFerIdText", "90ABCD"))
@@ -209,6 +211,8 @@ class MainActivity : AppCompatActivity() {
                 mMemberNames.put(key, value)
             }
         }
+
+
     }
 
     private fun savePreferences() {
@@ -224,8 +228,8 @@ class MainActivity : AppCompatActivity() {
         ed.putBoolean("vcbAstroIsChecked", vcbAstro.isChecked)
         ed.putBoolean("vcbRandomIsChecked", vcbRandom.isChecked)
         ed.putBoolean("vcbSunAutoIsChecked", vcbSunAuto.isChecked)
-
-//        ed.putBoolean("IsChecked", .isChecked)
+        ed.putBoolean("mHideViewLog", mHideViewLog)
+        ed.putBoolean("mHideViewTimer", mHideViewTimer)
 
 
         ed.putString("vetFerIdText", vetFerId.text.toString())
@@ -273,12 +277,14 @@ class MainActivity : AppCompatActivity() {
         vtvLog.movementMethod = ScrollingMovementMethod()
 
 
+
         pbsArr = arrayOf(vpbPiM1, vpbPiM2, vpbPiM3, vpbPiM4, vpbPiM5, vpbPiM6, vpbPiM7)
         ptvArr = arrayOf(vtvPiM1, vtvPiM2, vtvPiM3, vtvPiM4, vtvPiM5, vtvPiM6, vtvPiM7)
 
         progressDialog = ProgressDialog(this)
 
-
+        timer_frameLayout.visibility = if (mHideViewTimer) View.GONE else View.VISIBLE
+        vtvLog.visibility = if (mHideViewLog) View.GONE else View.VISIBLE
     }
 
 
@@ -669,9 +675,8 @@ class MainActivity : AppCompatActivity() {
                     cd.cmd = TfmcuSendData.CMD_SUN_DOWN; pr.data2Mcu(cd)
                 }
 
-                R.id.vbtTimer -> {
+                R.id.vbtTimerSend -> {
                     sendTimer()
-
                 }
 
                 R.id.vbtEdWeekly -> {
@@ -789,7 +794,8 @@ class MainActivity : AppCompatActivity() {
 
 
         }
-        vbtTimer.isEnabled = enable
+
+        vbtTimerSend.isEnabled = enable
         vbtUp.isEnabled = enable
         vbtStop.isEnabled = enable
         vbtSunPos.isEnabled = enable
@@ -821,6 +827,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
+        menu.findItem(R.id.action_hideLog).setChecked(mHideViewLog)
+        menu.findItem(R.id.action_hideTimer).setChecked(mHideViewTimer)
         mMenu = menu
         return true
     }
@@ -896,7 +904,17 @@ class MainActivity : AppCompatActivity() {
                 editShutterNameDialog()
             }
 
+            R.id.action_hideLog -> {
+                item.isChecked = !item.isChecked
+                mHideViewLog = item.isChecked
+                vtvLog.visibility = if (mHideViewLog) View.GONE else View.VISIBLE
+            }
 
+            R.id.action_hideTimer -> {
+                item.isChecked = !item.isChecked
+                mHideViewTimer = item.isChecked
+                timer_frameLayout.visibility = if (mHideViewTimer) View.GONE else View.VISIBLE
+            }
             else -> return super.onOptionsItemSelected(item)
         }
 

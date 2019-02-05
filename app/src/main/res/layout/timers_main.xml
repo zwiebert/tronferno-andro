@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?android:attr/colorControlHighlight"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="de.bertw.tronferno.MainActivity"
     tools:layout_editor_absoluteX="0dp"
@@ -15,10 +16,12 @@
         android:id="@+id/vcbSunAuto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
         android:text="@string/sun_auto"
-        app:layout_constraintBottom_toBottomOf="@+id/vcbDailyDown"
-        app:layout_constraintStart_toEndOf="@+id/vcbDailyDown"
-        app:layout_constraintTop_toTopOf="@+id/vcbDailyDown"
+        app:layout_constraintBottom_toBottomOf="@+id/vcbRandom"
+        app:layout_constraintStart_toEndOf="@+id/vcbRandom"
+        app:layout_constraintTop_toTopOf="@+id/vcbRandom"
         tools:layout_constraintBottom_creator="1"
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintRight_creator="1"
@@ -28,11 +31,14 @@
         android:id="@+id/vcbRandom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:text="@string/random"
-        app:layout_constraintBottom_toBottomOf="@+id/vcbDailyUp"
-        app:layout_constraintStart_toEndOf="@+id/vcbDailyDown"
-        app:layout_constraintStart_toStartOf="@+id/vcbSunAuto"
-        app:layout_constraintTop_toTopOf="@+id/vcbDailyUp"
+        app:layout_constraintBottom_toBottomOf="@+id/vcbAstro"
+        app:layout_constraintStart_toEndOf="@+id/vcbAstro"
+        app:layout_constraintTop_toTopOf="@+id/vcbAstro"
         tools:layout_constraintBaseline_creator="1"
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintRight_creator="1" />
@@ -180,6 +186,7 @@
         android:text="0700-++++0900-+"
         app:layout_constraintBottom_toTopOf="@+id/vetAstroMinuteOffset"
         app:layout_constraintEnd_toStartOf="@+id/vbtEdWeekly"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent" />
 
 
@@ -196,5 +203,19 @@
         app:layout_constraintTop_toTopOf="@+id/vcbWeekly"
         app:layout_constraintVertical_bias="0.461" />
 
+    <Button
+        android:id="@+id/vbtTimerSend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="1dp"
+        android:onClick="onClick"
+        android:text="Send"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
 
 </android.support.constraint.ConstraintLayout>
+

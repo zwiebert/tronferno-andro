@@ -5,12 +5,12 @@
     <string name="action_expert">Expert</string>
 
 
-    <string name="sun_auto">SunAuto</string>
-    <string name="random">Random</string>
+    <string name="sun_auto">Sun</string>
+    <string name="random">Rand</string>
     <string name="astro">Astro</string>
-    <string name="daily_up">DailyUp</string>
+    <string name="daily_up">Up</string>
     <string name="weekly">Weekly</string>
-    <string name="daily_down">DailyDown</string>
+    <string name="daily_down">Down</string>
     <string name="g">G</string>
     <string name="e">E</string>
     <string name="stop">Stop</string>

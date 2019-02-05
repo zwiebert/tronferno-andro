@@ -150,19 +150,5 @@
         tools:layout_constraintRight_creator="1" />
 
 
-    <Button
-        android:id="@+id/vbtTimer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="onClick"
-        android:text="@string/timer"
-        app:layout_constraintBottom_toBottomOf="@+id/vbtDown"
-        app:layout_constraintEnd_toEndOf="@+id/vbtE"
-        app:layout_constraintStart_toStartOf="@+id/vbtE"
-        app:layout_constraintTop_toTopOf="@+id/vbtDown"
-        tools:layout_constraintBottom_creator="1"
-        tools:layout_constraintLeft_creator="1"
-        tools:layout_constraintRight_creator="1" />
-
 </android.support.constraint.ConstraintLayout>
 

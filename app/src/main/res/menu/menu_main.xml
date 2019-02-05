@@ -52,5 +52,15 @@
         android:id="@+id/action_editShutterName"
         android:orderInCategory="104"
         android:title="Edit Shutter Name" />
+    <item
+        android:id="@+id/action_hideLog"
+        android:checkable="true"
+        android:orderInCategory="105"
+        android:title="Hide Log View" />
+    <item
+        android:id="@+id/action_hideTimer"
+        android:checkable="true"
+        android:orderInCategory="106"
+        android:title="Hide Timer View" />
 
 </menu>
