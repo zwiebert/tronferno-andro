@@ -14,8 +14,8 @@ class WTimerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_wtimer)
 
-        val wtimer_string = intent.getStringExtra("wtimer") ?: "empty"
-        weekDays.setTimes(wtimer_string)
+        val wtimerString = intent.getStringExtra("wtimer") ?: "empty"
+        weekDays.setTimes(wtimerString)
 
         vetWtUpMon.setText(weekDays.wdays[0].up)
         vetWtUpTue.setText(weekDays.wdays[1].up)
@@ -117,10 +117,10 @@ class WTimerActivity : AppCompatActivity() {
                 wday.up = ""
                 wday.down = ""
                 wday.copy = false
-                var wday_done = false
+                var wdayDone = false
                 val len = wtimer.length
 
-                while(!wday_done) {
+                while(!wdayDone) {
                     if (t >= len) {
                         return
                     }
@@ -128,7 +128,7 @@ class WTimerActivity : AppCompatActivity() {
                         '-' -> { // timer off
                             ++t
                             if (!isUp) {
-                                wday_done = true
+                                wdayDone = true
                             }
                             isUp = !isUp
                         }
@@ -136,7 +136,7 @@ class WTimerActivity : AppCompatActivity() {
                         '+' -> { // copy previous wday on+off timer
                             wday.copy = true;
                             ++t
-                            wday_done = true
+                            wdayDone = true
                         }
 
                         else -> {
@@ -151,7 +151,7 @@ class WTimerActivity : AppCompatActivity() {
                             }
                             t += 4
                             if (!isUp) {
-                                wday_done = true
+                                wdayDone = true
                             }
                             isUp = !isUp
                         }
