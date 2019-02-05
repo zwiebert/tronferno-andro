@@ -312,10 +312,6 @@ class MainActivity : AppCompatActivity() {
             var s = ""
             when (msg.what) {
 
-                McuTcp.MSG_TCP_DO_RECV -> {
-                    ma.pr.model.tcp.doReadTick()
-                }
-
                 McuTcp.MSG_TCP_INPUT_EOF -> {
                     //FIXME: what to do here?
                     //ma.pr.reset()
@@ -335,7 +331,6 @@ class MainActivity : AppCompatActivity() {
                     ma.enableSendButtons(true, 0)
                     ma.pr.onConnect()
                     ma.vtvLog.append("tcp connected\n")
-                    ma.pr.model.tcp.doReadTick()
 
                     if (mcuConfig_changed) {
                         mcuConfig_changed = false
@@ -366,8 +361,6 @@ class MainActivity : AppCompatActivity() {
                         }
                         else -> ma.vtvLog.append(s + "\n")
                     }
-
-                    ma.pr.model.tcp.doReadTick()
 
                     if (s.contains("rs=data")) {
                         ma.parseReceivedTimer(s)
@@ -838,7 +831,7 @@ class MainActivity : AppCompatActivity() {
         val input = EditText(this)
 // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
         input.inputType = InputType.TYPE_CLASS_TEXT
-        input.setText(ptvArr[memb-1].text)
+        input.setText(ptvArr[memb - 1].text)
         builder.setView(input)
 
 

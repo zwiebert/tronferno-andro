@@ -9,24 +9,12 @@ import java.io.OutputStream
 import java.lang.ref.WeakReference
 import java.net.InetSocketAddress
 import java.net.Socket
-import java.util.concurrent.ArrayBlockingQueue
-import java.util.concurrent.locks.ReentrantLock
 
 
 class McuTcp(msgHandler: Handler) {
 
-    @Volatile
-    private var mTcpSocket = Socket()
-    @Volatile
-    var bufferedReader: BufferedReader? = null
-    @Volatile
-    var outputStream: OutputStream? = null
 
     private val mMessageHandler: Handler = msgHandler
-    private val q = ArrayBlockingQueue<String>(1000)
-
-    private val connectLock = ReentrantLock()
-
     var mMsgThread = MessageThread(this)
 
     class MessageThread(val mcuTcp: McuTcp) : Thread() {
@@ -36,23 +24,41 @@ class McuTcp(msgHandler: Handler) {
             Looper.prepare()
             mHandler = MessageHandler(mcuTcp)
             Looper.loop()
-
-            while (true) {
-                mHandler?.readLoop()
-                sleep(100)
-            }
         }
-
-
     }
 
     class MessageHandler(mcuTcp: McuTcp) : Handler() {
         private val mWrTcp = WeakReference(mcuTcp)
-        var mHandler: MainActivity.MessageHandler? = null
+        private var mReadTickThread: ReadTickThread? = null
+        private var bufferedReader: BufferedReader? = null
+        private var outputStream: OutputStream? = null
+        @Volatile
+        var mTcpSocket = Socket()
 
-        fun readLoop() {
+        private inner class ReadTickThread : Thread() {
+            var stop = false
+            override fun run() {
+                while (!stop) {
+                    mWrTcp.get()?.mMsgThread?.mHandler?.obtainMessage(MSG_TCP_DO_RECV)?.sendToTarget()
+                    sleep(50)
+                }
+            }
+        }
+
+        private fun startReadTickThread() {
+            mReadTickThread?.stop = true
+            mReadTickThread = ReadTickThread()
+            mReadTickThread?.start()
+        }
+
+        private fun stopReadTickThread() {
+            mReadTickThread?.stop = true
+            mReadTickThread = null
+        }
+
+        private fun readLoop() {
             val mt = mWrTcp.get() ?: return
-            val br = mt.bufferedReader ?: return
+            val br = bufferedReader ?: return
 
             try {
                 while (br.ready()) {
@@ -68,6 +74,36 @@ class McuTcp(msgHandler: Handler) {
             }
         }
 
+        private fun closeSocket() {
+            mTcpSocket.close()
+            mTcpSocket = Socket()
+        }
+
+        private fun connectSocket(): Boolean {
+            val mt = mWrTcp.get() ?: return false
+
+            closeSocket()
+            try {
+                //socketAddress = InetSocketAddress(ipAddr, ipPort)
+                mTcpSocket.connect(socketAddress, 5 * 1000)
+            } catch (e: Exception) {
+                mt.mMessageHandler.obtainMessage(MSG_TCP_CONNECTION_FAILED, e.toString()).sendToTarget()
+                return false
+            }
+
+            if (!mTcpSocket.isConnected) {
+                mt.mMessageHandler.obtainMessage(MSG_TCP_CONNECTION_FAILED, "").sendToTarget()
+                return false
+            } else {
+                mt.mMessageHandler.obtainMessage(MSG_TCP_CONNECTED, "").sendToTarget()
+            }
+
+            bufferedReader = BufferedReader(InputStreamReader(mTcpSocket.getInputStream()))
+            outputStream = mTcpSocket.getOutputStream()
+
+            return true
+        }
+
         override fun handleMessage(msg: Message) {
             val mt = mWrTcp.get() ?: return
 
@@ -75,16 +111,18 @@ class McuTcp(msgHandler: Handler) {
 
 
                 McuTcp.MSG_TCP_DO_CONNECT -> {
-                    mt.connectSocket()
+                    if (connectSocket())
+                        startReadTickThread()
                 }
 
                 McuTcp.MSG_TCP_DO_DISCONNECT -> {
-                    mt.closeSocket()
+                    stopReadTickThread()
+                    closeSocket()
                 }
 
                 McuTcp.MSG_TCP_DO_SEND -> {
                     val data = msg.obj as String
-                    val os = mt.outputStream ?: return
+                    val os = outputStream ?: return
                     try {
                         os.write(data.toByteArray())
                         mt.mMessageHandler.sendMessageDelayed(mt.mMessageHandler.obtainMessage(MSG_TCP_DO_RECV), 100)
@@ -96,8 +134,6 @@ class McuTcp(msgHandler: Handler) {
                 }
 
                 McuTcp.MSG_TCP_DO_RECV -> {
-                    //FIXME: do ping/pong for now because sending a delayed message directly to ourself seems not to work
-                    mt.mMessageHandler.obtainMessage(McuTcp.MSG_TCP_DO_RECV)
                     readLoop()
                 }
 
@@ -107,48 +143,19 @@ class McuTcp(msgHandler: Handler) {
     }
 
 
-    private fun closeSocket() {
-        mTcpSocket.close()
-        mTcpSocket = Socket()
-    }
-
-    private fun connectSocket(): Boolean {
-        closeSocket()
-        try {
-            //socketAddress = InetSocketAddress(ipAddr, ipPort)
-            mTcpSocket.connect(socketAddress, 5 * 1000)
-        } catch (e: Exception) {
-            mMessageHandler.obtainMessage(MSG_TCP_CONNECTION_FAILED, e.toString()).sendToTarget()
-            return false
-        }
-
-        if (!mTcpSocket.isConnected) {
-            mMessageHandler.obtainMessage(MSG_TCP_CONNECTION_FAILED, "").sendToTarget()
-            return false
-        } else {
-            mMessageHandler.obtainMessage(MSG_TCP_CONNECTED, "").sendToTarget()
-        }
-
-        bufferedReader = BufferedReader(InputStreamReader(mTcpSocket.getInputStream()))
-        outputStream = mTcpSocket.getOutputStream()
-
-        return true
-    }
-
     val isConnected: Boolean
-        get() = mTcpSocket.isConnected
+        get() = mMsgThread.mHandler!!.mTcpSocket.isConnected
 
     @Volatile
     var isConnecting = false
 
 
     fun close() {
-        mMsgThread.mHandler!!.obtainMessage(MSG_TCP_DO_DISCONNECT).sendToTarget()
+        mMsgThread.mHandler?.obtainMessage(MSG_TCP_DO_DISCONNECT)?.sendToTarget()
     }
 
     fun transmit(s: String) {
         mMsgThread.mHandler!!.obtainMessage(MSG_TCP_DO_SEND, s).sendToTarget()
-        doReadTick()
     }
 
     fun reconnect() {
@@ -156,12 +163,7 @@ class McuTcp(msgHandler: Handler) {
     }
 
     fun connect() {
-        mMsgThread.mHandler!!.obtainMessage(MSG_TCP_DO_CONNECT).sendToTarget()
-        doReadTick()
-    }
-
-    fun doReadTick() {
-        mMsgThread.mHandler!!.sendMessageDelayed(mMsgThread.mHandler!!.obtainMessage(MSG_TCP_DO_RECV), 100)
+        mMsgThread.mHandler?.obtainMessage(MSG_TCP_DO_CONNECT)?.sendToTarget()
     }
 
     init {
