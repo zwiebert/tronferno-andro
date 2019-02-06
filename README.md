@@ -1,7 +1,14 @@
 # tronferno-andro
 Android GUI for [tronferno-mcu](https://github.com/zwiebert/tronferno-mcu)
 
+### How to install and getting started
 
+  * [Download](https://raw.githubusercontent.com/zwiebert/tronferno-andro/master/app/release/app-release.apk) the file app/release/app-release.apk to your Android device
+  * Install the downloaded APK
+  * Open the Tronferno App and go to Menu.Settings.General to configure the IP4-Address of your Tronferno-MCU
+  * If Tronferno-MCU is not already configured you can do it now via Menu.Settings.MCU_Remote_Settings
+  * Now disable unused Groups/Members via Menu.Settings.Groups_and_Members
+  
 ### What it can do
 
 You can do nearly all things you could do with original hardware Fernotron 2411 and some things more:
@@ -13,16 +20,6 @@ You can do nearly all things you could do with original hardware Fernotron 2411 
 * scan the ID of the original 2411
 * set shutter upper and lower limit (to avoid possible damage, this feature requires a hardware button connected to the MCU)
 * a motor code can be used to activate its pairing mode or to set shutter limits
-
-
-
-### How to install and getting started
-
-  * [Download](https://raw.githubusercontent.com/zwiebert/tronferno-andro/master/app/release/app-release.apk) the file app/release/app-release.apk to your Android device
-  * Install the downloaded APK
-  * Open the Tronferno App and go to Menu.Settings.General to configure the IP4-Address of your Tronferno-MCU
-  * If Tronferno-MCU is not already configured you can do it now via Menu.Settings.MCU_Remote_Settings
-  * Now disable unused Groups/Members via Menu.Settings.Groups_and_Members
 
 
 ### Usage
