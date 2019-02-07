@@ -107,6 +107,10 @@ class MainActivity : AppCompatActivity() {
         return group
     }
 
+    fun getGroupIndex(g: Int = group): Int {
+        return usedGroups.groupToIdxArr[g]
+    }
+
     var group = 0
     var memb = 0
     var groupMax = 0
@@ -129,7 +133,7 @@ class MainActivity : AppCompatActivity() {
     private var mMenu: Menu? = null
 
 
-    fun getMemberName(g: Int, m: Int): String {
+    fun getMemberName(g: Int = group, m: Int = memb): String {
         val key = "memberName_$g$m"
         val value = mMemberNames.get(key)
 
@@ -792,10 +796,10 @@ class MainActivity : AppCompatActivity() {
 
         if (old_group != group) {
             if (old_group != 0) {
-                mPosAdapter.notifyItemChanged(usedGroups.groupToIdxArr[old_group])
+                mPosAdapter.notifyItemChanged(getGroupIndex(old_group))
             } else mPosAdapter.notifyDataSetChanged()
             if (group != 0) {
-                mPosAdapter.notifyItemChanged(usedGroups.groupToIdxArr[group])
+                mPosAdapter.notifyItemChanged(getGroupIndex())
                 vrvPositions.scrollToPosition(usedGroups.selectedIdx)
             } else mPosAdapter.notifyDataSetChanged()
         }
@@ -833,8 +837,8 @@ class MainActivity : AppCompatActivity() {
         for (i in 0 until membMax[group]) {
             ptvArr[i].setBackgroundColor(if (m == 0 || i == (m - 1)) colorSelected else colorNormal)
         }
-        mPosAdapter.notifyItemChanged(usedGroups.selectedIdx)
-        vrvPositions.scrollToPosition(usedGroups.selectedIdx)
+        mPosAdapter.notifyItemChanged(getGroupIndex())
+        vrvPositions.scrollToPosition(getGroupIndex())
         enableFerId(false)
     }
 
@@ -964,17 +968,17 @@ class MainActivity : AppCompatActivity() {
         val input = EditText(this)
 // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
         input.inputType = InputType.TYPE_CLASS_TEXT
-        input.setText(ptvArr[memb - 1].text)
+        input.setText(getMemberName())
         builder.setView(input)
 
 
 // Set up the buttons
         builder.setPositiveButton("OK") { dialog, which ->
-            run {
-                val shutterName = input.text.toString()
-                ptvArr[memb - 1].text = if (shutterName.isNotBlank()) shutterName else "$memb"
-                this.mMemberNames.put("memberName_$group$memb", shutterName)
-            }
+            val shutterName = input.text.toString()
+            ptvArr[memb - 1].text = if (shutterName.isNotBlank()) shutterName else "$memb"
+            mMemberNames.put("memberName_$group$memb", shutterName)
+            mPosAdapter.notifyItemChanged(getGroupIndex())
+
         }
         builder.setNegativeButton("Cancel") { dialog, which -> dialog.cancel() }
 
