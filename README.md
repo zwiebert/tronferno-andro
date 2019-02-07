@@ -4,8 +4,8 @@ Android GUI for [tronferno-mcu](https://github.com/zwiebert/tronferno-mcu)
 ### How to install and getting started
 
   * [Download](https://raw.githubusercontent.com/zwiebert/tronferno-andro/master/app/release/app-release.apk) the file app/release/app-release.apk to your Android device
-  * Install the downloaded APK
-  * Open the Tronferno App and go to Menu.Settings.General to configure the IP4-Address of your Tronferno-MCU
+  * Install downloaded APK
+  * Open installed Tronferno-App and go to Menu.Settings.General to configure the IP4-Address of your Tronferno-MCU
   * If Tronferno-MCU is not already configured you can do it now via Menu.Settings.MCU_Remote_Settings
   * Now disable unused Groups/Members via Menu.Settings.Groups_and_Members
   
@@ -23,6 +23,8 @@ You can do nearly all things you could do with original hardware Fernotron 2411 
 
 
 ### Usage
+
+The GUI is still work in progress
 
 ---
  ![ScreenShot](pics/sc_main_buttons.png)
@@ -52,13 +54,15 @@ GUI buttons located in the lower half of the screen are similar to the original 
 
 ![ScreenShot](pics/sc_positions.png)
 
-Position Indicator shows status of each shutter of the selected group. You can click on each Shutter to select it directly. The label below each shutter shows its number or its name (names can be edited in menu).
+Position Indicator shows status of each shutter. One row for each non-empty group defined in Menu.Settings.Groups/Members.
+ If not fit on the screen, the view will scroll. You can click on each Shutter to select it directly. The label below each shutter shows its number or its name (names can be edited in menu).
 Unused Shutter can be hidden by configuring the number of members of the group in settings menu.
 
 ---
 
+![ScreenShot](pics/sc_main_menu.png)
 
-The Menu:
+Main menu:
 
  * Settings: configure the App and the MCU here
  * Main Controller Auto Set: starts a scan to find out the ID of your original 2411 unit
