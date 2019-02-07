@@ -178,6 +178,11 @@ class TfmcuModel(msgHandler: Handler) {
     }
 
     private fun updPosArr(g: Int, m: Int, p: Int) {
+        if (g == 0) {
+            for (gi in 1..7)
+                updPosArr(gi, m, p)
+            return
+        }
         val mm = if (m == 0) 0.inv() else (1 shl m)
 
         posArr0[g] = if (p == 0) (posArr0[g] or mm) else (posArr0[g] and mm.inv())

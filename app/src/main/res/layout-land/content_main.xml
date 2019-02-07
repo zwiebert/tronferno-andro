@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingTop="?attr/actionBarSize"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="de.bertw.tronferno.MainActivity"
     tools:layout_editor_absoluteX="0dp"
@@ -25,7 +26,7 @@
         android:maxLines="20"
         android:scrollbars="vertical"
         android:text=""
-        app:layout_constraintBottom_toTopOf="@+id/vetShutterPos"
+        app:layout_constraintBottom_toTopOf="@+id/vltShutterPosList"
         app:layout_constraintEnd_toEndOf="@+id/barrier5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -50,11 +51,27 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <include
+        android:id="@+id/vltShutterPosList"
+        layout="@layout/position_indicators"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="4dp"
+        app:layout_constraintBottom_toTopOf="@+id/vltShutterPos"
+        app:layout_constraintEnd_toEndOf="@+id/barrier5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/vtvLog" />
+
+    <include
         android:id="@+id/vltShutterPos"
         layout="@layout/position_indicator"
         android:layout_width="0dp"
         android:layout_height="80dp"
         android:layout_marginBottom="8dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/barrier5"
         app:layout_constraintStart_toStartOf="parent" />
@@ -99,8 +116,8 @@
         android:id="@+id/barrier5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:constraint_referenced_ids="cmd_button_frameLayout,timer_frameLayout"
-        app:barrierDirection="left" />
+        app:barrierDirection="left"
+        app:constraint_referenced_ids="cmd_button_frameLayout,timer_frameLayout" />
 
 
 </android.support.constraint.ConstraintLayout>

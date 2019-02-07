@@ -11,6 +11,8 @@ import android.preference.PreferenceManager
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.DefaultItemAnimator
+import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.Toolbar
 import android.text.InputType
 import android.text.method.ScrollingMovementMethod
@@ -21,6 +23,7 @@ import android.widget.*
 import kotlinx.android.synthetic.main.cmd_buttons_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.position_indicator.*
+import kotlinx.android.synthetic.main.position_indicators.*
 import kotlinx.android.synthetic.main.timers_main.*
 import java.lang.ref.WeakReference
 import java.net.InetSocketAddress
@@ -48,6 +51,7 @@ class MainActivity : AppCompatActivity() {
     private var mode = VIS_NORMAL
     private var mHideViewTimer = false
     private var mHideViewLog = false
+    private var mPosAdapter = ShutterPositionsAdapter(this)
 
 
     private fun switchVisibility(mode: Int = VIS_NORMAL) {
@@ -95,11 +99,20 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun getSelectedMember(): Int {
+        return if (group == 0) 0 else memb
+    }
 
-    private var group = 0
-    private var memb = 0
-    private var groupMax = 0
-    private val membMax = intArrayOf(0, 0, 0, 0, 0, 0, 0, 0)
+    fun getSelectedGroup(): Int {
+        return group
+    }
+
+    var group = 0
+    var memb = 0
+    var groupMax = 0
+
+    val membMax = intArrayOf(0, 0, 0, 0, 0, 0, 0, 0)
+
     private val membMap = arrayOf(
             booleanArrayOf(false, false, false, false, false, false, false, false),
             booleanArrayOf(false, false, false, false, false, false, false, false),
@@ -115,6 +128,13 @@ class MainActivity : AppCompatActivity() {
     private var cuasInProgress = false
     private var mMenu: Menu? = null
 
+
+    fun getMemberName(g: Int, m: Int): String {
+        val key = "memberName_$g$m"
+        val value = mMemberNames.get(key)
+
+        return if (value.isNullOrBlank()) "$m" else value
+    }
 
     private val onCheckedChanged = CompoundButton.OnCheckedChangeListener { button, isChecked ->
         when (button.id) {
@@ -212,6 +232,23 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        fun updateUsedGroups() {
+            var ugi = 0
+            for (gi in 1..7) {
+                if (membMax[gi] > 0) {
+                    usedGroups.arr[ugi] = gi
+                    if (group == gi)
+                        usedGroups.selectedIdx = ugi
+                    usedGroups.groupToIdxArr[gi] = ugi
+
+                    ++ugi
+                }
+            }
+            usedGroups.arr[ugi] = 0 // terminate array with 0
+            usedGroups.size = ugi
+        }
+
+        updateUsedGroups()
 
     }
 
@@ -285,6 +322,17 @@ class MainActivity : AppCompatActivity() {
 
         timer_frameLayout.visibility = if (mHideViewTimer) View.GONE else View.VISIBLE
         vtvLog.visibility = if (mHideViewLog) View.GONE else View.VISIBLE
+
+
+        val mLayoutManager = LinearLayoutManager(applicationContext)
+
+        vrvPositions.apply {
+            layoutManager = mLayoutManager
+            itemAnimator = DefaultItemAnimator()
+            adapter = mPosAdapter
+        }
+
+        mPosAdapter.notifyDataSetChanged()
     }
 
 
@@ -295,7 +343,7 @@ class MainActivity : AppCompatActivity() {
         enableSendButtons(false, 0)
         pr.onResume()
         vtvG.text = if (group != 0) group.toString() else "A"
-        setMemb(memb)
+        selectMember(memb)
         //  vtvLog.append("-----onResume----\n")
     }
 
@@ -487,9 +535,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun sendTimer() {
         pr.timerClear()
-        pr.td.a = getFerId()
-        pr.td.g = group
-        pr.td.m = memb
+        pr.td.apply {
+            a = getFerId()
+            g = getSelectedGroup()
+            m = getSelectedMember()
+            sunAuto = vcbSunAuto.isChecked
+            random = vcbRandom.isChecked
+        }
 
         val dailyUpChecked = vcbDailyUp.isChecked
         val dailyDownChecked = vcbDailyDown.isChecked
@@ -511,13 +563,13 @@ class MainActivity : AppCompatActivity() {
 
 
 
-        pr.td.sunAuto = vcbSunAuto.isChecked
-        pr.td.random = vcbRandom.isChecked
+
 
         if (pr.data2Mcu(pr.td)) {
             enableSendButtons(false, 5)
         }
     }
+
 
     private fun saveMcuPreferecence() {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
@@ -578,6 +630,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showShutterPositions() {
+
+        return; //TODO replaced by recyclerview
         vltShutterPos.visibility = if (group == 0) View.INVISIBLE else View.VISIBLE
 
         if (group == 0) {
@@ -590,19 +644,19 @@ class MainActivity : AppCompatActivity() {
 
         for (i in 0..6) {
             val m = i + 1
-            when (pos[i]) {
-                'o' -> pbs[i].progress = 100
-                'c' -> pbs[i].progress = 0
-                'm' -> pbs[i].progress = 50
-                '?' -> pbs[i].progress = 100
+
+            pbs[i].progress = when (pos[i]) {
+                'o' -> 100
+                'c' -> 0
+                'm' -> 50
+                else -> 100
             }
 
             // visibility of undefined shutters and defined shutters with unknown status
             val vi = if (membMax[group] < m) View.GONE else View.VISIBLE //onClick works only with VISIBLE
             pbs[i].visibility = vi
             ptv[i].visibility = if (vi == View.GONE) vi else View.VISIBLE
-            val name = mMemberNames.get("memberName_$group$m") ?: ""
-            ptv[i].text = if (name.isNotBlank()) name else "$m"
+            ptv[i].text = getMemberName(group, m)
         }
     }
 
@@ -618,6 +672,7 @@ class MainActivity : AppCompatActivity() {
     fun parseReceivedPosition(line: String) {
         if (pr.model.parseReceivedPosition(line)) {
             showShutterPositions()
+            mPosAdapter.notifyDataSetChanged()
         }
     }
 
@@ -638,7 +693,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun onClick(view: View) {
-        val cd = TfmcuSendData(a = getFerId(), g = group, m = memb, sep = (mode == MODE_SEP))
+        val g = getSelectedGroup()
+        val m = getSelectedMember()
+        val cd = TfmcuSendData(a = getFerId(), g = g, m = m, sep = (mode == MODE_SEP))
         try {
             // vtvLog.append(String.format("ra: %b, wa: %b, ca: %b\n", tcpReadThread.isAlive, tcpWriteThread.isAlive, tcpConnectThread.isAlive))
 
@@ -654,24 +711,11 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 R.id.vbtG -> if (enableFerId(false)) {
-                    for (i in 0..7) {
-                        group = ++group % 8
-                        if (group == 0 || membMax[group] != 0) {
-                            break
-                        }
-                    }
-
-                    vtvG.text = if (group == 0) "A" else group.toString()
-                    if (memb > membMax[group])
-                        memb = 1
-                    vtvE.text = if (group == 0) "" else if (memb == 0) "A" else memb.toString()
-                    pr.model.getSavedTimer(group, memb)
-                    mMenu?.findItem(R.id.action_editShutterName)?.isEnabled = (group != 0 && memb != 0)
-                    showShutterPositions()
-
+                    selectNextGroup()
                 }
+
                 R.id.vbtE -> if (enableFerId(false)) {
-                    setMemb((memb + 1) % (membMax[group] + 1))
+                    selectNextMember()
                 }
 
                 R.id.vbtSunPos -> {
@@ -690,13 +734,13 @@ class MainActivity : AppCompatActivity() {
 
                 }
 
-                R.id.vpbPiM1 -> setMemb(1)
-                R.id.vpbPiM2 -> setMemb(2)
-                R.id.vpbPiM3 -> setMemb(3)
-                R.id.vpbPiM4 -> setMemb(4)
-                R.id.vpbPiM5 -> setMemb(5)
-                R.id.vpbPiM6 -> setMemb(6)
-                R.id.vpbPiM7 -> setMemb(7)
+                R.id.vpbPiM1 -> selectMember(1, view.tag)
+                R.id.vpbPiM2 -> selectMember(2, view.tag)
+                R.id.vpbPiM3 -> selectMember(3, view.tag)
+                R.id.vpbPiM4 -> selectMember(4, view.tag)
+                R.id.vpbPiM5 -> selectMember(5, view.tag)
+                R.id.vpbPiM6 -> selectMember(6, view.tag)
+                R.id.vpbPiM7 -> selectMember(7, view.tag)
             }
 
 
@@ -706,7 +750,78 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    fun setMemb(m: Int) {
+    private val usedGroups = object {
+        var arr = Array(8) { 0 }
+        var groupToIdxArr = Array(8) { 0 }
+        var size = 0
+        var selectedIdx = 0
+    }
+
+    val nonEmptyGroupsCount: Int
+        get () = usedGroups.size
+
+    fun getGroupNumberByIdx(idx: Int): Int {
+        return usedGroups.arr[idx]
+    }
+
+    fun selectNextGroup() {
+        if (usedGroups.arr[usedGroups.selectedIdx] == 0)
+            usedGroups.selectedIdx = -1
+
+        selectGroup(usedGroups.arr[++usedGroups.selectedIdx])
+    }
+
+    fun selectGroupByIdx(idx: Int) {
+        usedGroups.selectedIdx = idx
+        selectGroup(usedGroups.arr[idx])
+    }
+
+    fun selectGroup(g: Int) {
+        val old_group = group
+        group = g
+
+        // update index if needed //FIXME
+        if (group != usedGroups.arr[usedGroups.selectedIdx]) {
+            for (i in 0..7) {
+                if (usedGroups.arr[i] == group) {
+                    usedGroups.selectedIdx = i
+                    break
+                }
+            }
+        }
+
+        if (old_group != group) {
+            if (old_group != 0) {
+                mPosAdapter.notifyItemChanged(usedGroups.groupToIdxArr[old_group])
+            } else mPosAdapter.notifyDataSetChanged()
+            if (group != 0) {
+                mPosAdapter.notifyItemChanged(usedGroups.groupToIdxArr[group])
+                vrvPositions.scrollToPosition(usedGroups.selectedIdx)
+            } else mPosAdapter.notifyDataSetChanged()
+        }
+
+        vtvG.text = if (group == 0) "A" else group.toString()
+        if (memb > membMax[group])
+            memb = 1
+        vtvE.text = if (group == 0) "" else if (memb == 0) "A" else memb.toString()
+        pr.model.getSavedTimer(group, memb)
+        mMenu?.findItem(R.id.action_editShutterName)?.isEnabled = (group != 0 && memb != 0)
+        enableFerId(false)
+        showShutterPositions()
+    }
+
+    fun selectNextMember() {
+        selectMember((memb + 1) % (membMax[group] + 1))
+    }
+
+    fun selectMember(m: Int, tag: Any?) {
+        if (tag is Int) {
+            selectGroup(tag)
+        }
+        selectMember(m)
+    }
+
+    fun selectMember(m: Int) {
         memb = m
         vtvE.text = if (group == 0) "" else if (memb == 0) "A" else memb.toString()
         mMenu?.findItem(R.id.action_editShutterName)?.isEnabled = (group != 0 && memb != 0)
@@ -718,6 +833,9 @@ class MainActivity : AppCompatActivity() {
         for (i in 0 until membMax[group]) {
             ptvArr[i].setBackgroundColor(if (m == 0 || i == (m - 1)) colorSelected else colorNormal)
         }
+        mPosAdapter.notifyItemChanged(usedGroups.selectedIdx)
+        vrvPositions.scrollToPosition(usedGroups.selectedIdx)
+        enableFerId(false)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -881,7 +999,9 @@ class MainActivity : AppCompatActivity() {
             }
 
             R.id.action_setFunc -> {
-                pr.data2Mcu(TfmcuSendData(a = getFerId(), g = group, m = memb, cmd = TfmcuSendData.CMD_SET))
+                val g = getSelectedGroup()
+                val m = getSelectedMember()
+                pr.data2Mcu(TfmcuSendData(a = getFerId(), g = g, m = m, cmd = TfmcuSendData.CMD_SET))
                 showAlertDialog("You now have 60 seconds remaining to press STOP on the transmitter you want to add/remove. Beware: If you press STOP on the central unit, the device will be removed from it. To add it again, you would need the code. If you don't have the code, then you would have to press the physical set-button on the device")
             }
 

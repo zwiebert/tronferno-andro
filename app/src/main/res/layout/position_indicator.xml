@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/vltPiLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="80dp"
     android:background="#1f000000">
 
     <ProgressBar
@@ -119,8 +120,8 @@
         android:layout_marginStart="2dp"
         android:layout_marginLeft="2dp"
         android:layout_marginTop="8dp"
-        android:layout_marginRight="2dp"
         android:layout_marginEnd="2dp"
+        android:layout_marginRight="2dp"
         android:clickable="true"
         android:focusable="true"
         android:focusableInTouchMode="false"
