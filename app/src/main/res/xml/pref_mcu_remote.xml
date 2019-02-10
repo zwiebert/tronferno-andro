@@ -11,12 +11,12 @@
     <!-- NOTE: EditTextPreference's summary should be set to its value by the activity code. -->
     <EditTextPreference
         android:inputType="numberDecimal"
-        android:numeric="integer"
         android:key="serial_baud"
         android:maxLines="1"
+        android:numeric="integer"
         android:selectAllOnFocus="true"
         android:singleLine="true"
-        android:title="Serial Port Baud Rate" />
+        android:title="@string/pref_mcu_serial_baud" />
 
     <EditTextPreference
         android:inputType="numberSigned"
@@ -24,7 +24,7 @@
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
-        android:title="Latitude" />
+        android:title="@string/pref_mcu_latitude" />
 
     <EditTextPreference
         android:inputType="numberSigned"
@@ -32,7 +32,7 @@
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
-        android:title="Longitude" />
+        android:title="@string/pref_mcu_longitude" />
 
     <EditTextPreference
         android:inputType="numberSigned"
@@ -40,14 +40,14 @@
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
-        android:title="Posix Time-Zone (TZ)" />
+        android:title="@string/pref_mcu_timezone" />
 
     <EditTextPreference
         android:key="wlan_ssid"
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
-        android:title="WLAN SSID" />
+        android:title="@string/pref_mcu_wlan_ssid" />
 
 
     <EditTextPreference
@@ -55,16 +55,16 @@
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
-        android:title="WLAN Password" />
+        android:title="@string/pref_mcu_wlan_password" />
 
 
     <EditTextPreference
         android:key="cu_id"
-        android:text="enter the actual ID (6 digit, hex) or enter auto for auto-scan ID"
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
-        android:title="Central Unit ID" />
+        android:text="enter the actual ID (6 digit, hex) or enter auto for auto-scan ID"
+        android:title="@string/pref_mcu_central_unit_id" />
 
 
     <!-- NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to
@@ -76,6 +76,6 @@
         android:key="cli_verbosity"
         android:negativeButtonText="@null"
         android:positiveButtonText="@null"
-        android:title="CLI Verbosity Level" />
+        android:title="@string/pref_mcu_cli_verbosity" />
 
 </PreferenceScreen>

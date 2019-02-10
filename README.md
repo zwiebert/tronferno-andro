@@ -1,3 +1,8 @@
+<p align="center">
+  <span>English</span> |
+  <a href="README-de.md">Deutsch</a>
+</p>
+
 # tronferno-andro
 Android GUI for [tronferno-mcu](https://github.com/zwiebert/tronferno-mcu)
 

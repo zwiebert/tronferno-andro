@@ -98,6 +98,18 @@
 
     <string name="edname_title">Edit name of member %1$d group %2$d:</string>
 
+
+    <string name="pref_mcu_longitude">Longitude</string>
+    <string name="pref_mcu_latitude">Latitude</string>
+    <string name="pref_mcu_serial_baud">Serial Port Baud-Rate</string>
+    <string name="pref_mcu_timezone">POSIX TimeZone (TZ)</string>
+    <string name="pref_mcu_wlan_ssid">WLAN SSID</string>
+    <string name="pref_mcu_wlan_password">WLAN Password</string>
+    <string name="pref_mcu_central_unit_id">Central Unit ID</string>
+    <string name="pref_mcu_cli_verbosity">CLI Verbosity Level</string>
+
+    <string name="pref_gen_hostname">MCU-Hostname or -IP4-Address</string>
+
     <!--
   <string name="xxx">XXX</string>
   <string name="xx3">XXX</string>
