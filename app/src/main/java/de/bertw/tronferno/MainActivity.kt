@@ -3,6 +3,7 @@ package de.bertw.tronferno
 import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
@@ -430,12 +431,12 @@ class MainActivity : AppCompatActivity() {
                     if (ma.progressDialog.isShowing && ma.cuasInProgress) {
                         if (s.contains(":cuas=ok:")) {
                             ma.progressDialog.hide()
-                            ma.showAlertDialog("Success. Data has been received and stored.")
+                            ma.showAlertDialog(ma.getString(R.string.cuas_success))
                             ma.cuasInProgress = false
                         } else if (s.contains(":cuas=time-out:")) {
                             ma.cuasInProgress = false
                             ma.progressDialog.hide()
-                            ma.showAlertDialog("Time-Out. Please try again.")
+                            ma.showAlertDialog(ma.getString(R.string.cuas_timeout))
                         }
                     }
                     if (s.startsWith("config ")) {
@@ -456,7 +457,7 @@ class MainActivity : AppCompatActivity() {
                 MainActivity.MSG_CUAS_TIME_OUT -> if (ma.progressDialog.isShowing && ma.cuasInProgress) {
                     ma.cuasInProgress = false
                     ma.progressDialog.hide()
-                    ma.showAlertDialog("Time-Out. Please try again.")
+                    ma.showAlertDialog(ma.getString(R.string.cuas_timeout))
                 }
 
 
@@ -688,7 +689,7 @@ class MainActivity : AppCompatActivity() {
             if (s.length == 5) {
                 s = "9$s"
             } else if (s.length != 6) {
-                throw Exception("id must have 6 digits ($s)")
+                throw Exception("id must have 6 digits ($s)") // FIXME
             }
             result = Integer.parseInt(s, 16)
 
@@ -962,8 +963,7 @@ class MainActivity : AppCompatActivity() {
         if (group == 0 || memb == 0)
             return
         val builder = AlertDialog.Builder(this)
-        builder.setTitle("Edit Name of member $memb group $group:")
-
+         builder.setTitle(getString(R.string.edname_title, memb, group))
 // Set up the input
         val input = EditText(this)
 // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
@@ -999,14 +999,14 @@ class MainActivity : AppCompatActivity() {
 
             R.id.action_cuAutoSet -> {
                 pr.data2Mcu(TfmcuConfigData("cu=auto"))
-                showProgressDialog("Press the Stop-Button on your Fernotron Central Unit in the next 60 seconds...", 60)
+                showProgressDialog(getString(R.string.cuas_info), 60)
             }
 
             R.id.action_setFunc -> {
                 val g = getSelectedGroup()
                 val m = getSelectedMember()
                 pr.data2Mcu(TfmcuSendData(a = getFerId(), g = g, m = m, cmd = TfmcuSendData.CMD_SET))
-                showAlertDialog("You now have 60 seconds remaining to press STOP on the transmitter you want to add/remove. Beware: If you press STOP on the central unit, the device will be removed from it. To add it again, you would need the code. If you don't have the code, then you would have to press the physical set-button on the device")
+                showAlertDialog(getString(R.string.setf_info))
             }
 
             R.id.action_setEndPos -> {
@@ -1040,7 +1040,10 @@ class MainActivity : AppCompatActivity() {
             R.id.action_hideTimer -> {
                 item.isChecked = !item.isChecked
                 mHideViewTimer = item.isChecked
+                val landscape = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE
+
                 timer_frameLayout.visibility = if (mHideViewTimer) View.GONE else View.VISIBLE
+                //timer_frameLayout.visibility = if (mHideViewTimer) (if (landscape) View.INVISIBLE else View.GONE) else View.VISIBLE
             }
             else -> return super.onOptionsItemSelected(item)
         }

@@ -35,7 +35,7 @@
     <item
         android:id="@+id/action_sendRtc"
         android:orderInCategory="101"
-        android:title="Send RTC to Shutter"
+        android:title="@string/action_send_rtc"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_broadcastRtc"
@@ -47,20 +47,20 @@
         android:id="@+id/action_motorCode"
         android:checkable="true"
         android:orderInCategory="103"
-        android:title="Enter Motor Code" />
+        android:title="@string/action_enter_motor_code" />
     <item
         android:id="@+id/action_editShutterName"
         android:orderInCategory="104"
-        android:title="Edit Shutter Name" />
+        android:title="@string/action_edit_shutter_name" />
     <item
         android:id="@+id/action_hideLog"
         android:checkable="true"
         android:orderInCategory="105"
-        android:title="Hide Log View" />
+        android:title="@string/action_hide_log" />
     <item
         android:id="@+id/action_hideTimer"
         android:checkable="true"
         android:orderInCategory="106"
-        android:title="Hide Timer View" />
+        android:title="@string/action_hide_timer" />
 
 </menu>

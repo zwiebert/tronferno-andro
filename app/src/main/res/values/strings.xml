@@ -2,8 +2,12 @@
     <string name="app_name">Tronferno</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_settings">Settings</string>
-    <string name="action_expert">Expert</string>
-
+    <string name="action_expert">Expert-Mode</string>
+    <string name="action_enter_motor_code">Enter Motor-Code</string>
+    <string name="action_edit_shutter_name">Edit Shutter-Name</string>
+    <string name="action_hide_log">Hide Log-View</string>
+    <string name="action_hide_timer">Hide Timer-View</string>
+    <string name="action_send_rtc">Send Time To Receiver</string>
 
     <string name="sun_auto">Sun</string>
     <string name="random">Rand</string>
@@ -85,8 +89,21 @@
     <!-- Example settings for Notifications -->
     <string name="pref_general">General</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- -->
 
+    <string name="cuas_success">Success. Data has been received and stored.</string>
+    <string name="cuas_timeout">Time-Out. Please try again</string>
+    <string name="cuas_info">Please press and hold the Stop-Button on your Fernotron Central Unit for a few seconds</string>
+    <string name="setf_info">You now have 60 seconds to pair a receiver to a transmitter. To add/remove a plain transmitter press STOP on it. To assign it to a Group/Member send timer: Select the wanted Group/Member in the app and press Send(-Timer)</string>
+
+    <string name="edname_title">Edit name of member %1$d group %2$d:</string>
+
+    <!--
+  <string name="xxx">XXX</string>
+  <string name="xx3">XXX</string>
+  <string name="xx4">XXX</string>
+  <string name="xx5">XXX</string>
+  <string name="xx6">XXX</string>
+ -->
 
 </resources>

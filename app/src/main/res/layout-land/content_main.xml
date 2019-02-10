@@ -15,19 +15,14 @@
     <TextView
         android:id="@+id/vtvLog"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_height="102dp"
         android:layout_weight="1"
         android:gravity="bottom"
         android:maxLines="20"
         android:scrollbars="vertical"
         android:text=""
-        app:layout_constraintBottom_toTopOf="@+id/vltShutterPosList"
-        app:layout_constraintEnd_toEndOf="@+id/barrier5"
+        app:layout_constraintBottom_toTopOf="@+id/barrier5"
+        app:layout_constraintEnd_toStartOf="@+id/timer_frameLayout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_constraintLeft_creator="1"
@@ -41,13 +36,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
         android:ems="10"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/vltShutterPos"
-        app:layout_constraintEnd_toEndOf="@+id/barrier5"
         app:layout_constraintStart_toStartOf="parent" />
 
     <include
@@ -59,9 +51,8 @@
         android:layout_marginLeft="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginBottom="4dp"
-        app:layout_constraintBottom_toTopOf="@+id/vltShutterPos"
-        app:layout_constraintEnd_toEndOf="@+id/barrier5"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/guideline"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/vtvLog" />
 
@@ -73,18 +64,15 @@
         android:layout_marginBottom="8dp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/barrier5"
         app:layout_constraintStart_toStartOf="parent" />
 
     <FrameLayout
         android:id="@+id/timer_frameLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/cmd_button_frameLayout"
-        app:layout_constraintEnd_toEndOf="parent">
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <include
             android:id="@+id/timer_group_main"
@@ -97,12 +85,15 @@
 
     <FrameLayout
         android:id="@+id/cmd_button_frameLayout"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline">
 
         <include
             android:id="@+id/cmd_button_group_main"
@@ -112,12 +103,20 @@
 
     </FrameLayout>
 
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.53" />
+
     <android.support.constraint.Barrier
         android:id="@+id/barrier5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:barrierDirection="left"
-        app:constraint_referenced_ids="cmd_button_frameLayout,timer_frameLayout" />
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="vtvLog,timer_frameLayout"
+        tools:layout_editor_absoluteY="386dp" />
 
 
 </android.support.constraint.ConstraintLayout>

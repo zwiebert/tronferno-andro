@@ -55,7 +55,7 @@ GUI buttons located in the lower half of the screen are similar to the original 
 ![ScreenShot](pics/sc_positions.png)
 
 Position Indicator shows status of each shutter. One row for each non-empty group defined in Menu.Settings.Groups/Members.
- If not fit on the screen, the view will scroll. You can click on each Shutter to select it directly. The label below each shutter shows its number or its name (names can be edited in menu).
+ If not fit on screen, the view will scroll. You can click on each Shutter to select it directly. The label below each shutter shows its number or its name (names can be edited in menu).
 Unused Shutter can be hidden by configuring the number of members of the group in settings menu.
 
 ---
