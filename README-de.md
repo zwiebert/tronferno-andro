@@ -32,7 +32,7 @@ Die Funktionen entsprechen mehr oder weniger der originalen Komfort-Programmierz
 Die GUI ist noch nicht fertig entwickelt und kann sich noch ändern
 
 ---
- ![ScreenShot](pics/sc_main_buttons.png)
+ ![ScreenShot](pics/sc_main_buttons-de.png)
 
 Knöpfe in der unteren Hälfte des Bildschirms sind ähnlich zur Programmierzentrale 2411 angeordent:
 
@@ -43,7 +43,7 @@ Knöpfe in der unteren Hälfte des Bildschirms sind ähnlich zur Programmierzent
 ---
 
 
-![ScreenShot](pics/sc_timer_area.png)
+![ScreenShot](pics/sc_timer_area-de.png)
 
  Der Timer-Bereich erlaubt die Konfiguarion der Timer und Optionen und die anschließende Datenübermittlung. Die Übermittlung geschieht immer als Block aller Timer und Optionen.
  Anders als bei der 2411 können Daten an ganze Gruppen oder auch alle Gruppen leichzeitig übermittelt werden.
@@ -57,7 +57,7 @@ Knöpfe in der unteren Hälfte des Bildschirms sind ähnlich zur Programmierzent
 * Senden: Datenübermittlung durchführen zu allen ausgewählten Empfängern. Übermittlung dauert 5 Sekunden aufgrund der großen Menge an Daten aufgrund der Astro Funktion. Die adressierten Motoren quittieren den erfolgreichen Empfang mit kurzem Anlauf.
 ---
 
-![ScreenShot](pics/sc_positions.png)
+![ScreenShot](pics/sc_positions-de.png)
 
 Positions-Anzeiger zeigen die aktuellen Position jedes Empfängers (soweit bekannt). Eine Zeile für jede nicht-leere Gruppe. Unbenutzte Empfänger sollten deaktiviert werden um die Übersichtlichkeit zu erhöhen (siehe Menü.Einstellungen.Gruppen_und_Empfänger).
 Sollten nicht alle Gruppen auf den Bildschirm passen wird gescrollt. Durch Berührung eines Empfänger-Bildes kann dieser direkt (ohne Umweg über G/E-Tasten) ausgewählt werden. Es wird ein Name für jeden Empfänger angezeigt (Menü.Empfängername...)
@@ -65,7 +65,7 @@ Sollten nicht alle Gruppen auf den Bildschirm passen wird gescrollt. Durch Berü
 
 ---
 
-![ScreenShot](pics/sc_main_menu.png)
+![ScreenShot](pics/sc_main_menu-de.png)
 
 Haupt-Menü:
 
