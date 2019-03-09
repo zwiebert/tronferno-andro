@@ -52,6 +52,7 @@ class TfmcuTimerData(var a: Int = 0, var g: Int = 0, var m: Int = 0) {
     var astro = 0
     var rtcOnly = false
     var rs = 0
+    var manual = false
 
     override fun toString(): String {
         var timer = "timer"
@@ -73,6 +74,14 @@ class TfmcuTimerData(var a: Int = 0, var g: Int = 0, var m: Int = 0) {
             timer += " rtc-only=1"
             return timer
         }
+
+        var flag = "f=i"
+
+        flag += if (manual) "M" else "m"
+        flag += if (sunAuto) "S" else "s"
+        flag += if (random) "R" else "r"
+
+        timer += " $flag"
 
         if (hasAstro) {
             timer += " astro=$astro"
@@ -155,7 +164,7 @@ class TfmcuModel(msgHandler: Handler) {
 
     @Throws(java.io.IOException::class)
     fun getSavedTimer(g: Int, m: Int) {
-        transmit("timer g=$g m=$m rs=2;")
+        transmit("timer g=$g m=$m f=ukI;")
     }
 
     @Throws(java.io.IOException::class)
@@ -298,58 +307,32 @@ class TfmcuModel(msgHandler: Handler) {
         var s = timer
         val td = TfmcuTimerData()
         try {
-            s = s.substring(s.indexOf(":rs=data: "))
-
-            //     tvRec.append(String.format("###%s###\n", s))
-
-
-            if (s.startsWith(":rs=data: none")) {
-
-            } else if (s.startsWith(":rs=data: timer ")) {
-                val scIdx = s.indexOf(';')
+            val p = Pattern.compile("\\s+")
+            val arr = p.split(s)
 
 
-                s = if (scIdx > 16) {
-                    s.substring(16, scIdx)
-                } else {
-                    s.substring(16)
-                }
+            for (i in arr) {
+                if (i.contains("=")) {
+                    val idxES = i.indexOf('=')
+                    val key = i.substring(0, idxES)
+                    val value = i.substring(idxES + 1)
 
-                val p = Pattern.compile("\\s+")
-                val arr = p.split(s)
-
-
-                for (i in arr) {
-                    if (i.contains("=")) {
-                        val idxES = i.indexOf('=')
-                        val key = i.substring(0, idxES)
-                        val value = i.substring(idxES + 1)
-
-                        when (key) {
-                            "g" -> td.g = value.toInt()
-                            "m" -> td.m = value.toInt()
-                            "sun-auto" -> td.sunAuto = value != "0"
-                            "random" -> td.random = value != "0"
-                            "astro" -> {
-                                td.hasAstro = true
-                                td.astro = value.toInt()
-                            }
-                            "daily" -> td.daily = value
-                            "weekly" -> td.weekly = value
-
+                    when (key) {
+                        "f" -> {
+                            td.sunAuto = value.contains("S")
+                            td.random = value.contains("R")
+                            td.manual = value.contains("M")
+                            td.hasAstro = value.contains("A")
                         }
-
-                    } else {
-                        when (i) {
-                            "sun-auto" -> td.sunAuto
-                            "random" -> td.random
-                            "astro" -> {
-                                td.hasAstro = true; td.astro = 0
-                            }
-                        }
+                        "g" -> td.g = value.toInt()
+                        "m" -> td.m = value.toInt()
+                        "astro" -> td.astro = value.toInt()
+                        "daily" -> td.daily = value
+                        "weekly" -> td.weekly = value
                     }
                 }
             }
+
         } catch (e: Exception) {
         }
         return td

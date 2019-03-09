@@ -216,6 +216,18 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <CheckBox
+        android:id="@+id/vcbManu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:onClick="onCheckedClick"
+        android:text="Manu"
+        app:layout_constraintBottom_toBottomOf="@+id/vbtTimerSend"
+        app:layout_constraintEnd_toStartOf="@+id/vbtTimerSend"
+        app:layout_constraintTop_toTopOf="@+id/vbtTimerSend" />
+
 
 </android.support.constraint.ConstraintLayout>
 

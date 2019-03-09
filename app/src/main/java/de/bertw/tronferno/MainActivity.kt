@@ -425,8 +425,10 @@ class MainActivity : AppCompatActivity() {
                         else -> ma.vtvLog.append(s + "\n")
                     }
 
-                    if (s.contains("rs=data")) {
-                        ma.parseReceivedTimer(s)
+                    if (s.startsWith("tf:") && s.contains(" timer:")) {
+                        ma.parseReceivedTimer(s.substringAfter(" timer:"))
+                    } else if (s.contains("timer ")) {
+                        ma.parseReceivedTimer(s.substringAfter("timer ")) //TODO: remove this
                     }
                     if (ma.progressDialog.isShowing && ma.cuasInProgress) {
                         if (s.contains(":cuas=ok:")) {
@@ -439,8 +441,10 @@ class MainActivity : AppCompatActivity() {
                             ma.showAlertDialog(ma.getString(R.string.cuas_timeout))
                         }
                     }
-                    if (s.startsWith("config ")) {
-                        ma.parseReceivedConfig(s)
+                    if (s.startsWith("tf:") && s.contains(" config:")) {
+                        ma.parseReceivedConfig(s.substringAfter(" config:"))
+                    } else if (s.contains("config ")) {
+                        ma.parseReceivedConfig((s.substringAfter(("config ")))) //TODO: remove this
                     }
                     if (s.startsWith("A:position:")) {
                         ma.parseReceivedPosition(s)
@@ -516,6 +520,7 @@ class MainActivity : AppCompatActivity() {
 
         vcbSunAuto.isChecked = td.sunAuto
         vcbRandom.isChecked = td.random
+        vcbManu.isChecked = td.manual
         vcbWeekly.isChecked = !td.weekly.isEmpty()
         vcbAstro.isChecked = td.hasAstro
         vetWeeklyTimer.setText(td.weekly)
@@ -546,6 +551,7 @@ class MainActivity : AppCompatActivity() {
             m = getSelectedMember()
             sunAuto = vcbSunAuto.isChecked
             random = vcbRandom.isChecked
+            manual = vcbManu.isChecked
         }
 
         val dailyUpChecked = vcbDailyUp.isChecked
@@ -610,10 +616,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun parseReceivedConfig(line: String) {
-
-        if (line.startsWith("config ")) {
-
-            var s = line.substringAfter("config ")
+        var s = line;
             while (s.contains('=')) {
                 val k = s.substringBefore('=')
                 val v = s.substringAfter('=').substringBefore(';').substringBefore(' ')
@@ -631,7 +634,6 @@ class MainActivity : AppCompatActivity() {
             }
             saveMcuPreferecence()
             vtvLog.append("mcu preference saved\n")
-        }
     }
 
     private fun showShutterPositions() {
