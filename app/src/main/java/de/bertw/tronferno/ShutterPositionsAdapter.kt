@@ -57,7 +57,6 @@ class ShutterPositionsAdapter(val ma: MainActivity) : RecyclerView.Adapter<Shutt
         val colorSelected = ContextCompat.getColor(ma, R.color.colorAccent)
         val colorNormal2 = ContextCompat.getColor(ma, R.color.button_material_light)
         val colorSelected2 = ContextCompat.getColor(ma, R.color.background_floating_material_dark)
-        val pos = ma.pr.model.showPos(grp, 7)
         val memb = ma.getSelectedMember()
         val group = ma.getSelectedGroup()
 
@@ -71,12 +70,7 @@ class ShutterPositionsAdapter(val ma: MainActivity) : RecyclerView.Adapter<Shutt
             if (membEnable) {
                 holder.vpbArr[mi].apply {
                     visibility = View.VISIBLE
-                    progress = when (pos[mi]) {
-                        'o' -> 100
-                        'c' -> 0
-                        'm' -> 50
-                        else -> 100
-                    }
+                    progress = ma.pr.model.getPos(grp, mi+1)
                     tag = grp
                 }
 

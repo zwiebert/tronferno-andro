@@ -636,49 +636,9 @@ class MainActivity : AppCompatActivity() {
             vtvLog.append("mcu preference saved\n")
     }
 
-    private fun showShutterPositions() {
-
-        return; //TODO replaced by recyclerview
-        vltShutterPos.visibility = if (group == 0) View.INVISIBLE else View.VISIBLE
-
-        if (group == 0) {
-            return
-        }
-
-        val pos = pr.model.showPos(group, 7)
-        val pbs = pbsArr //arrayOf(vpbPiM1, vpbPiM2, vpbPiM3, vpbPiM4, vpbPiM5, vpbPiM6, vpbPiM7)
-        val ptv = ptvArr //arrayOf(vtvPiM1, vtvPiM2, vtvPiM3, vtvPiM4, vtvPiM5, vtvPiM6, vtvPiM7)
-
-        for (i in 0..6) {
-            val m = i + 1
-
-            pbs[i].progress = when (pos[i]) {
-                'o' -> 100
-                'c' -> 0
-                'm' -> 50
-                else -> 100
-            }
-
-            // visibility of undefined shutters and defined shutters with unknown status
-            val vi = if (membMax[group] < m) View.GONE else View.VISIBLE //onClick works only with VISIBLE
-            pbs[i].visibility = vi
-            ptv[i].visibility = if (vi == View.GONE) vi else View.VISIBLE
-            ptv[i].text = getMemberName(group, m)
-        }
-    }
-
-    private fun showShutterPositionsText() {
-        val positions = pr.model.showPos(group, memb_count = membMax[group], format = 1)
-        vetShutterPos.setText(if (positions.isEmpty()) "" else "Pos-G$group: $positions")
-
-        vltShutterPos.visibility = if (group == 0) View.INVISIBLE else View.VISIBLE
-
-    }
-
     // position code
     fun parseReceivedPosition(line: String) {
         if (pr.model.parseReceivedPosition(line)) {
-            showShutterPositions()
             mPosAdapter.notifyDataSetChanged()
         }
     }
@@ -814,7 +774,6 @@ class MainActivity : AppCompatActivity() {
         pr.model.getSavedTimer(group, memb)
         mMenu?.findItem(R.id.action_editShutterName)?.isEnabled = (group != 0 && memb != 0)
         enableFerId(false)
-        showShutterPositions()
     }
 
     fun selectNextMember() {

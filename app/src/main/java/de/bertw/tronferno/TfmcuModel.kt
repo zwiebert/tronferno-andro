@@ -173,17 +173,25 @@ class TfmcuModel(msgHandler: Handler) {
     }
 
     // position code
-    private var posArr0 = intArrayOf(0, 0, 0, 0, 0, 0, 0, 0)
-    private var posArr50 = intArrayOf(0, 0, 0, 0, 0, 0, 0, 0)
-    private var posArr100 = intArrayOf(0, 0, 0, 0, 0, 0, 0, 0)
+    private var posArr = arrayOf<Array<Int>>();
     private var posDataValid = true
+
+    init {
+        for (i in 0..7) {
+            posArr += arrayOf<Int>(0,0,0,0,0,0,0,0);
+        }
+    }
 
     private fun clearPosArr() {
         for (i in 0..7) {
-            posArr0[i] = 0
-            posArr50[i] = 0
-            posArr100[i] = 0
+            for (k in 0..7) {
+                posArr[i][k] = 0;
+            }
         }
+    }
+
+    fun getPos(g: Int, m: Int):Int {
+        return posArr[g][m];
     }
 
     private fun updPosArr(g: Int, m: Int, p: Int) {
@@ -192,59 +200,7 @@ class TfmcuModel(msgHandler: Handler) {
                 updPosArr(gi, m, p)
             return
         }
-        val mm = if (m == 0) 0.inv() else (1 shl m)
-
-        posArr0[g] = if (p == 0) (posArr0[g] or mm) else (posArr0[g] and mm.inv())
-        posArr50[g] = if (p == 50) (posArr50[g] or mm) else (posArr50[g] and mm.inv())
-        posArr100[g] = if (p == 100) (posArr100[g] or mm) else (posArr100[g] and mm.inv())
-    }
-
-    fun showPos(group: Int, memb_count: Int = 7, format: Int = 0): String {
-        var posText = ""
-        var posText0 = ""
-        var posText50 = ""
-        var posText100 = ""
-
-        for (i in 1..memb_count) {
-            when {
-                (posArr0[group] and (1 shl i)) != 0 -> {
-                    posText += "c"
-                    posText0 += if (posText0.isEmpty()) "$i" else ",$i"
-                }
-                (posArr50[group] and (1 shl i)) != 0 -> {
-                    posText += "m"
-                    posText50 += if (posText50.isEmpty()) "$i" else ",$i"
-                }
-                (posArr100[group] and (1 shl i)) != 0 -> {
-                    posText += "o"
-                    posText100 += if (posText100.isEmpty()) "$i" else ",$i"
-                }
-                else -> posText += "?"
-            }
-        }
-
-        if (format == 1) {
-            posText = ""
-            if (posText0.isNotEmpty()) {
-                posText += "0%=$posText0"
-            }
-
-            if (posText50.isNotEmpty()) {
-                if (posText.isNotEmpty()) {
-                    posText += " | "
-                }
-                posText += "50%=$posText50"
-            }
-
-            if (posText100.isNotEmpty()) {
-                if (posText.isNotEmpty()) {
-                    posText += " | "
-                }
-                posText += "100%=$posText100"
-            }
-
-        }
-        return posText
+        posArr[g][m] = p;
     }
 
     fun parseReceivedPosition(line: String): Boolean {
@@ -278,14 +234,14 @@ class TfmcuModel(msgHandler: Handler) {
             if (!mm.isEmpty() && p != -1) {
                 val arr = mm.split(',')
                 if (arr.size == 8) {
-                    for (i in 1..7) {
-                        val temp = arr[i].toInt(radix = 16)
-                        when (p) {
-                            0 -> posArr0[i] = temp
-                            50 -> posArr50[i] = temp
-                            100 -> posArr100[i] = temp
+                    for (i in 0..7) {
+                        var temp = arr[i].toInt(radix = 16)
+                        for (k in 0..7) {
+                            if (1 == (temp and 1)) {
+                                posArr[g][m] = p;
+                            }
+                            temp = temp shr 1;
                         }
-
                     }
                     posDataValid = true
                     posChanged = true
