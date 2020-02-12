@@ -238,7 +238,7 @@ class TfmcuModel(msgHandler: Handler) {
                         var temp = arr[i].toInt(radix = 16)
                         for (k in 0..7) {
                             if (1 == (temp and 1)) {
-                                posArr[g][m] = p;
+                                posArr[i][k] = p;
                             }
                             temp = temp shr 1;
                         }
