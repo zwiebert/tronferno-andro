@@ -117,6 +117,7 @@ class McuTcp(msgHandler: Handler) {
                 McuTcp.MSG_TCP_DO_CONNECT -> {
                     if (connectSocket())
                         startReadTickThread()
+                    mt.isConnecting = false;
                 }
 
                 McuTcp.MSG_TCP_DO_DISCONNECT -> {
@@ -166,6 +167,7 @@ class McuTcp(msgHandler: Handler) {
     }
 
     fun connect() {
+        isConnecting = true;
         sendMsgToTcp(MSG_TCP_DO_CONNECT)
     }
 

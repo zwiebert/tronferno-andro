@@ -9,18 +9,18 @@ import android.os.Handler
 import android.os.Message
 import android.os.StrictMode
 import android.preference.PreferenceManager
-import android.support.v4.content.ContextCompat
-import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.DefaultItemAnimator
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.Toolbar
 import android.text.InputType
 import android.text.method.ScrollingMovementMethod
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.cmd_buttons_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.position_indicator.*
@@ -458,16 +458,16 @@ class MainActivity : AppCompatActivity() {
 
                 }
 
-                MainActivity.MSG_CUAS_TIME_OUT -> if (ma.progressDialog.isShowing && ma.cuasInProgress) {
+                MSG_CUAS_TIME_OUT -> if (ma.progressDialog.isShowing && ma.cuasInProgress) {
                     ma.cuasInProgress = false
                     ma.progressDialog.hide()
                     ma.showAlertDialog(ma.getString(R.string.cuas_timeout))
                 }
 
 
-                MainActivity.MSG_SEND_ENABLE -> ma.enableSendButtons(true, 0)
+                MSG_SEND_ENABLE -> ma.enableSendButtons(true, 0)
 
-                MainActivity.MSG_ERROR -> {
+                MSG_ERROR -> {
                     val errMsg = msg.obj as String
                     ma.vtvLog.append(errMsg + "\n")
                 }
@@ -616,7 +616,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun parseReceivedConfig(line: String) {
-        var s = line;
+        var s = line
             while (s.contains('=')) {
                 val k = s.substringBefore('=')
                 val v = s.substringAfter('=').substringBefore(';').substringBefore(' ')
@@ -805,6 +805,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
                 REQ_WEEKLY_EDITOR -> {
@@ -841,7 +842,7 @@ class MainActivity : AppCompatActivity() {
 
                 while (jumpTime < time_out && cuasInProgress) {
                     try {
-                        Thread.sleep(1000)
+                        sleep(1000)
                         jumpTime += 1
                         progressDialog.progress = jumpTime
 
@@ -866,7 +867,7 @@ class MainActivity : AppCompatActivity() {
 
                     while (jumpTime < timeout) {
                         try {
-                            Thread.sleep(1000)
+                            sleep(1000)
                             jumpTime += 1
                         } catch (e: InterruptedException) {
                             // TODO Auto-generated catch block
