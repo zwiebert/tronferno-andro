@@ -1,0 +1,24 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- These settings headers are only used on tablets. -->
+
+
+    <Preference
+        app:key="pref_general_fragment"
+        app:fragment="de.bertw.tronferno.PrefGeneralFragment"
+        app:title="@string/pref_general" />
+
+    <Preference
+        app:key="pref_members_fragment"
+        app:fragment="de.bertw.tronferno.PrefMembersFragment"
+        app:title="@string/pref_header_members" />
+
+
+    <Preference
+        app:key="pref_mcu_fragment"
+        app:fragment="de.bertw.tronferno.PrefMcuFragment"
+        app:title="@string/pref_on_mcu" />
+
+
+
+</PreferenceScreen>

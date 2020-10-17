@@ -1,0 +1,74 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ListPreference
+        app:defaultValue="7"
+        app:entries="@array/pref_members_titles"
+        app:entryValues="@array/pref_members_values"
+        app:key="group1_members"
+        app:negativeButtonText="@null"
+        app:positiveButtonText="@null"
+        app:title="@string/pref_group1_members" />
+
+    <ListPreference
+        app:defaultValue="7"
+        app:entries="@array/pref_members_titles"
+        app:entryValues="@array/pref_members_values"
+        app:key="group2_members"
+        app:negativeButtonText="@null"
+        app:positiveButtonText="@null"
+        app:title="@string/pref_group2_members" />
+
+    <ListPreference
+        app:defaultValue="7"
+        app:entries="@array/pref_members_titles"
+        app:entryValues="@array/pref_members_values"
+        app:key="group3_members"
+        app:negativeButtonText="@null"
+        app:positiveButtonText="@null"
+        app:title="@string/pref_group3_members" />
+
+    <ListPreference
+        app:defaultValue="7"
+        app:entries="@array/pref_members_titles"
+        app:entryValues="@array/pref_members_values"
+        app:key="group4_members"
+        app:negativeButtonText="@null"
+        app:positiveButtonText="@null"
+        app:title="@string/pref_group4_members" />
+
+    <ListPreference
+        app:defaultValue="7"
+        app:entries="@array/pref_members_titles"
+        app:entryValues="@array/pref_members_values"
+        app:key="group5_members"
+        app:negativeButtonText="@null"
+        app:positiveButtonText="@null"
+        app:title="@string/pref_group5_members" />
+
+    <ListPreference
+        app:defaultValue="7"
+        app:entries="@array/pref_members_titles"
+        app:entryValues="@array/pref_members_values"
+        app:key="group6_members"
+        app:negativeButtonText="@null"
+        app:positiveButtonText="@null"
+        app:title="@string/pref_group6_members" />
+
+    <ListPreference
+        app:defaultValue="7"
+        app:entries="@array/pref_members_titles"
+        app:entryValues="@array/pref_members_values"
+        app:key="group7_members"
+        app:negativeButtonText="@null"
+        app:positiveButtonText="@null"
+        app:title="@string/pref_group7_members" />
+<!--
+    <MultiSelectListPreference
+        app:entries="@array/pref_members_titles"
+        app:entryValues="@array/pref_members_values"
+        app:key="group8_members"
+        app:persistent="true"
+        app:title="@string/pref_group7_members" />
+-->
+
+</PreferenceScreen>

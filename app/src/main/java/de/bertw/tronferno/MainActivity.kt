@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.os.StrictMode
-import android.preference.PreferenceManager
 import android.text.InputType
 import android.text.method.ScrollingMovementMethod
 import android.view.Menu
@@ -19,6 +18,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.cmd_buttons_main.*

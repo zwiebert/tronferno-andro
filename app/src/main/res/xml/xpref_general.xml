@@ -1,0 +1,72 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <!-- NOTE: EditTextPreference accepts EditText attributes. -->
+    <!-- NOTE: EditTextPreference's summary should be set to its value by the activity code. -->
+    <EditTextPreference
+        app:defaultValue="fernotron.fritz.box"
+        app:key="tcpHostName"
+        app:maxLines="1"
+        app:singleLine="true"
+        app:title="@string/pref_gen_hostname" />
+
+
+    <!-- NOTE: EditTextPreference accepts EditText attributes. -->
+    <!-- NOTE: EditTextPreference's summary should be set to its value by the activity code. -->
+    <!--
+    <EditTextPreference
+        app:capitalize="none"
+        app:defaultValue="77777777"
+        app:inputType="numberDecimal"
+        app:key="groupsAndMembers"
+        app:maxLines="1"
+        app:selectAllOnFocus="true"
+        app:singleLine="true"
+        app:summary="A number representing groups and members. 1st digit from the left: number of groups. 2nd digit: how many members in 1st group. 3rd digit: how many in 2nd group. ... and so on until 7th group. Examples: 45534, 77777777"
+        app:title="Groups and Members" />
+        -->
+    <!--
+       <EditTextPreference
+            app:capitalize="none"
+            app:defaultValue="90abcd"
+            app:inputType="text"
+            app:key="fernotronId"
+            app:maxLines="1"
+            app:selectAllOnFocus="true"
+            app:singleLine="true"
+            app:summary="a 6 digit hexadecimal number used as ID.  Could be the 5 digit motor hex code with the digit 9 in front of it"
+            app:title="ID code" />
+
+    -->
+    <!-- A 'parent' preference, which enables/disables child preferences (below)
+         when checked/unchecked. -->
+    <!--
+    <SwitchPreference
+        app:defaultValue="true"
+        app:key="notifications_new_message"
+        app:title="@string/pref_title_new_message_notifications" />
+    -->
+
+    <!-- Allows the user to choose a ringtone in the 'notification' category. -->
+    <!-- NOTE: This preference will be enabled only when the checkbox above is checked. -->
+    <!-- NOTE: RingtonePreference's summary should be set to its value by the activity code. -->
+    <!--
+    <RingtonePreference
+        app:defaultValue="content://settings/system/notification_sound"
+        app:dependency="notifications_new_message"
+        app:key="notifications_new_message_ringtone"
+        app:ringtoneType="notification"
+        app:title="@string/pref_title_ringtone" />
+   -->
+
+    <!-- NOTE: This preference will be enabled only when the checkbox above is checked. -->
+    <!--
+    <SwitchPreference
+        app:defaultValue="true"
+        app:dependency="notifications_new_message"
+        app:key="notifications_new_message_vibrate"
+        app:title="@string/pref_title_vibrate" />
+   -->
+
+
+</PreferenceScreen>

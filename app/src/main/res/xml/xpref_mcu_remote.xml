@@ -1,0 +1,66 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+    <EditTextPreference
+        app:key="serial_baud"
+        app:maxLines="1"
+        app:singleLine="true"
+        app:useSimpleSummaryProvider="true"
+        app:title="@string/pref_mcu_serial_baud" />
+
+    <EditTextPreference
+        app:key="geo_latitude"
+        app:maxLines="1"
+        app:singleLine="true"
+        app:useSimpleSummaryProvider="true"
+        app:title="@string/pref_mcu_latitude" />
+
+    <EditTextPreference
+        app:key="geo_longitude"
+        app:maxLines="1"
+        app:singleLine="true"
+        app:useSimpleSummaryProvider="true"
+        app:title="@string/pref_mcu_longitude" />
+
+    <EditTextPreference
+        app:key="geo_time_zone"
+        app:maxLines="1"
+        app:singleLine="true"
+        app:useSimpleSummaryProvider="true"
+        app:title="@string/pref_mcu_timezone" />
+
+    <EditTextPreference
+        app:key="wlan_ssid"
+        app:maxLines="1"
+        app:singleLine="true"
+        app:useSimpleSummaryProvider="true"
+        app:title="@string/pref_mcu_wlan_ssid" />
+
+
+    <EditTextPreference
+        app:key="wlan_password"
+        app:maxLines="1"
+        app:singleLine="true"
+        app:title="@string/pref_mcu_wlan_password" />
+
+
+    <EditTextPreference
+        app:key="cu_id"
+        app:maxLines="1"
+        app:singleLine="true"
+        app:defaultValue="enter the actual ID (6 digit, hex) or enter auto for auto-scan ID"
+        app:useSimpleSummaryProvider="true"
+        app:title="@string/pref_mcu_central_unit_id" />
+
+
+    <!-- NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to
+         dismiss it. -->
+    <!-- NOTE: ListPreference's summary should be set to its value by the activity code. -->
+    <ListPreference
+        app:entries="@array/pref_mcu_cli_verbosity_list_titles"
+        app:entryValues="@array/pref_mcu_cli_verbosity_list_values"
+        app:key="cli_verbosity"
+        app:negativeButtonText="@null"
+        app:positiveButtonText="@null"
+        app:useSimpleSummaryProvider="true"
+        app:title="@string/pref_mcu_cli_verbosity" />
+
+</PreferenceScreen>
