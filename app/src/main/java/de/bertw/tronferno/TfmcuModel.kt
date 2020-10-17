@@ -7,28 +7,30 @@ import java.util.regex.Pattern
 class TfmcuSendData(var a: Int = 0, var g: Int = 0, var m: Int = 0, var cmd: String = "", var sep: Boolean = false) {
 
     override fun toString(): String {
-        var s = "send"
+        var s = "{\"cmd\":{"
 
         if (a != 0) {
-            s += String.format(" a=%x", a)
+            s += String.format("\"a\":\"%x\"", a) + ","
         }
 
         if (a == 0 || (a and 0xF00000) == 0x800000) {
             if (g != 0) {
-                s += " g=$g"
+                s += "\"g\":$g,"
             }
             if (m != 0) {
-                s += " m=$m"
+                s += "\"m\":$m,"
             }
         }
 
         if (cmd.isNotEmpty()) {
-            s += " c=$cmd"
+            s += "\"c\":\"$cmd\","
         }
 
         if (sep && (cmd == CMD_UP || cmd == CMD_DOWN)) {
-            s += " SEP"
+            s += "\"SEP\":1,"
         }
+
+        s  = s.dropLast(1) + "}}";
 
         return s
     }

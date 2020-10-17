@@ -1,5 +1,9 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    id "kotlin-android-extensions"
+    id "org.jetbrains.kotlin.plugin.serialization" version "1.4.10"
+}
 
 android {
     compileSdkVersion 30
@@ -52,9 +56,10 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.preference:preference-ktx:1.1.1'
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.0")
 }
+
 repositories {
     mavenCentral()
 }
 
-apply plugin: 'kotlin-android-extensions'
