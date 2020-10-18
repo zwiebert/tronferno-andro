@@ -1,10 +1,4 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
-    <EditTextPreference
-        app:key="serial_baud"
-        app:maxLines="1"
-        app:singleLine="true"
-        app:useSimpleSummaryProvider="true"
-        app:title="@string/pref_mcu_serial_baud" />
 
     <EditTextPreference
         app:key="geo_latitude"

@@ -114,30 +114,30 @@ class McuTcp(msgHandler: Handler) {
             when (msg.what) {
 
 
-                McuTcp.MSG_TCP_DO_CONNECT -> {
+                MSG_TCP_DO_CONNECT -> {
                     if (connectSocket())
                         startReadTickThread()
-                    mt.isConnecting = false;
+                    mt.isConnecting = false
                 }
 
-                McuTcp.MSG_TCP_DO_DISCONNECT -> {
+                MSG_TCP_DO_DISCONNECT -> {
                     stopReadTickThread()
                     closeSocket()
                 }
 
-                McuTcp.MSG_TCP_DO_SEND -> {
+                MSG_TCP_DO_SEND -> {
                     val data = msg.obj as String
                     val os = outputStream ?: return
                     try {
                         os.write(data.toByteArray())
                     } catch (e: Exception) {
-                        mt.sendMsgToGui(McuTcp.MSG_TCP_OUTPUT_ERROR, "tcp-wt:error: $e")
-                        mt.sendMsgToGui(McuTcp.MSG_TCP_REQ_RECONNECT)
+                        mt.sendMsgToGui(MSG_TCP_OUTPUT_ERROR, "tcp-wt:error: $e")
+                        mt.sendMsgToGui(MSG_TCP_REQ_RECONNECT)
                         return
                     }
                 }
 
-                McuTcp.MSG_TCP_DO_RECV -> {
+                MSG_TCP_DO_RECV -> {
                     readLoop()
                 }
 
@@ -167,7 +167,7 @@ class McuTcp(msgHandler: Handler) {
     }
 
     fun connect() {
-        isConnecting = true;
+        isConnecting = true
         sendMsgToTcp(MSG_TCP_DO_CONNECT)
     }
 

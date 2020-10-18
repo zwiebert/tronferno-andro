@@ -26,6 +26,9 @@ import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.position_indicator.*
 import kotlinx.android.synthetic.main.position_indicators.*
 import kotlinx.android.synthetic.main.timers_main.*
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import java.lang.ref.WeakReference
 import java.net.InetSocketAddress
 
@@ -189,11 +192,11 @@ class MainActivity : AppCompatActivity() {
         McuTcp.socketAddress = InetSocketAddress(tcpHostname, tcpPort)
 
         val sgam = pref.getString("groupsAndMembers", "77777777")
-        val sgamLength1 = Math.min(7, sgam!!.length - 1)
-        groupMax = Math.min(7, Integer.parseInt(sgam.substring(0, 1)))
+        val sgamLength1 = kotlin.math.min(7, sgam!!.length - 1)
+        groupMax = kotlin.math.min(7, Integer.parseInt(sgam.substring(0, 1)))
 
         for (i in 1..sgamLength1) {
-            membMax[i] = Math.min(7, Integer.parseInt(sgam.substring(i, i + 1)))
+            membMax[i] = kotlin.math.min(7, Integer.parseInt(sgam.substring(i, i + 1)))
         }
         for (i in sgamLength1 + 1..7) {
             membMax[i] = 0
@@ -233,7 +236,7 @@ class MainActivity : AppCompatActivity() {
             for (m in 1..7) {
                 val key = "memberName_$g$m"
                 val value = pref.getString(key, "") ?: continue
-                mMemberNames.put(key, value)
+                mMemberNames[key] = value
             }
         }
 
@@ -400,8 +403,7 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     // ma.pr.data2Mcu(TfmcuConfigData("longitude=? latitude=? time-zone=? dst=? wlan-ssid=? cu=? baud=? verbose=? dst=?"))
-                    ma.pr.data2Mcu(TfmcuConfigData("longitude=? latitude=? tz=? wlan-ssid=?"))
-                    ma.pr.data2Mcu(TfmcuConfigData("cu=? baud=? verbose=?"))
+                    ma.pr.data2Mcu(TfmcuMcuSettings(geta=arrayOf("longitude", "latitude", "tz", "wlan-ssid", "cu", "verbose")))
                 }
 
                 McuTcp.MSG_TCP_CONNECTION_FAILED -> {
@@ -415,6 +417,8 @@ class MainActivity : AppCompatActivity() {
 
                 McuTcp.MSG_LINE_RECEIVED -> try {
                     s = msg.obj as String
+                    val json = if (s.startsWith("{"))  s.removeSuffix(";") else ""
+
                     when {
                         s == "ready:" -> {
 
@@ -427,8 +431,8 @@ class MainActivity : AppCompatActivity() {
 
                     if (s.startsWith("tf:") && s.contains(" timer:")) {
                         ma.parseReceivedTimer(s.substringAfter(" timer:"))
-                    } else if (s.contains("timer ")) {
-                        ma.parseReceivedTimer(s.substringAfter("timer ")) //TODO: remove this
+                    } else if (json.contains("\"auto\":")) {
+                        ma.parseReceivedTimerJson(json)
                     }
                     if (ma.progressDialog.isShowing && ma.cuasInProgress) {
                         if (s.contains(":cuas=ok:")) {
@@ -443,14 +447,15 @@ class MainActivity : AppCompatActivity() {
                     }
                     if (s.startsWith("tf:") && s.contains(" config:")) {
                         ma.parseReceivedConfig(s.substringAfter(" config:"))
-                    } else if (s.contains("config ")) {
-                        ma.parseReceivedConfig((s.substringAfter(("config ")))) //TODO: remove this
+                    } else if (json.contains("\"config\":")) {
+                        ma.parseReceivedConfigJson(json)
                     }
                     if (s.startsWith("A:position:")) {
                         ma.parseReceivedPosition(s)
-                    }
-                    if (s.startsWith("U:position:")) {
+                    } else if (s.startsWith("U:position:")) {
                         ma.parseReceivedPosition(s)
+                    } else if  (json.contains("\"pct\":")) {
+                        ma.parseReceivedPositionJson(json)
                     }
 
                 } catch (e: Exception) {
@@ -515,13 +520,29 @@ class MainActivity : AppCompatActivity() {
         return if (daily.startsWith("-")) "" else daily.substring(0, 2) + ":" + daily.substring(2, 4)
     }
 
-    internal fun parseReceivedTimer(s: String) {
-        val td = pr.model.parseReceivedTimer(s)
+    internal fun parseReceivedTimerJson(s: String) {
+        val td = ferParseReceivedTimerJson2(s)
 
         vcbSunAuto.isChecked = td.sunAuto
         vcbRandom.isChecked = td.random
         vcbManu.isChecked = td.manual
-        vcbWeekly.isChecked = !td.weekly.isEmpty()
+        vcbWeekly.isChecked = td.weekly.isNotEmpty()
+        vcbAstro.isChecked = td.hasAstro
+        vetWeeklyTimer.setText(td.weekly)
+        vcbDailyUp.isChecked = !(td.daily.isEmpty() || td.daily.startsWith("-"))
+        vcbDailyDown.isChecked = !(td.daily.isEmpty() || td.daily.endsWith("-"))
+        vetAstroMinuteOffset.setText(if (td.hasAstro) td.astro.toString() else "")
+        vetDailyUpTime.setText(td2dailyUp(td))
+        vetDailyDownTime.setText(td2dailyDown(td))
+    }
+
+    internal fun parseReceivedTimer(s: String) {
+        val td = ferParseReceivedTimer(s)
+
+        vcbSunAuto.isChecked = td.sunAuto
+        vcbRandom.isChecked = td.random
+        vcbManu.isChecked = td.manual
+        vcbWeekly.isChecked = td.weekly.isNotEmpty()
         vcbAstro.isChecked = td.hasAstro
         vetWeeklyTimer.setText(td.weekly)
         vcbDailyUp.isChecked = !(td.daily.isEmpty() || td.daily.startsWith("-"))
@@ -587,7 +608,7 @@ class MainActivity : AppCompatActivity() {
         val ed = sharedPreferences.edit()
 
 
-        for (i in 0 until mcuCfgPrefKeys.size) {
+        for (i in mcuCfgPrefKeys.indices) {
             ed.putString(mcuCfgPrefKeys[i], mcuCfgPrefVals[i])
             ed.putString(mcuCfgPrefKeys[i] + "_old", mcuCfgPrefVals[i])
         }
@@ -596,14 +617,14 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private val mcuCfgPrefKeys = arrayOf("geo_latitude", "geo_longitude", "geo_time_zone", "wlan_ssid", "cu_id", "serial_baud", "cli_verbosity")
-    private val mcuCfgMcuKeys = arrayOf("latitude", "longitude", "tz", "wlan-ssid", "cu", "baud", "verbose")
-    private var mcuCfgPrefVals = arrayOf("", "", "", "", "", "", "")
+    private val mcuCfgPrefKeys = arrayOf("geo_latitude", "geo_longitude", "geo_time_zone", "wlan_ssid", "cu_id", "cli_verbosity")
+    private val mcuCfgMcuKeys = arrayOf("latitude", "longitude", "tz", "wlan-ssid", "cu", "verbose")
+    private var mcuCfgPrefVals = arrayOf("", "", "", "", "", "")
 
 
     fun configureMcu() {
         val pref = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-        for (i in 0 until mcuCfgPrefKeys.size) {
+        for (i in mcuCfgPrefKeys.indices) {
             val pv = pref.getString(mcuCfgPrefKeys[i], "")
             val pvOld = pref.getString(mcuCfgPrefKeys[i] + "_old", "")
             val mk = mcuCfgMcuKeys[i]
@@ -615,6 +636,21 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    fun parseReceivedConfigJson(line: String) {
+        val jco = Json.parseToJsonElement(line).jsonObject["config"] ?: return
+
+        for ((k, v) in jco.jsonObject) {
+            // listAdapter.add(k + "=" + v)
+            for (i in mcuCfgPrefKeys.indices) {
+                if (mcuCfgMcuKeys[i] == k) {
+                    mcuCfgPrefVals[i] = v.jsonPrimitive.content
+                }
+            }
+        }
+        saveMcuPreferecence()
+        vtvLog.append("mcu preference saved\n")
+    }
+
     fun parseReceivedConfig(line: String) {
         var s = line
             while (s.contains('=')) {
@@ -623,7 +659,7 @@ class MainActivity : AppCompatActivity() {
                 s = s.substringAfter(' ', ";")
 
                 // listAdapter.add(k + "=" + v)
-                for (i in 0 until mcuCfgPrefKeys.size) {
+                for (i in mcuCfgPrefKeys.indices) {
                     if (mcuCfgMcuKeys[i] == k) {
                         mcuCfgPrefVals[i] = v
                     }
@@ -643,6 +679,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun parseReceivedPositionJson(line: String) {
+        if (pr.model.parseReceivedPositionJson(line)) {
+            mPosAdapter.notifyDataSetChanged()
+        }
+    }
 
     private fun getFerId(): Int {
         var result = 0
@@ -805,7 +846,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
                 REQ_WEEKLY_EDITOR -> {
@@ -915,8 +956,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
-        menu.findItem(R.id.action_hideLog).setChecked(mHideViewLog)
-        menu.findItem(R.id.action_hideTimer).setChecked(mHideViewTimer)
+        menu.findItem(R.id.action_hideLog).isChecked = mHideViewLog
+        menu.findItem(R.id.action_hideTimer).isChecked = mHideViewTimer
         mMenu = menu
         return true
     }
@@ -938,7 +979,7 @@ class MainActivity : AppCompatActivity() {
         builder.setPositiveButton("OK") { dialog, which ->
             val shutterName = input.text.toString()
             ptvArr[memb - 1].text = if (shutterName.isNotBlank()) shutterName else "$memb"
-            mMemberNames.put("memberName_$group$memb", shutterName)
+            mMemberNames["memberName_$group$memb"] = shutterName
             mPosAdapter.notifyItemChanged(getGroupIndex())
 
         }
@@ -960,7 +1001,7 @@ class MainActivity : AppCompatActivity() {
 
 
             R.id.action_cuAutoSet -> {
-                pr.data2Mcu(TfmcuConfigData("cu=auto"))
+                pr.data2Mcu(TfmcuMcuSettings(cu="auto"))
                 showProgressDialog(getString(R.string.cuas_info), 60)
             }
 
@@ -1002,7 +1043,7 @@ class MainActivity : AppCompatActivity() {
             R.id.action_hideTimer -> {
                 item.isChecked = !item.isChecked
                 mHideViewTimer = item.isChecked
-                val landscape = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE
+                val landscape = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
                 timer_frameLayout.visibility = if (mHideViewTimer) View.GONE else View.VISIBLE
                 //timer_frameLayout.visibility = if (mHideViewTimer) (if (landscape) View.INVISIBLE else View.GONE) else View.VISIBLE

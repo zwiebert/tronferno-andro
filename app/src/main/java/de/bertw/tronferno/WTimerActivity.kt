@@ -97,7 +97,7 @@ class WTimerActivity : AppCompatActivity() {
             return (if (up.isBlank()) "-" else up)  + (if (down.isBlank()) "-" else down)
         }
     }
-    class WeekDays() {
+    class WeekDays {
         val wdays = arrayOf(WeekDay("Mon"), WeekDay("Tue"), WeekDay("Wed"), WeekDay("Thu"), WeekDay("Fri"), WeekDay("Sat"), WeekDay("Sun"))
 
         override fun toString() : String {
@@ -134,7 +134,7 @@ class WTimerActivity : AppCompatActivity() {
                         }
 
                         '+' -> { // copy previous wday on+off timer
-                            wday.copy = true;
+                            wday.copy = true
                             ++t
                             wdayDone = true
                         }

@@ -24,6 +24,11 @@ class TfmcuPresenter(msgHandler: Handler) {
         return true // FIXME
     }
 
+    fun data2Mcu(configData: TfmcuMcuSettings): Boolean {
+        model.tcp.transmit(configData.toString() + ";\n")
+        return true // FIXME
+    }
+
     fun data2Mcu(cmdData: TfmcuSendData): Boolean {
         return model.transmitSend(cmdData)
     }
@@ -33,7 +38,7 @@ class TfmcuPresenter(msgHandler: Handler) {
         val c = Calendar.getInstance()
         val sd = SimpleDateFormat("yyyy-MM-dd", Locale.US).format(c.time)
         val st = SimpleDateFormat("HH:mm:ss", Locale.US).format(c.time)
-        data2Mcu(TfmcuConfigData("rtc=${sd}T$st"))
+        data2Mcu(TfmcuMcuSettings(rtc="${sd}T$st"))
     }
 
     fun onConnect() {

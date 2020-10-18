@@ -13,7 +13,7 @@ class SettingsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_settings)
         supportFragmentManager
                 .beginTransaction()
-                .replace(R.id.pref_root_container, SettingsActivity.PrefRootFragment())
+                .replace(R.id.pref_root_container, PrefRootFragment())
                 .commit()
     }
 
