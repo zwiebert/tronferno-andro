@@ -31,7 +31,7 @@ class McuTcp(msgHandler: Handler) {
         }
     }
 
-    class MessageHandler(mcuTcp: McuTcp) : Handler() {
+    class MessageHandler(mcuTcp: McuTcp) : Handler(Looper.getMainLooper()) {
         private val mWrTcp = WeakReference(mcuTcp)
         private var mReadTickThread: ReadTickThread? = null
         private var bufferedReader: BufferedReader? = null

@@ -35,9 +35,6 @@ class ShutterPositionsAdapter(val ma: MainActivity) : RecyclerView.Adapter<Shutt
 
         val vltPiLayout = view.findViewById<View>(R.id.vltPiLayout) as ConstraintLayout
 
-        init {
-
-        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {

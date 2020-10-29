@@ -31,7 +31,8 @@
         android:ems="10"
         android:inputType="number"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/vtvWtMon" />
+        app:layout_constraintTop_toBottomOf="@+id/vtvWtMon"
+        android:autofillHints="" />
 
     <EditText
         android:id="@+id/vetWtDownMon"
@@ -45,7 +46,8 @@
         app:layout_constraintEnd_toEndOf="@+id/vetWtUpMon"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/vetWtUpMon"
-        app:layout_constraintTop_toBottomOf="@+id/vetWtUpMon" />
+        app:layout_constraintTop_toBottomOf="@+id/vetWtUpMon"
+        android:autofillHints="" />
 
     <CheckBox
         android:id="@+id/vcbWtMon"
@@ -72,7 +74,8 @@
         android:inputType="number"
         app:layout_constraintEnd_toEndOf="@+id/vetWtUpTue"
         app:layout_constraintStart_toStartOf="@+id/vetWtUpTue"
-        app:layout_constraintTop_toBottomOf="@+id/vetWtUpTue" />
+        app:layout_constraintTop_toBottomOf="@+id/vetWtUpTue"
+        android:autofillHints="" />
 
     <EditText
         android:id="@+id/vetWtUpTue"
@@ -87,7 +90,8 @@
         android:inputType="number"
         app:layout_constraintEnd_toStartOf="@+id/vcbWtTue"
         app:layout_constraintStart_toEndOf="@+id/barrier"
-        app:layout_constraintTop_toBottomOf="@+id/vtvWtTue" />
+        app:layout_constraintTop_toBottomOf="@+id/vtvWtTue"
+        android:autofillHints="" />
 
     <TextView
         android:id="@+id/vtvWtTue"
@@ -136,7 +140,8 @@
         app:layout_constraintEnd_toEndOf="@+id/vetWtUpWed"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/vetWtUpWed"
-        app:layout_constraintTop_toBottomOf="@+id/vetWtUpWed" />
+        app:layout_constraintTop_toBottomOf="@+id/vetWtUpWed"
+        android:autofillHints="" />
 
     <EditText
         android:id="@+id/vetWtUpWed"
@@ -152,7 +157,8 @@
         app:layout_constraintEnd_toStartOf="@+id/vcbWtWed"
         app:layout_constraintHorizontal_bias="0.478"
         app:layout_constraintStart_toEndOf="@+id/barrier2"
-        app:layout_constraintTop_toBottomOf="@+id/vtvWtWed" />
+        app:layout_constraintTop_toBottomOf="@+id/vtvWtWed"
+        android:autofillHints="" />
 
 
     <CheckBox
@@ -188,7 +194,8 @@
         android:ems="10"
         android:inputType="number"
         app:layout_constraintStart_toStartOf="@+id/vtvWtThu"
-        app:layout_constraintTop_toBottomOf="@+id/vtvWtThu" />
+        app:layout_constraintTop_toBottomOf="@+id/vtvWtThu"
+        android:autofillHints="" />
 
     <EditText
         android:id="@+id/vetWtDownThu"
@@ -202,7 +209,8 @@
         app:layout_constraintEnd_toEndOf="@+id/vetWtUpThu"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/vetWtUpThu"
-        app:layout_constraintTop_toBottomOf="@+id/vetWtUpThu" />
+        app:layout_constraintTop_toBottomOf="@+id/vetWtUpThu"
+        android:autofillHints="" />
 
     <CheckBox
         android:id="@+id/vcbWtThu"
@@ -240,7 +248,8 @@
         android:ems="10"
         android:inputType="number"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/vtvWtFri" />
+        app:layout_constraintTop_toBottomOf="@+id/vtvWtFri"
+        android:autofillHints="" />
 
     <EditText
         android:id="@+id/vetWtDownFri"
@@ -252,7 +261,8 @@
         app:layout_constraintEnd_toEndOf="@+id/vetWtUpFri"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/vetWtUpFri"
-        app:layout_constraintTop_toBottomOf="@+id/vetWtUpFri" />
+        app:layout_constraintTop_toBottomOf="@+id/vetWtUpFri"
+        android:autofillHints="" />
 
     <CheckBox
         android:id="@+id/vcbWtFri"
@@ -290,7 +300,8 @@
         android:ems="10"
         android:inputType="number"
         app:layout_constraintStart_toEndOf="@+id/barrier"
-        app:layout_constraintTop_toBottomOf="@+id/vtvWtSat" />
+        app:layout_constraintTop_toBottomOf="@+id/vtvWtSat"
+        android:autofillHints="" />
 
     <EditText
         android:id="@+id/vetWtDownSat"
@@ -301,7 +312,8 @@
         android:inputType="number"
         app:layout_constraintEnd_toEndOf="@+id/vetWtUpSat"
         app:layout_constraintStart_toStartOf="@+id/vetWtUpSat"
-        app:layout_constraintTop_toBottomOf="@+id/vetWtUpSat" />
+        app:layout_constraintTop_toBottomOf="@+id/vetWtUpSat"
+        android:autofillHints="" />
 
     <CheckBox
         android:id="@+id/vcbWtSat"
@@ -342,7 +354,8 @@
         android:ems="10"
         android:inputType="number"
         app:layout_constraintStart_toEndOf="@+id/barrier2"
-        app:layout_constraintTop_toBottomOf="@+id/vtvWtSun" />
+        app:layout_constraintTop_toBottomOf="@+id/vtvWtSun"
+        android:autofillHints="" />
 
     <EditText
         android:id="@+id/vetWtDownSun"
@@ -353,7 +366,8 @@
         android:inputType="number"
         app:layout_constraintEnd_toEndOf="@+id/vetWtUpSun"
         app:layout_constraintStart_toStartOf="@+id/vetWtUpSun"
-        app:layout_constraintTop_toBottomOf="@+id/vetWtUpSun" />
+        app:layout_constraintTop_toBottomOf="@+id/vetWtUpSun"
+        android:autofillHints="" />
 
     <CheckBox
         android:id="@+id/vcbWtSun"

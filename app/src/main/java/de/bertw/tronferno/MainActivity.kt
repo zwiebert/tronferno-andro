@@ -36,16 +36,6 @@ import java.net.InetSocketAddress
 const val DEFAULT_TCP_HOSTNAME = "fernotron.fritz.box."
 const val DEFAULT_TCP_PORT = 7777
 
-
-// Integer.min/max not available for SDK < 24
-fun <T : Comparable<T>> min(a: T, b: T): T {
-    return if (a < b) a else b
-}
-
-fun <T : Comparable<T>> max(a: T, b: T): T {
-    return if (a > b) a else b
-}
-
 class MainActivity : AppCompatActivity() {
 
     val mMessageHandler = MessageHandler(this)
@@ -139,7 +129,7 @@ class MainActivity : AppCompatActivity() {
 
     fun getMemberName(g: Int = group, m: Int = memb): String {
         val key = "memberName_$g$m"
-        val value = mMemberNames.get(key)
+        val value = mMemberNames[key]
 
         return if (value.isNullOrBlank()) "$m" else value
     }
@@ -283,7 +273,7 @@ class MainActivity : AppCompatActivity() {
         ed.putString("vetWeeklyTimerText", vetWeeklyTimer.text.toString())
         ed.putString("vetAstroMinuteOffsetText", vetAstroMinuteOffset.text.toString())
 
-        val start = vtvLog.layout.getLineStart(max(0, vtvLog.lineCount - 20))
+        val start = vtvLog.layout.getLineStart(kotlin.math.max(0, vtvLog.lineCount - 20))
         val end = vtvLog.layout.getLineEnd(vtvLog.lineCount - 1)
         val logText = vtvLog.text.toString().substring(start, end)
         ed.putString("vtvLogText", logText)
@@ -363,10 +353,6 @@ class MainActivity : AppCompatActivity() {
         savePreferences()
     }
 
-    private fun logWriteLine(line: String) {
-        vtvLog.append(line + "\n")
-    }
-
     class MessageHandler(activity: MainActivity) : Handler() {
         private val mActivity = WeakReference(activity)
 
@@ -417,7 +403,7 @@ class MainActivity : AppCompatActivity() {
 
                 McuTcp.MSG_LINE_RECEIVED -> try {
                     s = msg.obj as String
-                    val json = if (s.startsWith("{"))  s.removeSuffix(";") else ""
+                    val json = if (s.startsWith("{")) s.removeSuffix(";") else ""
 
                     when {
                         s == "ready:" -> {
@@ -429,35 +415,47 @@ class MainActivity : AppCompatActivity() {
                         else -> ma.vtvLog.append(s + "\n")
                     }
 
-                    if (s.startsWith("tf:") && s.contains(" timer:")) {
-                        ma.parseReceivedTimer(s.substringAfter(" timer:"))
-                    } else if (json.contains("\"auto\":")) {
-                        ma.parseReceivedTimerJson(json)
-                    }
-                    if (ma.progressDialog.isShowing && ma.cuasInProgress) {
-                        if (s.contains(":cuas=ok:")) {
-                            ma.progressDialog.hide()
-                            ma.showAlertDialog(ma.getString(R.string.cuas_success))
-                            ma.cuasInProgress = false
-                        } else if (s.contains(":cuas=time-out:")) {
-                            ma.cuasInProgress = false
-                            ma.progressDialog.hide()
-                            ma.showAlertDialog(ma.getString(R.string.cuas_timeout))
+                    when {
+                        (s.startsWith("tf:") && s.contains(" timer:")) -> {
+                            ma.parseReceivedTimer(s.substringAfter(" timer:"))
+                        }
+
+                        (json.contains("\"auto\":")) -> {
+                            ma.parseReceivedTimerJson(json)
+                        }
+
+                        (s.startsWith("tf:") && s.contains(" config:")) -> {
+                            ma.parseReceivedConfig(s.substringAfter(" config:"))
+                        }
+
+                        (json.contains("\"config\":")) -> {
+                            ma.parseReceivedConfigJson(json)
+                        }
+
+                        (s.startsWith("A:position:")) -> {
+                            ma.parseReceivedPosition(s)
+                        }
+
+                        (s.startsWith("U:position:")) -> {
+                            ma.parseReceivedPosition(s)
+                        }
+
+                        (json.contains("\"pct\":")) -> {
+                            ma.parseReceivedPositionJson(json)
+                        }
+
+                        (ma.progressDialog.isShowing && ma.cuasInProgress) -> {
+                            if (s.contains(":cuas=ok:")) {
+                                ma.progressDialog.hide()
+                                ma.showAlertDialog(ma.getString(R.string.cuas_success))
+                                ma.cuasInProgress = false
+                            } else if (s.contains(":cuas=time-out:")) {
+                                ma.cuasInProgress = false
+                                ma.progressDialog.hide()
+                                ma.showAlertDialog(ma.getString(R.string.cuas_timeout))
+                            }
                         }
                     }
-                    if (s.startsWith("tf:") && s.contains(" config:")) {
-                        ma.parseReceivedConfig(s.substringAfter(" config:"))
-                    } else if (json.contains("\"config\":")) {
-                        ma.parseReceivedConfigJson(json)
-                    }
-                    if (s.startsWith("A:position:")) {
-                        ma.parseReceivedPosition(s)
-                    } else if (s.startsWith("U:position:")) {
-                        ma.parseReceivedPosition(s)
-                    } else if  (json.contains("\"pct\":")) {
-                        ma.parseReceivedPositionJson(json)
-                    }
-
                 } catch (e: Exception) {
                     ma.vtvLog.append("MLR:error: $e\n...line: $s")
 
@@ -779,13 +777,8 @@ class MainActivity : AppCompatActivity() {
         selectGroup(usedGroups.arr[++usedGroups.selectedIdx])
     }
 
-    fun selectGroupByIdx(idx: Int) {
-        usedGroups.selectedIdx = idx
-        selectGroup(usedGroups.arr[idx])
-    }
-
     fun selectGroup(g: Int) {
-        val old_group = group
+        val oldGroup = group
         group = g
 
         // update index if needed //FIXME
@@ -798,9 +791,9 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        if (old_group != group) {
-            if (old_group != 0) {
-                mPosAdapter.notifyItemChanged(getGroupIndex(old_group))
+        if (oldGroup != group) {
+            if (oldGroup != 0) {
+                mPosAdapter.notifyItemChanged(getGroupIndex(oldGroup))
             } else mPosAdapter.notifyDataSetChanged()
             if (group != 0) {
                 mPosAdapter.notifyItemChanged(getGroupIndex())

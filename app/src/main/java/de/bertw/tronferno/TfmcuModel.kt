@@ -3,7 +3,7 @@ package de.bertw.tronferno
 import android.os.Handler
 import java.io.IOException
 
-val USE_JSON = true
+const val USE_JSON = true
 
 fun agmToJson(a: Int, g: Int, m: Int): String {
     var s = ""
